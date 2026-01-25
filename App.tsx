@@ -564,6 +564,7 @@ const App: React.FC = () => {
             onStartRitual={startRitual}
             isMobile={isMobile}
             isTablet={isTablet}
+            isThinking={isThinking}
           />
         );
       case GameState.SHUFFLING:

@@ -13,6 +13,7 @@ interface InputSectionProps {
   onStartRitual: () => void;
   isMobile: boolean;
   isTablet: boolean;
+  isThinking?: boolean;
 }
 
 const InputSection: React.FC<InputSectionProps> = ({
@@ -23,8 +24,8 @@ const InputSection: React.FC<InputSectionProps> = ({
   onStartRitual,
   isMobile,
   isTablet,
+  isThinking = false,
 }) => {
-  // Start confirmed if we have a spread (which we now default to specific spread or AUTO)
   const [isSpreadConfirmed, setIsSpreadConfirmed] = useState(!!spread);
   const [direction, setDirection] = useState(0); // 0: initial, 1: forward, -1: backward
 
@@ -98,12 +99,6 @@ const InputSection: React.FC<InputSectionProps> = ({
             exit="exit"
             className="w-full flex flex-col gap-8 md:gap-16 items-center"
           >
-            {/* Header */}
-            <div className="text-center space-y-2 md:space-y-3">
-              <p className="text-base md:text-lg text-neutral-200 font-serif tracking-wide">
-                请闭上双眼，深呼吸三次
-              </p>
-            </div>
 
             {/* Spread Grid */}
             <div className="w-full space-y-6">
@@ -156,7 +151,7 @@ const InputSection: React.FC<InputSectionProps> = ({
                 <ChevronUp size={24} />
               </div>
               <span className="text-[9px] tracking-[0.2em] text-white/20 group-hover:text-white/60 transition-colors duration-500 uppercase">
-                RESELECT 重选牌阵
+                RESELECT 选择牌阵
               </span>
             </motion.button>
 
@@ -189,6 +184,7 @@ const InputSection: React.FC<InputSectionProps> = ({
             <div className="w-full mt-8 md:mt-12 space-y-6 relative">
               <div className="text-center space-y-2 md:space-y-4">
                 <p className="text-base md:text-lg text-neutral-200 font-serif tracking-wide">
+                  请闭上双眼，深呼吸三次<br />
                   在心中默念你的困惑，保持虔诚与专注
                 </p>
                 <Label text="Enter your question" />
@@ -226,9 +222,9 @@ const InputSection: React.FC<InputSectionProps> = ({
 
               <div className="flex justify-center mt-10">
                 <ActionButton
-                  disabled={!spread}
+                  disabled={!spread || isThinking}
                   onClick={onStartRitual}
-                  text="BEGIN RITUAL 开始洗牌"
+                  text={isThinking ? "DIVINING... 感知中" : "BEGIN RITUAL 开始洗牌"}
                 />
               </div>
             </div>
