@@ -60,27 +60,26 @@ const TarotCard: React.FC<TarotCardProps> = ({
     right: "left-full ml-2 top-1/2 -translate-y-1/2",
   };
 
-  const effectiveLayoutId = !isDetailed
-    ? layoutId || `card-${card.id}`
-    : undefined;
+  const imageFilter = isHovered || isDetailed
+    ? "grayscale(0%) contrast(1.1) brightness(1.05)"
+    : "grayscale(100%) contrast(1.2) brightness(0.9)";
+
   return (
     <motion.div
-      layoutId={effectiveLayoutId}
-      layout={!isDetailed} // 明确关闭 detailed 下的自动 layout 动画
+      layoutId={!isDetailed ? (layoutId || `card-${card.id}`) : undefined}
+      layout={!isDetailed}
       style={{
         transformStyle: "preserve-3d",
         rotate: isHorizontal ? 90 : 0,
+        touchAction: isDetailed ? "auto" : undefined,
         ...style,
       }}
       onClick={onClick}
       onMouseEnter={() => !isDetailed && onHover?.(card.id)}
       onMouseLeave={() => !isDetailed && onHover?.(null)}
-      className={`relative ${
-        !isDetailed ? "cursor-pointer group" : ""
-      } ${width} ${height} ${className}`}
+      className={`relative ${!isDetailed ? "cursor-pointer group" : ""} ${width} ${height} ${className}`}
       {...motionProps}
     >
-      {/* Card Container with Flip Animation */}
       <motion.div
         className="w-full h-full relative"
         style={{ transformStyle: "preserve-3d" }}
@@ -94,214 +93,150 @@ const TarotCard: React.FC<TarotCardProps> = ({
         }}
         transition={{ duration: 0.8, ease: "easeInOut" }}
       >
-        {/* Front Face (Image) */}
+        {/* Front Face */}
         <div
-          className={`absolute inset-0 bg-black border border-white/20 shadow-[0_0_50px_rgba(255,255,255,0.05)] overflow-hidden ${
-            isDetailed ? "md:flex md:flex-row" : ""
-          }`}
+          className={`absolute inset-0 bg-black border border-white/20 shadow-[0_0_50px_rgba(255,255,255,0.05)] overflow-hidden ${isDetailed ? "flex flex-col md:flex-row" : "flex"}`}
           style={{ backfaceVisibility: "hidden" }}
         >
-          {/* Image Container */}
-          <div
-            className={`relative w-full h-full bg-neutral-900 ${
-              isDetailed ? "md:w-1/2 md:border-r md:border-white/10" : ""
-            }`}
-          >
-            <img
-              src={getCardImageUrl(card.image)}
-              alt={card.nameEn}
-              loading={priority ? "eager" : "lazy"}
-              onLoad={() => setIsImageLoaded(true)}
-              className={`w-full h-full object-cover transition-opacity duration-500 ${
-                isImageLoaded ? "opacity-100" : "opacity-0"
-              }`}
-              style={{
-                filter: "grayscale(100%) contrast(1.2) brightness(0.9)",
-                mixBlendMode: "normal",
-              }}
-            />
-            {/* Loading Placeholder */}
-            {!isImageLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-8 h-8 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
-              </div>
-            )}
-            {/* Gradient Overlay - Hide in detailed view as content container handles the gradient */}
-            <div
-              className={`absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-black/40 ${
-                isDetailed ? "hidden" : ""
-              }`}
-            />
-            {/* Border - Hide in detailed desktop view as it conflicts with layout */}
-            <div
-              className={`absolute inset-2 md:inset-3 border border-white/20 pointer-events-none ${
-                isDetailed ? "md:hidden" : ""
-              }`}
-            />
-          </div>
+          {isDetailed ? (
+            <>
+              {/* Image & Header Section */}
+              <div className="flex flex-row md:flex-col w-full md:w-[42%] h-[40%] md:h-full shrink-0 border-b md:border-b-0 md:border-r border-white/10 bg-black relative overflow-hidden">
+                {/* Background Glow */}
+                <img
+                  src={getCardImageUrl(card.image)}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-30 scale-125 pointer-events-none"
+                />
 
-          {/* Content Container */}
-          <div
-            className={`
-              flex flex-col items-center text-center z-10 transition-opacity duration-500
-              ${isRevealed ? "opacity-100" : "opacity-0"}
-              ${
-                isDetailed
-                  ? "absolute bottom-0 w-full h-[90%] md:static md:w-1/2 md:h-full md:bg-neutral-950 md:border-l md:border-white/5 bg-linear-to-t from-black via-black/95 to-transparent"
-                  : "absolute bottom-0 w-full p-3 md:p-4"
-              }
-            `}
-          >
-            {/* Decorative Element for Desktop Detailed View */}
-            {isDetailed && (
-              <div className="hidden md:block absolute top-8 left-8 right-8 bottom-8 border border-white/5 pointer-events-none" />
-            )}
-
-            {/* Fixed Header Section (Name & Keywords) */}
-            <div
-              className={`flex-none w-full flex flex-col items-center ${
-                isDetailed ? "px-6 pt-16 md:px-16 md:pt-16" : ""
-              }`}
-            >
-              {/* Roman Numeral */}
-              {getRomanNumeral(card.id) && (
-                <div
-                  className={`${
-                    isDetailed
-                      ? "text-sm md:text-base mb-2 text-amber-50/60"
-                      : "text-[8px] md:text-[10px] mb-0.5 text-white/60"
-                  } font-cinzel tracking-[0.2em]`}
-                >
-                  {getRomanNumeral(card.id)}
+                {/* Card Art Panel */}
+                <div className="w-[45%] md:w-full h-full flex items-center justify-center p-4 md:p-8 relative z-10">
+                  <img
+                    src={getCardImageUrl(card.image)}
+                    alt={card.nameEn}
+                    loading="eager"
+                    className="w-full h-full object-contain drop-shadow-2xl"
+                    style={{ filter: imageFilter }}
+                  />
                 </div>
-              )}
 
-              <h2
-                className={`${
-                  isDetailed
-                    ? "text-3xl md:text-5xl mb-3 text-amber-50/90"
-                    : "text-[10px] md:text-sm mb-1 text-white"
-                } font-cinzel tracking-widest drop-shadow-md`}
-              >
-                {card.nameEn}
-              </h2>
-              <p
-                className={`${
-                  isDetailed
-                    ? "text-sm md:text-lg mb-6 tracking-wide"
-                    : "text-[9px] md:text-[10px]"
-                } text-neutral-400 font-serif`}
-              >
-                {card.nameCn}
-                {isReversed && (
-                  <span className="text-red-400/80 opacity-80 inline-block ml-2 font-light italic">
-                    (Reversed)
-                  </span>
-                )}
-              </p>
-
-              {isDetailed && "keywords" in card && (
-                <div className="w-full max-w-lg animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 relative z-10">
-                  <div className="flex flex-wrap justify-center gap-3 mb-6">
-                    {(card as PickedCard).keywords.map((keyword) => (
-                      <span
-                        key={keyword}
-                        className="text-[10px] md:text-xs px-3 py-1 bg-white/5 border border-white/10 rounded-sm text-neutral-300 tracking-[0.15em] uppercase hover:bg-white/10 transition-colors"
-                      >
-                        {keyword}
-                      </span>
-                    ))}
-                  </div>
+                {/* Mobile Meta (Visible next to art on mobile, hidden on desktop) */}
+                <div className="flex-1 md:hidden flex flex-col justify-center px-4 py-6 bg-neutral-950/40 relative z-10 border-l border-white/5">
+                  {getRomanNumeral(card.id) && (
+                    <div className="text-[10px] mb-1 text-amber-50/60 font-cinzel tracking-[0.2em]">{getRomanNumeral(card.id)}</div>
+                  )}
+                  <h3 className="text-xl font-cinzel text-amber-50/90 tracking-widest leading-tight mb-2">{card.nameEn}</h3>
+                  <p className="text-[10px] text-neutral-400 font-serif mb-4 uppercase tracking-widest">
+                    {card.nameCn} {isReversed && <span className="text-red-400/80 ml-1 italic">(Rev)</span>}
+                  </p>
+                  {"keywords" in card && (
+                    <div className="flex flex-wrap gap-1">
+                      {(card as PickedCard).keywords.slice(0, 3).map((kw) => (
+                        <span key={kw} className="text-[7px] px-1.5 py-0.5 bg-white/5 border border-white/10 text-neutral-400 uppercase tracking-tighter">{kw}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
-              <div className="flex items-center justify-center gap-4 mb-8 opacity-30">
-                <div className="h-px w-12 bg-white" />
-                <div className="w-1.5 h-1.5 rotate-45 border border-white" />
-                <div className="h-px w-12 bg-white" />
               </div>
-            </div>
 
-            {/* Scrollable Description Section */}
-            {isDetailed && "keywords" in card && (
-              <div className="flex-1 w-full overflow-y-auto px-6 pb-10 md:px-16 md:pb-16">
-                <div className="w-full max-w-lg mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 relative z-10">
-                  <p className="text-sm md:text-base text-neutral-300 font-light leading-loose text-justify tracking-wide">
-                    {isDetailed ? (
-                      <>
-                        <span className="block mb-1 text-neutral-200">
-                          <span className="mr-2 text-xs text-neutral-400 align-middle">
-                            ＋
-                          </span>
+              {/* Main Info Section (Scrollable Area) */}
+              <div className="flex-1 flex flex-col bg-neutral-950 overflow-hidden relative">
+                {/* Desktop Header (Only md+) */}
+                <div className="hidden md:flex flex-none flex-col items-center text-center px-12 pt-16 pb-8 border-b border-white/5">
+                  {getRomanNumeral(card.id) && (
+                    <div className="text-sm md:text-base mb-2 text-amber-50/60 font-cinzel tracking-[0.2em]">{getRomanNumeral(card.id)}</div>
+                  )}
+                  <h2 className="text-4xl md:text-5xl mb-3 text-amber-50/90 font-cinzel tracking-widest drop-shadow-md">{card.nameEn}</h2>
+                  <p className="text-sm md:text-lg mb-6 text-neutral-400 font-serif tracking-wide">
+                    {card.nameCn} {isReversed && <span className="text-red-400/80 opacity-80 inline-block ml-2 italic">(Reversed)</span>}
+                  </p>
+
+                  {"keywords" in card && (
+                    <div className="flex flex-wrap justify-center gap-3 mb-6">
+                      {(card as PickedCard).keywords.map((kw) => (
+                        <span key={kw} className="text-xs px-3 py-1 bg-white/5 border border-white/10 rounded-sm text-neutral-300 tracking-[0.15em] uppercase">{kw}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Shared Scrollable Content */}
+                <div className="flex-1 overflow-y-auto p-6 md:p-16 space-y-8 overscroll-contain touch-pan-y relative z-10 pointer-events-auto">
+                  {"keywords" in card && (
+                    <div className="max-w-lg mx-auto space-y-8">
+                      {/* Interpretation */}
+                      <p className="text-sm md:text-base text-neutral-300 font-light leading-relaxed md:leading-loose text-justify tracking-wide">
+                        <span className="block mb-2 text-neutral-200">
+                          <span className="mr-2 text-xs text-neutral-400 align-middle">＋</span>
                           {(card as PickedCard).positive}
                         </span>
                         <span className="block text-neutral-400">
-                          <span className="mr-2 text-xs text-neutral-500 align-middle">
-                            －
-                          </span>
+                          <span className="mr-2 text-xs text-neutral-500 align-middle">－</span>
                           {(card as PickedCard).negative}
                         </span>
-                      </>
-                    ) : isReversed ? (
-                      <span className="text-neutral-400">
-                        <span className="mr-2 text-xs text-neutral-500 align-middle">
-                          －
-                        </span>
-                        {(card as PickedCard).negative}
-                      </span>
-                    ) : (
-                      <span className="text-neutral-200">
-                        <span className="mr-2 text-xs text-neutral-400 align-middle">
-                          ＋
-                        </span>
-                        {(card as PickedCard).positive}
-                      </span>
-                    )}
-                  </p>
-                  {(card as PickedCard).descriptionCn && (
-                    <div className="mt-8 pt-8 border-t border-white/5">
-                      <h4 className="text-[10px] text-neutral-500 uppercase tracking-[0.3em] mb-4 text-center">
-                        Arcana Wisdom
-                      </h4>
-                      <p className="text-xs md:text-sm text-neutral-400 font-light leading-relaxed text-justify opacity-80">
-                        {(card as PickedCard).descriptionCn}
                       </p>
-                    </div>
-                  )}
-                  {(card as PickedCard).descriptionEn && (
-                    <div className="mt-8 pt-8 border-t border-white/5">
-                      <p className="text-xs md:text-sm text-neutral-400 font-light leading-relaxed text-justify opacity-80">
-                        {(card as PickedCard).descriptionEn}
-                      </p>
+
+                      {/* Analysis Sections */}
+                      {["descriptionCn" as const, "descriptionEn" as const].map((key) =>
+                        (card as PickedCard)[key] && (
+                          <div key={key} className="pt-8 border-t border-white/5">
+                            {key === "descriptionCn" && (
+                              <h4 className="text-[10px] text-neutral-500 uppercase tracking-[0.3em] mb-4 text-center">Arcana Wisdom</h4>
+                            )}
+                            <p className={`text-xs md:text-sm text-neutral-400 font-light leading-relaxed text-justify opacity-80 ${key === 'descriptionEn' ? 'italic' : ''}`}>
+                              {(card as PickedCard)[key]}
+                            </p>
+                          </div>
+                        )
+                      )}
                     </div>
                   )}
                 </div>
               </div>
-            )}
-          </div>
+            </>
+          ) : (
+            /* Standard Card View */
+            <div className="relative w-full h-full bg-neutral-900">
+              <img
+                src={getCardImageUrl(card.image)}
+                alt={card.nameEn}
+                loading={priority ? "eager" : "lazy"}
+                onLoad={() => setIsImageLoaded(true)}
+                className={`w-full h-full object-cover transition-opacity duration-700 ${isImageLoaded ? "opacity-100" : "opacity-0"}`}
+                style={{ filter: imageFilter }}
+              />
+              {!isImageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-8 h-8 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-linear-to-t from-black/95 via-black/20 to-black/40" />
+              <div className="absolute inset-2 md:inset-3 border border-white/20 pointer-events-none" />
+
+              <div className={`absolute bottom-0 w-full p-3 md:p-4 text-center transition-opacity duration-500 ${isRevealed ? "opacity-100" : "opacity-0"}`}>
+                {getRomanNumeral(card.id) && (
+                  <div className="text-[8px] md:text-[10px] mb-0.5 text-white/60 font-cinzel tracking-[0.2em]">{getRomanNumeral(card.id)}</div>
+                )}
+                <h2 className="text-[10px] md:text-sm mb-0.5 text-white font-cinzel tracking-widest truncate">{card.nameEn}</h2>
+                <p className="text-[9px] md:text-[10px] text-neutral-400 font-serif truncate">
+                  {card.nameCn} {isReversed && <span className="text-red-400/80 ml-1 italic opacity-80">(Rev)</span>}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Back Face (Pattern) */}
+        {/* Back Face */}
         <div
-          className="absolute inset-0 bg-neutral-950 border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] flex items-center justify-center overflow-hidden group-hover:border-white/40 group-hover:shadow-[0_0_25px_rgba(255,255,255,0.1)] transition-all duration-300"
-          style={{
-            backfaceVisibility: "hidden",
-            transform: "rotateY(180deg)",
-          }}
+          className="absolute inset-0 bg-neutral-950 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-white/40 transition-all duration-300"
+          style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
         >
-          <div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, #fff 1px, transparent 1px)",
-              backgroundSize: "6px 6px",
-            }}
-          ></div>
+          <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "6px 6px" }} />
           <div className="absolute inset-1 border-[0.5px] border-white/5" />
-          <div className="w-3 h-3 border border-white/10 rotate-45 group-hover:rotate-90 transition-transform duration-700" />
+          <div className="w-4 h-4 border border-white/10 rotate-45 group-hover:rotate-90 transition-transform duration-700" />
         </div>
       </motion.div>
 
-      {/* Label */}
       {label && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -317,3 +252,4 @@ const TarotCard: React.FC<TarotCardProps> = ({
 };
 
 export default TarotCard;
+

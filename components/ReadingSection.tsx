@@ -52,19 +52,6 @@ const ReadingSection: React.FC<ReadingSectionProps> = ({
   const spreadConfig = SPREADS[spread];
   const displayedCards = pickedCards.slice(0, spreadConfig.cardCount);
 
-  // Helper to calculate margins from Tailwind width classes like "w-28"
-  const getMargins = (widthClass: string) => {
-    const match = widthClass.match(/w-(\d+)/);
-    if (!match) return { ml: "-3.5rem", mt: "-5.5rem" };
-    const widthVal = parseInt(match[1]);
-    const remWidth = widthVal / 4;
-    const remHeight = (remWidth * 519) / 300; // Based on aspect-[300/519]
-    return {
-      ml: `-${remWidth / 2}rem`,
-      mt: `-${remHeight / 2}rem`,
-    };
-  };
-
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
@@ -97,8 +84,7 @@ const ReadingSection: React.FC<ReadingSectionProps> = ({
       })
       .join("\n");
 
-    const prompt = `I did a tarot reading using the "${spreadConfig.name
-      }" spread.
+    const prompt = `I did a tarot reading using the "${spreadConfig.name}" spread.
 
 Question: ${question || "General Reading"}
 
@@ -136,17 +122,11 @@ Please provide a deeper, more detailed analysis of this reading, focusing on hid
       : undefined;
 
   const renderThinkingPhrase = () => {
-    const allKeywords = pickedCards.flatMap((c) => {
-      const desc = c.isReversed ? c.negative : c.positive;
-      const descPhrases = desc ? desc.split(/[;；]/).map((s) => s.trim()) : [];
-      return [...c.keywords, ...descPhrases];
-    });
     const phrases = [
       "Consulting the Stars...",
       "Weaving the Threads of Fate...",
       "Listening to the Whispers...",
       "Aligning with the Cosmos...",
-      ...allKeywords,
     ];
     return phrases[thinkingKeywordIndex % phrases.length];
   };
@@ -154,17 +134,16 @@ Please provide a deeper, more detailed analysis of this reading, focusing on hid
   return (
     <motion.div
       key="reading-layout"
-      className="flex flex-col items-center w-full max-w-6xl gap-16"
+      className="flex flex-col items-center w-full max-w-7xl gap-8 md:gap-16"
       layout
     >
       <div
         className={`${spreadConfig.layoutType === "absolute" && !isMobile
-            ? "relative w-full h-[80vh] max-w-4xl mx-auto"
-            : `flex flex-wrap justify-center gap-12 ${spread === "THREE" ? "items-start" : "items-center"
-            }`
+          ? "relative w-full h-[70vh] md:h-[80vh] max-w-4xl lg:max-w-6xl mx-auto"
+          : "flex flex-wrap justify-center items-center gap-6 md:gap-12"
           }`}
       >
-        <AnimatePresence>
+        <AnimatePresence mode="popLayout">
           {displayedCards.map((card, index) => {
             const isHovered =
               hoveredCardId === card.id && selectedCardId === null;
@@ -173,22 +152,14 @@ Please provide a deeper, more detailed analysis of this reading, focusing on hid
             const cardWidthClass = isMobile
               ? spreadConfig.cardSize.mobile
               : spreadConfig.cardSize.desktop;
-            const margins = getMargins(cardWidthClass);
 
             const absoluteStyle =
               spreadConfig.layoutType === "absolute" && !isMobile && position
                 ? {
                   position: "absolute" as const,
-                  left:
-                    typeof position.x === "number"
-                      ? `${position.x}%`
-                      : position.x,
-                  top:
-                    typeof position.y === "number"
-                      ? `${position.y}%`
-                      : position.y,
-                  marginLeft: margins.ml,
-                  marginTop: margins.mt,
+                  left: typeof position.x === "number" ? `${position.x}%` : position.x,
+                  top: typeof position.y === "number" ? `${position.y}%` : position.y,
+                  transform: "translate(-50%, -50%)",
                   zIndex: isHovered ? 100 : position.zIndex || 5,
                   rotate: position.rotation || 0,
                 }

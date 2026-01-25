@@ -11,6 +11,8 @@ interface PickingSectionProps {
   pickedCards: PickedCard[];
   isMobile: boolean;
   isTablet: boolean;
+  hoveredCardId: number | null;
+  onCardHover: (id: number | null) => void;
   onCardSelect: (card: TarotCardType) => void;
 }
 
@@ -20,6 +22,8 @@ const PickingSection: React.FC<PickingSectionProps> = ({
   pickedCards,
   isMobile,
   isTablet,
+  hoveredCardId,
+  onCardHover,
   onCardSelect,
 }) => (
   <motion.div
@@ -74,19 +78,23 @@ const PickingSection: React.FC<PickingSectionProps> = ({
           // Donut distribution to avoid clumping in center
           let minRadius = 180;
           let maxRadius = 450;
+          let stretchX = 1.4; // Fill horizontal space in landscape
+
           if (isMobile) {
             minRadius = 80;
             maxRadius = 180;
+            stretchX = 1; // Square for portrait mobile
           } else if (isTablet) {
             minRadius = 140;
             maxRadius = 320;
+            stretchX = 1.25;
           }
 
           // Square root of random for uniform area distribution, scaled to donut range
           const radius = Math.sqrt(r1) * (maxRadius - minRadius) + minRadius;
           const angle = r2 * 2 * Math.PI;
 
-          const x = Math.cos(angle) * radius;
+          const x = Math.cos(angle) * radius * stretchX;
           const y = Math.sin(angle) * radius;
           const randomRotate = r3 * 360;
 
@@ -94,8 +102,6 @@ const PickingSection: React.FC<PickingSectionProps> = ({
           const floatY = 10 + (seed % 10);
 
           const cardWidth = isMobile ? "w-12" : isTablet ? "w-16" : "w-24";
-          const ml = isMobile ? -24 : isTablet ? -32 : -48;
-          const mt = isMobile ? -36 : isTablet ? -48 : -72;
 
           return (
             <TarotCard
@@ -103,14 +109,15 @@ const PickingSection: React.FC<PickingSectionProps> = ({
               layoutId={`card-${card.id}`}
               card={card}
               isRevealed={false}
+              isHovered={hoveredCardId === card.id}
+              onHover={onCardHover}
               width={cardWidth}
               height="aspect-[300/519]"
               style={{
                 position: "absolute",
                 left: x,
                 top: y,
-                marginLeft: ml,
-                marginTop: mt,
+                transform: "translate(-50%, -50%)",
                 rotate: randomRotate,
               }}
               initial={{ scale: 0, opacity: 0 }}

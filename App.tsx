@@ -565,6 +565,8 @@ const App: React.FC = () => {
             pickedCards={pickedCards}
             isMobile={isMobile}
             isTablet={isTablet}
+            hoveredCardId={hoveredCardId}
+            onCardHover={setHoveredCardId}
             onCardSelect={handleCardSelect}
           />
         );
@@ -625,21 +627,21 @@ const App: React.FC = () => {
       {/* Main Content Area - No Scroll */}
       <main
         className={`absolute inset-0 z-10 perspective-1000 overflow-hidden ${gameState === GameState.READING ||
-            gameState === GameState.REVEAL ||
-            gameState === GameState.INPUT ||
-            gameState === GameState.LIBRARY
-            ? "overflow-y-auto"
-            : "overflow-hidden"
+          gameState === GameState.REVEAL ||
+          gameState === GameState.INPUT ||
+          gameState === GameState.LIBRARY
+          ? "overflow-y-auto"
+          : "overflow-hidden"
           }`}
       >
         {/* Inner Container - Full Height Centered */}
         <div
           className={`w-full flex flex-col items-center px-4 ${gameState === GameState.READING ||
-              gameState === GameState.REVEAL ||
-              gameState === GameState.INPUT ||
-              gameState === GameState.LIBRARY
-              ? "min-h-full py-12 justify-center"
-              : "h-full justify-center py-24"
+            gameState === GameState.REVEAL ||
+            gameState === GameState.INPUT ||
+            gameState === GameState.LIBRARY
+            ? "min-h-full py-12 justify-center"
+            : "h-full justify-center py-24"
             }`}
         >
           <AnimatePresence mode="popLayout">{renderPhase()}</AnimatePresence>
