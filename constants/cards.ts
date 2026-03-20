@@ -8,8 +8,7 @@
  * deeper meaning, in the spirit of Waite's original text, which sought to rescue the Tarot from mere
  * cartomancy and restore its place as a key to inner wisdom and the "Sanctuary" of the soul.
  *
- * Card images are sourced from local assets for performance and offline support, with a fallback to the
- * Sacred Texts Archive. The descriptions and keywords aim to honor the poetic and esoteric qualities
+ * Card images are sourced from local assets for performance and offline support. The descriptions and keywords aim to honor the poetic and esoteric qualities
  * emphasized by Waite, inviting users to contemplate the Tarot as a journey of the spirit, not just a game of chance.
  *
  * Source: The Pictorial Key to the Tarot, by A.E. Waite, ill. by Pamela Colman Smith [1911], public domain (US).
@@ -17,43 +16,7 @@
 
 import { TarotCard, CardPoolType } from "../types";
 
-// Base URL for card images
-// Using local images stored in public folder for better performance and offline support
 const LOCAL_CDN = `${import.meta.env.BASE_URL}images/cards/`;
-// Fallback to Sacred Texts Archive if local images are not available
-const REMOTE_CDN = "https://www.sacred-texts.com/tarot/pkt/img/";
-
-const SUIT_PREFIX_MAP: Record<string, string> = {
-  wa: "wands",
-  cu: "cups",
-  sw: "swords",
-  pe: "pents",
-};
-
-const COURT_SUFFIX_MAP: Record<string, string> = {
-  ac: "01",
-  pa: "11",
-  kn: "12",
-  qu: "13",
-  ki: "14",
-};
-
-const getLocalCardImageName = (image: string) => {
-  if (/^ar\d{2}\.jpg$/i.test(image)) {
-    return image.replace(/^ar/i, "maj");
-  }
-
-  const suitMatch = image.match(/^(wa|cu|sw|pe)(ac|pa|kn|qu|ki|\d{2})\.jpg$/i);
-  if (!suitMatch) {
-    return image;
-  }
-
-  const [, rawSuit, rawRank] = suitMatch;
-  const suit = SUIT_PREFIX_MAP[rawSuit.toLowerCase()];
-  const rank = COURT_SUFFIX_MAP[rawRank.toLowerCase()] ?? rawRank;
-
-  return `${suit}${rank}.jpg`;
-};
 
 export const MAJOR_ARCANA: TarotCard[] = [
   {
@@ -61,7 +24,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "The Fool",
     nameCn: "愚人",
     keywords: ["无限潜力", "新的开始", "赤子之心", "纯真", "自由", "冒险"],
-    image: "ar00.jpg",
+    image: "maj00.jpg",
     descriptionCn:
       "他是追寻经验的灵魂，一位身着华服的流浪者 。他背对过去，无忧无虑地停驻在悬崖边缘，凝视着远方未知的虚空 。他手中的白玫瑰象征着尚未被欲望沾染的纯洁，肩上的行囊则装满了未经开发的无限潜能 。他是另一世界的王子，象征着向外旅程、第一次发出的状态，以及精神的优雅与被动 。",
     descriptionEn:
@@ -76,7 +39,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "The Magician",
     nameCn: "魔术师",
     keywords: ["显化", "意志力", "创造", "资源", "专注"],
-    image: "ar01.jpg",
+    image: "maj01.jpg",
     descriptionCn:
       "他身着象征行动的红袍，一手高举权杖指天，一手指地，以此昭示赫尔墨斯学派“如在其上，如在其下”的奥义 。他不仅是技艺精湛的术士，更是意志的化身，也是连结神性与物质世界的通道 。头顶上方悬浮着代表永恒的双纽线符号（∞），腰间缠绕着象征智慧的吞尾蛇 。在他面前的祭坛上，陈列着圣杯、宝剑、权杖与星币，代表构成物质世界的四要素 。他以此告诫世人：通过专注的意志与神圣的知识，人类拥有将精神能量显化为现实奇迹的能力。",
     descriptionEn:
@@ -91,7 +54,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "The High Priestess",
     nameCn: "女祭司",
     keywords: ["直觉", "潜意识", "神秘", "内在智慧", "静默"],
-    image: "ar02.jpg",
+    image: "maj02.jpg",
     descriptionCn:
       "她端坐于黑白双柱（J和B）之间，象征着二元对立中的完美平衡 。她身后的帷幕上绣着棕榈与石榴，遮蔽着凡人不可直视的深层真理 。她头戴有角的月冠，脚踏新月，胸前有太阳十字 ，手中紧握神秘卷轴“Tora”，那是神圣律法的象征 。她是通往隐秘智慧的守门人 ，代表着直觉、潜意识以及那寂静之中流淌的灵性之光。她的最高阶名字是 Shekinah，象征内住的荣耀 。",
     descriptionEn:
@@ -106,7 +69,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "The Empress",
     nameCn: "皇后",
     keywords: ["丰饶", "自然", "母性", "感官享受", "孕育"],
-    image: "ar03.jpg",
+    image: "maj03.jpg",
     descriptionCn:
       "她是众生之母，是大自然丰饶力量的崇高化身 。在她面前，谷物正在成熟，远处瀑布奔流，象征着物质世界的繁荣与生机 。她手中的权杖高举地球仪，头戴由十二颗星辰组成的冠冕 ，脚下的盾牌刻有维纳斯的符号 。她是通往尘世天堂的大门 ，代表着普遍的丰饶、感官之美以及滋养万物之母 。",
     descriptionEn:
@@ -121,7 +84,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "The Emperor",
     nameCn: "皇帝",
     keywords: ["权威", "结构", "控制", "父亲原型", "秩序"],
-    image: "ar04.jpg",
+    image: "maj04.jpg",
     descriptionCn:
       "他是世俗权力的顶峰，端坐于饰有公羊头骨的石座之上 。他手持安卡十字权杖与金球，在此展现绝对的统治与秩序 。他是雄性的力量，是行政与实现，代表了人类最高的自然属性 。在这个充满变数的世界中，他是坚定的建立者与守护者，以理性和威严确立疆界 。",
     descriptionEn:
@@ -136,7 +99,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "The Hierophant",
     nameCn: "教皇",
     keywords: ["传统", "信仰", "教导", "社会规范", "精神指引"],
-    image: "ar05.jpg",
+    image: "maj05.jpg",
     descriptionCn:
       "他头戴三重冠冕，手持三重十字权杖 ，象征着他在身、心、灵三个层面的至高权威。他做出手势，区分了显性与隐秘的教义 。两把交叉的钥匙置于脚下 。教皇代表着显性的教义、社会规范与外部宗教的统治力量 。他是传统的守护者，指引人们通过既定的仪式与信仰体系，在群体中寻求精神上的归属与救赎 。",
     descriptionEn:
@@ -151,7 +114,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "The Lovers",
     nameCn: "恋人",
     keywords: ["爱", "和谐", "价值观", "选择", "结合"],
-    image: "ar06.jpg",
+    image: "maj06.jpg",
     descriptionCn:
       "骄阳高悬于天顶，天使拉斐尔张开双臂，以超然的姿态庇护着下方的亚当与夏娃 。男人身后是燃烧着十二团火焰的生命之树，女人身后则是缠绕着蛇的智慧之树 。这不仅是人类之爱的象征 ，更是纯真与诱惑并存的伊甸园景象。它象征着意识与潜意识的统一，以及在道德的路口上，人类出于自由意志所做出的神圣抉择——那是关于爱、美、以及自我整合的试炼 。",
     descriptionEn:
@@ -166,7 +129,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "The Chariot",
     nameCn: "战车",
     keywords: ["意志力", "胜利", "决心", "自我掌控", "进取"],
-    image: "ar07.jpg",
+    image: "maj07.jpg",
     descriptionCn:
       "威严的王子驾驭着战车，背对繁华的城池，踏上征途 。他无需缰绳，仅凭强大的意志力便能驾驭黑白两头斯芬克斯 。这是心灵层面的征服，象征着以自律、决心与勇气，战胜内在的矛盾与外在的障碍 。他是胜利中的国王，代表创造王权的胜利 。",
     descriptionEn:
@@ -181,7 +144,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "Strength",
     nameCn: "力量",
     keywords: ["勇气", "耐心", "同情", "内在力量", "驯服"],
-    image: "ar08.jpg",
+    image: "maj08.jpg",
     descriptionCn:
       "一位女子温柔地抚摸着狮子的头颅，甚至轻合它的利齿 。她头顶悬浮着代表无限的符号（双纽线），腰间缠绕着鲜花 。这并非暴力的征服，而是以柔克刚的最高典范，象征着内在力量与仁慈的坚韧 。它代表着更高本性的解放，与神圣原则相通 。",
     descriptionEn:
@@ -196,7 +159,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "The Hermit",
     nameCn: "隐士",
     keywords: ["内省", "孤独", "寻求真理", "指引", "撤退"],
-    image: "ar09.jpg",
+    image: "maj09.jpg",
     descriptionCn:
       "他独自立于冰雪覆盖的山巅，身披斗篷 。他右手高举一盏明灯，内藏熠熠生辉的六芒星，象征真理与灵性的光芒 。隐士是向内探索的先行者，是“成就之牌”而非“追寻之牌” 。他所持的灯塔暗示着：“我所在之处，亦有你可至” 。其形象象征神圣奥秘会自我保护，不受未经准备的人侵犯 。",
     descriptionEn:
@@ -211,7 +174,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "Wheel of Fortune",
     nameCn: "命运之轮",
     keywords: ["宿命", "转折点", "周期", "运气", "改变"],
-    image: "ar10.jpg",
+    image: "maj10.jpg",
     descriptionCn:
       "巨大的轮盘悬于苍穹，轮辐上刻有神名（TARO/ROTA）与炼金术符号 。斯芬克斯端坐顶端，手持利剑，象征着即使在变动中也要保持平衡 。赫尔墨斯-阿努比斯随轮上升，泰风巨蛇随轮下降 。这象征着流体宇宙的永恒运动与人类生命的无常 ，但也否认了其中所暗示的偶然性 。",
     descriptionEn:
@@ -226,7 +189,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "Justice",
     nameCn: "正义",
     keywords: ["公平", "真理", "因果", "法律", "平衡"],
-    image: "ar11.jpg",
+    image: "maj11.jpg",
     descriptionCn:
       "她端坐于石柱之间，右手高举利剑，左手持天平 。这象征着道德原则，根据每个人的行为给予报偿 。她代表绝对的公平与精神的真理。正义之柱通向一个世界，而女祭司之柱则通向另一个世界 。",
     descriptionEn:
@@ -241,7 +204,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "The Hanged Man",
     nameCn: "倒吊人",
     keywords: ["牺牲", "等待", "新视角", "放下", "暂停"],
-    image: "ar12.jpg",
+    image: "maj12.jpg",
     descriptionCn:
       "他以倒吊的姿态悬挂于T形树枝之上，这树是活着的木头，长着新叶 。他的双腿交织成十字，双臂背于身后 。他的面容宁静安详，头周闪耀着代表灵性的光环 。这象征着生命处于暂停状态，但不是死亡 。它表达了神性与宇宙的关系 ，预示着在神圣的静止中孕育出的伟大觉醒 。",
     descriptionEn:
@@ -256,7 +219,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "Death",
     nameCn: "死神",
     keywords: ["结束", "重生", "转变", "必然性", "过渡"],
-    image: "ar13.jpg",
+    image: "maj13.jpg",
     descriptionCn:
       "神秘的骑士骑着马，举着一面印有象征生命的神秘玫瑰的黑旗，象征着生命 。在他面前，世俗的国王、孩子和少女都倒下了 。这不是普通死亡，而是从低阶向高阶的转化 。在远方的双塔之间，一轮不朽的太阳正在升起 。",
     descriptionEn:
@@ -271,7 +234,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "Temperance",
     nameCn: "节制",
     keywords: ["平衡", "温和", "调和", "耐心", "炼金术"],
-    image: "ar14.jpg",
+    image: "maj14.jpg",
     descriptionCn:
       "一位长有双翼的天使（无性别区分），额头闪耀着太阳的印记 。他一只脚踏入水中，一只脚立于大地，双手稳健地将生命之精粹在两只圣杯间倾倒与调和 。这象征着心理和物质本性的调和 ，其规则一旦在意识中建立，便能通晓源头与归宿 。这并非字面意义上的节制，而是深层的平衡之道 。",
     descriptionEn:
@@ -286,7 +249,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "The Devil",
     nameCn: "恶魔",
     keywords: ["束缚", "物质主义", "诱惑", "阴影", "成瘾"],
-    image: "ar15.jpg",
+    image: "maj15.jpg",
     descriptionCn:
       "巨大的巴风特（有山羊头和蝙蝠翼）蹲伏于祭坛之上，头顶倒五芒星 。他左手持燃烧的火炬倒向地面，右手做出虚假的手势 。被铁链束缚的一男一女立于其下，象征着物质生命的枷锁与宿命 。它代表着“门槛上的居住者”——在神秘花园外，诱惑并奴役着那些吃下禁果的人 。",
     descriptionEn:
@@ -301,7 +264,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "The Tower",
     nameCn: "高塔",
     keywords: ["剧变", "启示", "破坏", "觉醒", "混乱"],
-    image: "ar16.jpg",
+    image: "maj16.jpg",
     descriptionCn:
       "一道闪电击中了高耸的石塔，两名人物从塔顶坠落 。这被称为“上帝之屋”或“巴别塔” 。它象征着建立在错误基础上的结构崩塌 。它是一张混乱之牌，代表着对骄傲的惩罚 ，以及知识层面上的毁灭 。",
     descriptionEn:
@@ -316,7 +279,7 @@ export const MAJOR_ARCANA: TarotCard[] = [
     nameEn: "The Star",
     nameCn: "星星",
     keywords: ["希望", "灵感", "宁静", "疗愈", "更新"],
-    image: "ar17.jpg",
+    image: "maj17.jpg",
     descriptionCn:
       "一位赤裸的女子，单膝跪在水边，将两壶生命之水倾倒，滋润着水和大地 。天空中，一颗巨大的八芒星被七颗小星环绕 。她是“被揭开的真理”，其座右铭是“自由的生命之水”和“精神的恩赐” 。她象征着希望、永恒的青春与不朽的美丽 。",
     descriptionEn:
@@ -335,7 +298,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Ace of Wands",
     nameCn: "权杖首牌",
     keywords: ["创造力", "发明", "事业起点", "阳刚之力", "财富", "继承"],
-    image: "waac.jpg",
+    image: "wands01.jpg",
     descriptionEn:
       "A hand issuing from a cloud grasps a stout wand or club. It signifies the source of creation, invention, and enterprise, representing the virility behind all beginnings. ",
     descriptionCn:
@@ -348,7 +311,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Two of Wands",
     nameCn: "权杖二",
     keywords: ["财富", "宏伟", "统治权", "成熟的规划", "意外的麻烦"],
-    image: "wa02.jpg",
+    image: "wands02.jpg",
     descriptionEn:
       "A tall man looks from a battlemented roof over sea and shore; he holds a globe in his right hand. It suggests the magnificence of worldly wealth, yet hints at the sadness of Alexander amidst the grandeur of dominion. ",
     descriptionCn:
@@ -361,7 +324,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Three of Wands",
     nameCn: "权杖三",
     keywords: ["稳固的力量", "商业贸易", "远见", "发现", "务实的合作"],
-    image: "wa03.jpg",
+    image: "wands03.jpg",
     descriptionEn:
       "A calm, stately personage, with his back turned, looking from a cliff's edge at ships passing over the sea. He symbolizes established strength and enterprise, viewing his merchandise sailing over the sea. ",
     descriptionCn:
@@ -375,7 +338,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Four of Wands",
     nameCn: "权杖四",
     keywords: ["乡村生活", "避难所", "和谐", "繁荣", "和平", "完美的成果"],
-    image: "wa04.jpg",
+    image: "wands04.jpg",
     descriptionEn:
       "Garlands hang between four wands; two female figures uplift nosegays near a bridge leading to an old manorial house. It represents a haven of refuge, repose, and concord. ",
     descriptionCn:
@@ -389,7 +352,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Five of Wands",
     nameCn: "权杖五",
     keywords: ["模拟战争", "激烈的竞争", "奋斗", "追求财富", "模仿"],
-    image: "wa05.jpg",
+    image: "wands05.jpg",
     descriptionEn:
       "A posse of youths are brandishing staves, as if in sport or strife. It is mimic warfare, symbolizing the strenuous competition and struggle of the search after riches and fortune. ",
     descriptionCn:
@@ -403,7 +366,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Six of Wands",
     nameCn: "权杖六",
     keywords: ["凯旋", "胜利", "好消息", "期望达成", "荣誉"],
-    image: "wa06.jpg",
+    image: "wands06.jpg",
     descriptionEn:
       "A laurelled horseman bears one staff adorned with a laurel crown. It is a victor triumphing, representing great news and expectation crowned with its own desire. ",
     descriptionCn:
@@ -416,7 +379,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Seven of Wands",
     nameCn: "权杖七",
     keywords: ["英勇", "优势地位", "商业谈判", "辩论", "竞争中的胜利"],
-    image: "wa07.jpg",
+    image: "wands07.jpg",
     descriptionEn:
       "A young man on a craggy eminence brandishing a staff; six other staves are raised towards him from below. It signifies valour and the vantage position, indicating success where the combatant is on top. ",
     descriptionCn:
@@ -429,7 +392,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Eight of Wands",
     nameCn: "权杖八",
     keywords: ["迅速的行动", "疾行", "伟大的希望", "爱的利箭", "奔向目标"],
-    image: "wa08.jpg",
+    image: "wands08.jpg",
     descriptionEn:
       "A flight of wands through an open country; they draw to the term of their course. It signifies motion through the immovable, swiftness, and great haste towards an assured end. ",
     descriptionCn:
@@ -443,7 +406,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Nine of Wands",
     nameCn: "权杖九",
     keywords: ["防御中的力量", "强大的对手", "延期", "暂停", "严阵以待"],
-    image: "wa09.jpg",
+    image: "wands09.jpg",
     descriptionEn:
       "The figure leans upon his staff and has an expectant look, as if awaiting an enemy. It signifies strength in opposition and the formidable antagonist. ",
     descriptionCn:
@@ -456,7 +419,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Ten of Wands",
     nameCn: "权杖十",
     keywords: ["压迫", "沉重的负担", "成功的代价", "虚假的表象", "辛苦的收获"],
-    image: "wa10.jpg",
+    image: "wands10.jpg",
     descriptionEn:
       "A man oppressed by the weight of the ten staves which he is carrying. It signifies oppression, but also fortune, gain, and any kind of success that is burdensome. ",
     descriptionCn:
@@ -469,7 +432,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Page of Wands",
     nameCn: "权杖侍从",
     keywords: ["忠诚的信使", "恋人", "消息灵通", "家族智慧", "正直的年轻人"],
-    image: "wapa.jpg",
+    image: "wands11.jpg",
     descriptionEn:
       "A young man stands in the act of proclamation. He is unknown but faithful, and his tidings are strange. He is a faithful lover, an envoy, or a postman. ",
     descriptionCn:
@@ -483,7 +446,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Knight of Wands",
     nameCn: "权杖骑士",
     keywords: ["启程", "离去", "移居", "改变住所", "友好的青年"],
-    image: "wakn.jpg",
+    image: "wands12.jpg",
     descriptionEn:
       "He is shewn as if upon a journey, armed with a short wand, and although mailed is not on a warlike errand. He is passing mounds or pyramids, suggesting departure, flight, or emigration. ",
     descriptionCn:
@@ -503,7 +466,7 @@ export const MINOR_ARCANA: TarotCard[] = [
       "友善的女性",
       "独立的爱",
     ],
-    image: "waqu.jpg",
+    image: "wands13.jpg",
     descriptionEn:
       "The Queen of flowering wands, her personality corresponds to that of the King, but is more magnetic. She represents a dark, friendly, chaste, and loving woman. ",
     descriptionCn:
@@ -517,7 +480,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "King of Wands",
     nameCn: "权杖国王",
     keywords: ["热烈", "生动", "诚实", "良知", "意外的遗产", "友善的男性"],
-    image: "waki.jpg",
+    image: "wands14.jpg",
     descriptionEn:
       "The King uplifts a flowering wand, and wears a cap of maintenance beneath his crown. His nature is dark, ardent, lithe, animated, and impassioned. ",
     descriptionCn:
@@ -531,7 +494,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Ace of Cups",
     nameCn: "圣杯首牌",
     keywords: ["真心之屋", "喜悦", "丰盛", "多产", "神圣的滋养", "坚定意志"],
-    image: "cuac.jpg",
+    image: "cups01.jpg",
     descriptionEn:
       "The waters are beneath, and thereon are water-lilies; the hand issues from the cloud, holding in its palm the cup, from which four streams are pouring; a dove, bearing in its bill a cross-marked Host, descends to place the Wafer in the Cup. It is an intimation of that which may lie behind the Lesser Arcana.",
     descriptionCn:
@@ -545,7 +508,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Two of Cups",
     nameCn: "圣杯二",
     keywords: ["爱", "热情", "友谊", "亲和力", "神圣化的自然", "结合"],
-    image: "cu02.jpg",
+    image: "cups02.jpg",
     descriptionEn:
       "A youth and maiden are pledging one another, and above their cups rises the Caduceus of Hermes, between the great wings of which there appears a lion's head. It represents that desire which is not in Nature, but by which Nature is sanctified.",
     descriptionCn:
@@ -558,7 +521,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Three of Cups",
     nameCn: "圣杯三",
     keywords: ["圆满", "快乐", "胜利", "治愈", "感官享受", "意想不到的晋升"],
-    image: "cu03.jpg",
+    image: "cups03.jpg",
     descriptionEn:
       "Maidens in a garden-ground with cups uplifted, as if pledging one another. It signifies the conclusion of any matter in plenty, perfection and merriment.",
     descriptionCn:
@@ -572,7 +535,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Four of Cups",
     nameCn: "圣杯四",
     keywords: ["厌倦", "反感", "想象的烦恼", "混合的快乐", "新知"],
-    image: "cu04.jpg",
+    image: "cups04.jpg",
     descriptionEn:
       "A young man is seated under a tree and contemplates three cups set on the grass before him; an arm issuing from a cloud offers him another cup. His expression is one of discontent with his environment.",
     descriptionCn:
@@ -585,7 +548,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Five of Cups",
     nameCn: "圣杯五",
     keywords: ["损失", "部分残留", "遗产", "苦涩的婚姻", "归来"],
-    image: "cu05.jpg",
+    image: "cups05.jpg",
     descriptionEn:
       "A dark, cloaked figure, looking sideways at three prone cups two others stand upright behind him; a bridge is in the background. It is a card of loss, but something remains over.",
     descriptionCn:
@@ -599,7 +562,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Six of Cups",
     nameCn: "圣杯六",
     keywords: ["回忆", "过去", "童年", "快乐", "未来", "遗产"],
-    image: "cu06.jpg",
+    image: "cups06.jpg",
     descriptionEn:
       "Children in an old garden, their cups filled with flowers. It is a card of the past and of memories, looking back on childhood.",
     descriptionCn:
@@ -612,7 +575,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Seven of Cups",
     nameCn: "圣杯七",
     keywords: ["幻想", "想象", "白日梦", "无实质的成就", "决心"],
-    image: "cu07.jpg",
+    image: "cups07.jpg",
     descriptionEn:
       "Strange chalices of vision, but the images are more especially those of the fantastic spirit. It signifies fairy favours, images of reflection, sentiment, imagination.",
     descriptionCn:
@@ -626,7 +589,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Eight of Cups",
     nameCn: "圣杯八",
     keywords: ["放弃", "衰退", "温和", "害羞", "巨大的喜悦"],
-    image: "cu08.jpg",
+    image: "cups08.jpg",
     descriptionEn:
       "A man of dejected aspect is deserting the cups of his felicity, enterprise, undertaking or previous concern. It speaks for itself on the surface, but other readings are entirely antithetical.",
     descriptionCn:
@@ -640,7 +603,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Nine of Cups",
     nameCn: "圣杯九",
     keywords: ["满足", "物质福利", "成功", "胜利", "真理"],
-    image: "cu09.jpg",
+    image: "cups09.jpg",
     descriptionEn:
       "A goodly personage has feasted to his heart's content, and abundant refreshment of wine is on the arched counter behind him. The picture offers the material side only.",
     descriptionCn:
@@ -653,7 +616,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Ten of Cups",
     nameCn: "圣杯十",
     keywords: ["完美的爱", "知足", "家庭幸福", "安息", "争吵"],
-    image: "cu10.jpg",
+    image: "cups10.jpg",
     descriptionEn:
       "Appearance of Cups in a rainbow; it is contemplated in wonder and ecstacy by a man and woman below, evidently husband and wife. It signifies contentment, repose of the entire heart.",
     descriptionCn:
@@ -667,7 +630,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Page of Cups",
     nameCn: "圣杯侍从",
     keywords: ["勤奋", "冥想", "消息", "依恋", "诱惑"],
-    image: "cupa.jpg",
+    image: "cups11.jpg",
     descriptionEn:
       "A fair, pleasing, somewhat effeminate page, of studious and intent aspect, contemplates a fish rising from a cup to look at him. It is the pictures of the mind taking form.",
     descriptionCn:
@@ -681,7 +644,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Knight of Cups",
     nameCn: "圣杯骑士",
     keywords: ["到来", "邀请", "梦想家", "提议", "欺诈"],
-    image: "cukn.jpg",
+    image: "cups12.jpg",
     descriptionEn:
       "Graceful, but not warlike; riding quietly, wearing a winged helmet, referring to those higher graces of the imagination. He too is a dreamer, but the images of the side of sense haunt him in his vision.",
     descriptionCn:
@@ -694,7 +657,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Queen of Cups",
     nameCn: "圣杯王后",
     keywords: ["远见", "充满爱意的智慧", "幸福", "贤妻良母", "不诚实的女人"],
-    image: "cuqu.jpg",
+    image: "cups13.jpg",
     descriptionEn:
       "Beautiful, fair, dreamy--as one who sees visions in a cup. She sees, but she also acts, and her activity feeds her dream. She represents loving intelligence, and hence the gift of vision.",
     descriptionCn:
@@ -709,7 +672,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "King of Cups",
     nameCn: "圣杯国王",
     keywords: ["公平", "创造性智慧", "负责任", "商业", "双重交易"],
-    image: "cuki.jpg",
+    image: "cups14.jpg",
     descriptionEn:
       "He holds a short sceptre in his left hand and a great cup in his right; his throne is set upon the sea. He represents equity, art and science, including those who profess science, law and art; creative intelligence.",
     descriptionCn:
@@ -726,7 +689,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Ace of Swords",
     nameCn: "宝剑首牌",
     keywords: ["突破", "清晰", "真理", "决断"],
-    image: "swac.jpg",
+    image: "swords01.jpg",
     descriptionEn:
       "A hand issues from a cloud, grasping a sword, the point of which is encircled by a crown. It is a card of great force, triumph, and the excessive degree in everything.",
     descriptionCn:
@@ -739,7 +702,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Two of Swords",
     nameCn: "宝剑二",
     keywords: ["僵局", "艰难决定", "回避", "权衡"],
-    image: "sw02.jpg",
+    image: "swords02.jpg",
     descriptionEn:
       "A hoodwinked female figure balances two swords upon her shoulders. It suggests conformity, equipoise, courage, friendship, and concord in a state of arms.",
     descriptionCn:
@@ -752,7 +715,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Three of Swords",
     nameCn: "宝剑三",
     keywords: ["心碎", "悲伤", "痛苦", "分离"],
-    image: "sw03.jpg",
+    image: "swords03.jpg",
     descriptionEn:
       "Three swords pierce a heart, set against a backdrop of cloud and rain. It signifies removal, absence, delay, division, rupture, and dispersion.",
     descriptionCn:
@@ -766,7 +729,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Four of Swords",
     nameCn: "宝剑四",
     keywords: ["休息", "恢复", "沉思", "被动"],
-    image: "sw04.jpg",
+    image: "swords04.jpg",
     descriptionEn:
       "The effigy of a knight is shown in the attitude of prayer, at full length upon his tomb. It denotes vigilance, retreat, solitude, hermit's repose, exile, tomb, and coffin.",
     descriptionCn:
@@ -779,7 +742,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Five of Swords",
     nameCn: "宝剑五",
     keywords: ["失败", "背叛", "冲突", "空虚的胜利"],
-    image: "sw05.jpg",
+    image: "swords05.jpg",
     descriptionEn:
       "A disdainful man looks after two retreating and dejected figures. He is the master in possession of the field. It signifies degradation, destruction, infamy, dishonour, and loss.",
     descriptionCn:
@@ -792,7 +755,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Six of Swords",
     nameCn: "宝剑六",
     keywords: ["过渡", "离开", "治愈", "前进"],
-    image: "sw06.jpg",
+    image: "swords06.jpg",
     descriptionEn:
       "A ferryman carries passengers in his punt to the further shore. It means passage, route, way, envoy, commissionary, expedient, and travel by water.",
     descriptionCn:
@@ -805,7 +768,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Seven of Swords",
     nameCn: "宝剑七",
     keywords: ["欺骗", "策略", "隐秘", "逃避"],
-    image: "sw07.jpg",
+    image: "swords07.jpg",
     descriptionEn:
       "A man in the act of carrying away five swords rapidly, leaving two stuck in the ground near a camp. It indicates design, attempt, wish, confidence, and quarrelling; uncertain import.",
     descriptionCn:
@@ -818,7 +781,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Eight of Swords",
     nameCn: "宝剑八",
     keywords: ["束缚", "受害者心态", "无助", "限制"],
-    image: "sw08.jpg",
+    image: "swords08.jpg",
     descriptionEn:
       "A woman, bound and hoodwinked, with the swords about her. It is a card of temporary durance, bad news, crisis, censure, and sickness.",
     descriptionCn:
@@ -832,7 +795,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Nine of Swords",
     nameCn: "宝剑九",
     keywords: ["焦虑", "噩梦", "担忧", "恐惧"],
-    image: "sw09.jpg",
+    image: "swords09.jpg",
     descriptionEn:
       "One seated on her couch in lamentation, with the swords over her. It is a card of utter desolation, death, failure, miscarriage, deception, and despair.",
     descriptionCn:
@@ -845,7 +808,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Ten of Swords",
     nameCn: "宝剑十",
     keywords: ["毁灭", "痛苦结局", "背叛", "最低点"],
-    image: "sw10.jpg",
+    image: "swords10.jpg",
     descriptionEn:
       "A prostrate figure, pierced by all the swords. It signifies pain, affliction, tears, sadness, and desolation.",
     descriptionCn:
@@ -858,7 +821,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Page of Swords",
     nameCn: "宝剑侍从",
     keywords: ["好奇", "警惕", "新想法", "沟通"],
-    image: "swpa.jpg",
+    image: "swords11.jpg",
     descriptionEn:
       "A lithe, active figure holds a sword upright in both hands. He signifies authority, overseeing, secret service, vigilance, spying, and examination.",
     descriptionCn:
@@ -872,7 +835,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Knight of Swords",
     nameCn: "宝剑骑士",
     keywords: ["急躁", "直接", "行动", "野心"],
-    image: "swkn.jpg",
+    image: "swords12.jpg",
     descriptionEn:
       "He is riding in full course, as if scattering his enemies. He signifies skill, bravery, capacity, enmity, wrath, war, destruction, and resistance.",
     descriptionCn:
@@ -885,7 +848,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Queen of Swords",
     nameCn: "宝剑王后",
     keywords: ["敏锐", "独立", "清晰", "界限"],
-    image: "swqu.jpg",
+    image: "swords13.jpg",
     descriptionEn:
       "Her countenance is severe but chastened; it suggests familiarity with sorrow. She signifies widowhood, female sadness and embarrassment, absence, sterility, mourning, and separation.",
     descriptionCn:
@@ -898,7 +861,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "King of Swords",
     nameCn: "宝剑国王",
     keywords: ["理智", "权威", "真理", "公正"],
-    image: "swki.jpg",
+    image: "swords14.jpg",
     descriptionEn:
       "He sits in judgment, holding the unsheathed sign of his suit. He signifies power, command, authority, militant intelligence, law, and offices of the crown.",
     descriptionCn:
@@ -913,7 +876,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Ace of Pentacles",
     nameCn: "星币首牌",
     keywords: ["新机会", "繁荣", "丰富", "表现"],
-    image: "peac.jpg",
+    image: "pents01.jpg",
     descriptionEn:
       "A hand issues from a cloud, holding up a pentacle. It signifies perfect contentment, felicity, ecstasy; also speedy intelligence, and gold.",
     descriptionCn:
@@ -927,7 +890,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Two of Pentacles",
     nameCn: "星币二",
     keywords: ["平衡", "适应", "优先顺位", "灵活"],
-    image: "pe02.jpg",
+    image: "pents02.jpg",
     descriptionEn:
       "A young man, in the act of dancing, has a pentacle in either hand, joined by an endless cord. It is a card of gaiety, recreation, news, messages in writing, obstacles, agitation, trouble, and embroilment.",
     descriptionCn:
@@ -941,7 +904,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Three of Pentacles",
     nameCn: "星币三",
     keywords: ["团队", "合作", "技能", "计划"],
-    image: "pe03.jpg",
+    image: "pents03.jpg",
     descriptionEn:
       "A sculptor at his work in a monastery, often regarded as a card of metier, trade, skilled labour, nobility, aristocracy, renown, and glory.",
     descriptionCn:
@@ -954,7 +917,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Four of Pentacles",
     nameCn: "星币四",
     keywords: ["控制", "占有", "保守", "安全"],
-    image: "pe04.jpg",
+    image: "pents04.jpg",
     descriptionEn:
       "A crowned figure clasps a pentacle, two others are under his feet. He holds to that which he has. It denotes the surety of possessions, cleaving to what one has, gift, legacy, and inheritance.",
     descriptionCn:
@@ -967,7 +930,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Five of Pentacles",
     nameCn: "星币五",
     keywords: ["贫穷", "孤立", "不安全", "困难"],
-    image: "pe05.jpg",
+    image: "pents05.jpg",
     descriptionEn:
       "Two mendicants in a snow-storm pass a lighted casement. It foretells material trouble, destitution, or sometimes love and lovers.",
     descriptionCn:
@@ -980,7 +943,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Six of Pentacles",
     nameCn: "星币六",
     keywords: ["慈善", "慷慨", "分享", "平衡"],
-    image: "pe06.jpg",
+    image: "pents06.jpg",
     descriptionEn:
       "A merchant weighs money in scales and distributes it to the needy. It signifies presents, gifts, gratification, vigilance, and present prosperity.",
     descriptionCn:
@@ -993,7 +956,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Seven of Pentacles",
     nameCn: "星币七",
     keywords: ["耐心", "投资", "等待", "长期规划"],
-    image: "pe07.jpg",
+    image: "pents07.jpg",
     descriptionEn:
       "A young man leaning on his staff looks intently at seven pentacles attached to greenery. It is mainly a card of money, business, barter, but readings also include altercation, innocence, and purgation.",
     descriptionCn:
@@ -1006,7 +969,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Eight of Pentacles",
     nameCn: "星币八",
     keywords: ["勤奋", "技能", "工艺", "细节"],
-    image: "pe08.jpg",
+    image: "pents08.jpg",
     descriptionEn:
       "An artist in stone at his work, exhibiting his craft. It denotes work, employment, commission, craftsmanship, and skill in craft and business.",
     descriptionCn:
@@ -1020,7 +983,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Nine of Pentacles",
     nameCn: "星币九",
     keywords: ["富足", "奢华", "自给自足", "成就"],
-    image: "pe09.jpg",
+    image: "pents09.jpg",
     descriptionEn:
       "A woman, with a bird upon her wrist, stands amidst a great abundance of grapevines. It signifies prudence, safety, success, accomplishment, and discernment.",
     descriptionCn:
@@ -1033,7 +996,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Ten of Pentacles",
     nameCn: "星币十",
     keywords: ["财富", "遗产", "家庭", "长期成功"],
-    image: "pe10.jpg",
+    image: "pents10.jpg",
     descriptionEn:
       "A man and woman beneath an archway, accompanied by a child, meeting an ancient personage with dogs. It signifies gain, riches, family matters, archives, and the abode of a family.",
     descriptionCn:
@@ -1046,7 +1009,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Page of Pentacles",
     nameCn: "星币侍从",
     keywords: ["好学", "务实", "新机会", "显化"],
-    image: "pepa.jpg",
+    image: "pents11.jpg",
     descriptionEn:
       "A youthful figure, looking intently at the pentacle. He signifies application, study, scholarship, reflection, news, messages, rule, and management.",
     descriptionCn:
@@ -1060,7 +1023,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Knight of Pentacles",
     nameCn: "星币骑士",
     keywords: ["勤奋", "效率", "例行公事", "保守"],
-    image: "pekn.jpg",
+    image: "pents12.jpg",
     descriptionEn:
       "He rides a slow, enduring horse, and exhibits his symbol. He signifies utility, serviceableness, interest, responsibility, and rectitude on the external plane.",
     descriptionCn:
@@ -1073,7 +1036,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "Queen of Pentacles",
     nameCn: "星币王后",
     keywords: ["养育", "务实", "安全", "居家"],
-    image: "pequ.jpg",
+    image: "pents13.jpg",
     descriptionEn:
       "The face suggests greatness of soul and serious intelligence. She signifies opulence, generosity, magnificence, security, and liberty.",
     descriptionCn:
@@ -1087,7 +1050,7 @@ export const MINOR_ARCANA: TarotCard[] = [
     nameEn: "King of Pentacles",
     nameCn: "星币国王",
     keywords: ["富裕", "商业", "领导", "安全感"],
-    image: "peki.jpg",
+    image: "pents14.jpg",
     descriptionEn:
       "The figure suggests courage but somewhat lethargic in tendency. He signifies valour, realizing intelligence in business, and success.",
     descriptionCn:
@@ -1097,12 +1060,7 @@ export const MINOR_ARCANA: TarotCard[] = [
   },
 ];
 
-// Helper to get image URL with fallback support
-// Tries local image first, falls back to remote CDN if not available
-export const getCardImageUrl = (image: string) =>
-  `${LOCAL_CDN}${getLocalCardImageName(image)}`;
-export const getCardImageFallbackUrl = (image: string) =>
-  `${REMOTE_CDN}${image}`;
+export const getCardImageUrl = (image: string) => `${LOCAL_CDN}${image}`;
 
 export const FULL_DECK: TarotCard[] = [...MAJOR_ARCANA, ...MINOR_ARCANA];
 

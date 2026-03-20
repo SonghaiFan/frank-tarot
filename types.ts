@@ -42,7 +42,7 @@ export interface TarotCard {
   descriptionCn?: string;
   descriptionEn?: string;
   keywords: string[];
-  image: string; // Filename or URL
+  image: string; // Local asset filename
   positive?: string;
   negative?: string;
 }

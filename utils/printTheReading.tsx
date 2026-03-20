@@ -1,4 +1,4 @@
-import { getCardImageUrl, getCardImageFallbackUrl } from "../constants/cards";
+import { getCardImageUrl } from "../constants/cards";
 import { getLocalizedSpread } from "../constants/spreads";
 import { Locale } from "../types";
 import { UI_TEXT } from "../constants/i18n";
@@ -136,9 +136,6 @@ export default function printTheReading(
         const img = document.createElement("img");
         img.src = getCardImageUrl(card.image);
         img.crossOrigin = "anonymous";
-        img.onerror = () => {
-          img.src = getCardImageFallbackUrl(card.image);
-        };
         img.style.cssText = `
           width: 100%;
           height: auto;

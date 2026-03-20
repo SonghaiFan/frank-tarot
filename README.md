@@ -66,8 +66,6 @@
 - `npm run dev`: Start the development server.
 - `npm run build`: Build the app for production.
 - `npm run preview`: Preview the production build locally.
-- `npm run generate-audio`: Generate static audio assets (requires setup).
-- `npm run download-cards`: Download Tarot card images.
 
 ## 🧩 Tech Stack
 
