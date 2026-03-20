@@ -289,6 +289,66 @@ export const MAJOR_ARCANA: TarotCard[] = [
     negative:
       "挫折、失败; 理想过高; 缺乏想像力; 异想天开; 事与愿违; 失望; 从事不喜的工作; 失去; 盗窃; 剥夺; 遗弃; 傲慢; 高傲; 无能 ",
   },
+  {
+    id: 18,
+    nameEn: "The Moon",
+    nameCn: "月亮",
+    keywords: ["幻觉", "潜意识", "不安", "梦境", "直觉"],
+    image: "maj18.jpg",
+    descriptionCn:
+      "渐盈的月洒下光滴，小径穿过双塔通往未知；狗与狼长嚎，螯虾自水而出。反射之智唤醒兽性的恐惧，光外是不可见的深渊。讯息是安静，让下层本性平息，深处之影自会退去。",
+    descriptionEn:
+      "The waxing moon of mercy sheds drops of light; a path between two towers leads into the unknown. Dog and wolf howl, a crayfish crawls from the pool. Reflected intellect stirs animal fears; beyond lies the unseen abyss. Be still; let lower nature quiet and the shapes sink back.",
+    positive:
+      "不安与动摇; 心中不平静; 谎言; 暧昧不明; 鬼迷心窍; 暗藏动乱; 欺骗; 终止; 不安的爱; 三角关系",
+    negative:
+      "从危险的骗局中逃脱; 状况稍为好转; 误会冰释; 破除迷惘; 时间能解决一切; 眼光要长远; 静观等待; 早期发现早期治疗有效; 事前察知危险; 对虚情假意的恋情已不在乎",
+  },
+  {
+    id: 19,
+    nameEn: "The Sun",
+    nameCn: "太阳",
+    keywords: ["快乐", "成功", "活力", "清晰", "温暖"],
+    image: "maj19.jpg",
+    descriptionCn:
+      "灿日照耀向日葵墙，裸童骑白马持红旗前行，象征复原的世界与由反射月光迈向灵性真光；此处的纯真即智慧与单纯，新的亚当之子，引领人类归途的圣光。",
+    descriptionEn:
+      "A radiant sun shines over sunflowers as a naked child rides a white horse with scarlet banner. It marks the restored world and passage from reflected moonlight to true Spirit. Innocence is wisdom and simplicity, the child of the new Adam, great light leading humanity home.",
+    positive:
+      "丰富的生命力; 巨大的成就感; 人际关系非常好; 爱情美满; 内心充满了热情和力量; 一定能够实现的约定; 飞黄腾达; 无忧无虑",
+    negative:
+      "情绪低落; 事情失败; 朋友的离去和人际关系的恶化; 无法安定内心; 忧郁孤单寂寞; 爱情不顺利; 取消的计划; 工作上困难重重",
+  },
+  {
+    id: 20,
+    nameEn: "Judgement",
+    nameCn: "审判",
+    keywords: ["觉醒", "反思", "重生", "召唤", "赦免"],
+    image: "maj20.jpg",
+    descriptionCn:
+      "大天使于云间吹响带十字旗的号角，亡者男女孩童出墓而起，神情惊喜。此牌记录回应至高召唤的炼化完成，也暗指内在号角瞬间唤醒下层本性，是永生的象征。",
+    descriptionEn:
+      "A great angel in clouds blows the cross-marked trumpet as the dead rise, faces filled with wonder. It records the completed work of transmutation answering the Supernal call within, hinting at the inner trumpet that awakens lower nature. It is a card of eternal life.",
+    positive:
+      "复活的喜悦; 开运; 公开; 改革期; 危机解除; 决断; 荣升; 崭露头角; 好消息; 爱的使者; 恢复健康; 坦白; 复苏的爱; 再会; 爱的奇迹",
+    negative:
+      "一败不起; 幻灭; 离复苏还有很长的时间; 不利的决定; 不被采用; 还未开始就结束了; 坏消息; 延期; 无法决定; 虽重新开始却又恢复原状; 分离; 消除; 恋恋不舍",
+  },
+  {
+    id: 21,
+    nameEn: "The World",
+    nameCn: "世界",
+    keywords: ["圆满", "完成", "旅行", "成就", "整体"],
+    image: "maj21.jpg",
+    descriptionCn:
+      "花环环绕舞动的披纱之人双持权杖，四角列以西结的四生灵。此牌象征宇宙的圆满与终结、灵魂处于神圣观照中的喜悦，回响万物皆善之日，并非绝对或登顶的魔术师。",
+    descriptionEn:
+      "A wreath encloses a dancing figure with two wands, while Ezekiel's four living creatures fill the corners. It is the perfection and consummation of the cosmos, the soul in divine vision, the joy when all was declared good. It is not the Absolute nor the Magus crowned.",
+    positive:
+      "完成; 成功; 拥有毕生的志业; 达成目标; 永续不断; 最盛期; 完美无缺; 接触异国将获得幸运; 到达标准; 精神亢奋; 快乐的结束; 模范情侣",
+    negative:
+      "未完成; 无法达到计划中的成就; 因准备不足而失败; 中途无法再进行; 不完全燃烧; 一时不顺利; 饱和状态; 烦恼延续; 精神松弛; 个人惯用的表现方式; 因不成熟而使情感受挫; 合谋; 态度不够圆融",
+  },
 ];
 // Specific definitions for the 56 Minor Arcana cards
 export const MINOR_ARCANA: TarotCard[] = [
