@@ -10,7 +10,6 @@ interface Star {
   twinkleSpeed: number;
   twinklePhase: number;
   speed: number; // Angular velocity
-  color: p5.Color;
 }
 
 interface CosmicParticlesProps {
@@ -74,7 +73,6 @@ const CosmicParticles: React.FC<CosmicParticlesProps> = ({ gameState }) => {
             twinkleSpeed: p.random(0.005, 0.035),
             twinklePhase: p.random(p.TWO_PI),
             speed: BASE_ANGULAR_SPEED * (0.8 + p.random() * 0.4),
-            color: p.color(255), // Can be customized for colorful stars
           });
         }
       };
@@ -101,6 +99,7 @@ const CosmicParticles: React.FC<CosmicParticlesProps> = ({ gameState }) => {
         // Center of the screen
         const cx = p.width / 2;
         const cy = p.height / 2;
+        const ctx = p.drawingContext as CanvasRenderingContext2D;
 
         p.translate(cx, cy);
 
@@ -124,10 +123,18 @@ const CosmicParticles: React.FC<CosmicParticlesProps> = ({ gameState }) => {
           // Check bounds roughly before drawing to save some perf (though GPU is fast)
           // Since we translated, coordinates are relative to center
           if (x > -cx - 10 && x < cx + 10 && y > -cy - 10 && y < cy + 10) {
-            p.fill(255, 255, 255, opacity * 255);
+            const alpha = p.constrain(opacity, 0, 1);
+            if (!Number.isFinite(alpha)) continue;
+
+            // Apply per-star alpha on the 2D context to avoid p5 fill arg parsing edge cases.
+            ctx.globalAlpha = alpha;
+            p.fill(255);
             p.circle(x, y, s.size);
           }
         }
+
+        // Restore default alpha for any subsequent p5 drawing.
+        ctx.globalAlpha = 1;
       };
 
       p.windowResized = () => {
