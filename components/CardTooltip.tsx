@@ -2,7 +2,6 @@ import React, { useRef, useLayoutEffect, useState } from "react";
 import { motion } from "motion/react";
 import { PickedCard } from "../types";
 import { useTranslation } from "react-i18next";
-import { Locale } from "../types";
 
 interface CardTooltipProps {
   x: number;
@@ -20,10 +19,15 @@ const CardTooltip: React.FC<CardTooltipProps> = ({
   card,
 }) => {
   const { t, i18n } = useTranslation();
-  const locale = i18n.language as Locale;
+  const resolvedLanguage = i18n.resolvedLanguage ?? i18n.language;
+  const isEnglish = resolvedLanguage.startsWith("en");
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ x, y });
-  const keywords = locale === "zh-CN" ? card?.keywords?.slice(0, 6) || [] : card?.keywordsEn?.slice(0, 6) || [];
+  const keywords = isEnglish
+    ? card?.keywordsEn?.slice(0, 6) || []
+    : card?.keywords?.slice(0, 6) || [];
+  const primaryName = isEnglish ? card?.nameEn : card?.nameCn;
+  const secondaryName = isEnglish ? "" : card?.nameEn;
 
   useLayoutEffect(() => {
     if (tooltipRef.current) {
@@ -54,7 +58,7 @@ const CardTooltip: React.FC<CardTooltipProps> = ({
 
       setPos({ x: newX, y: newY });
     }
-  }, [x, y, isRevealed, card]);
+  }, [x, y, isRevealed, card, positionLabel, resolvedLanguage]);
 
   return (
     <motion.div
@@ -83,8 +87,10 @@ const CardTooltip: React.FC<CardTooltipProps> = ({
         {isRevealed && card ? (
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 text-[10px] text-white/70 tracking-[0.2em] uppercase font-light">
-              <span className="text-white/80">{card.nameEn}</span>
-              <span className="text-white/40">/ {card.nameCn}</span>
+              <span className="text-white/80">{primaryName}</span>
+              {secondaryName && (
+                <span className="text-white/40">/ {secondaryName}</span>
+              )}
             </div>
             {keywords.length > 0 && (
               <div className="flex flex-wrap gap-1.5">

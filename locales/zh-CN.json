@@ -25,15 +25,15 @@
   "input": {
     "chooseSpread": "选择牌阵",
     "chooseSpreadHint": "牌阵决定解读角度：感情、决策、全局扫描、关系镜像……先选对牌阵再发问。",
-    "confirmSpread": "CONFIRM SPREAD 确认牌阵",
-    "selectSpread": "SELECT A SPREAD",
-    "reselect": "RESELECT 重新选择牌阵",
+    "confirmSpread": "确认牌阵",
+    "selectSpread": "选择牌阵",
+    "reselect": "重新选择",
     "selectedSpread": "已选择「{{name}}」牌阵",
     "meditation": "请闭上双眼，深呼吸三次\n在心中默念你的困惑，保持虔诚与专注",
     "enterQuestion": "输入你的问题",
     "fallbackPlaceholder": "在此输入你心中的疑惑...",
-    "beginRitual": "BEGIN RITUAL 开始洗牌",
-    "divining": "DIVINING... 感知中"
+    "beginRitual": "开始洗牌",
+    "divining": "感知中"
   },
   "picking": {
     "instruction": "轻点任意卡牌，直到下方格子亮满（共 {{count}} 张）"
