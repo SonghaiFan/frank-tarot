@@ -282,20 +282,23 @@ const TarotCard: React.FC<TarotCardProps> = ({
                       className="relative w-full h-full overflow-hidden border border-white/20 bg-neutral-900 shadow-[0_28px_60px_rgba(0,0,0,0.55)]"
                       style={{ transform: "translateZ(24px)" }}
                     >
-                      <img
-                        src={getCardImageUrl(card.image)}
-                        alt={card.nameEn}
-                        loading="eager"
-                        className="absolute inset-0 w-full h-full object-cover"
-                        style={{ filter: imageFilter }}
-                      />
-                      <motion.div
-                        aria-hidden
-                        className="absolute inset-0 pointer-events-none mix-blend-screen"
-                        style={{ background: detailSurface }}
-                      />
-                      <div className="absolute inset-0 bg-linear-to-t from-black/92 via-black/10 to-black/25 pointer-events-none" />
-                      <div className="absolute inset-2 md:inset-3 border border-white/20 pointer-events-none" />
+                      <div className="absolute inset-1.5 md:inset-2 overflow-hidden bg-neutral-950">
+                        <img
+                          src={getCardImageUrl(card.image)}
+                          alt={card.nameEn}
+                          loading="eager"
+                          className="absolute inset-0 w-full h-full object-cover"
+                          style={{ filter: imageFilter }}
+                        />
+                        <motion.div
+                          aria-hidden
+                          className="absolute inset-0 pointer-events-none mix-blend-screen"
+                          style={{ background: detailSurface }}
+                        />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/92 via-black/10 to-black/25 pointer-events-none" />
+                      </div>
+                      <div className="absolute inset-1.5 md:inset-2 border border-white/20 pointer-events-none">
+                      </div>
                     </div>
                   </motion.div>
                 </div>
@@ -399,31 +402,35 @@ const TarotCard: React.FC<TarotCardProps> = ({
           ) : (
             /* Standard Card View */
             <div className="relative w-full h-full bg-neutral-900">
-              <img
-                src={getCardImageUrl(card.image)}
-                alt={card.nameEn}
-                loading={priority ? "eager" : "lazy"}
-                onLoad={() => setIsImageLoaded(true)}
-                className={`w-full h-full object-cover transition-opacity duration-700 ${isImageLoaded ? "opacity-100" : "opacity-0"}`}
-                style={{ filter: imageFilter }}
-              />
-              {!isImageLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-8 h-8 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
-                </div>
-              )}
-              <div className="absolute inset-0 bg-linear-to-t from-black/95 via-black/20 to-black/40" />
-              <motion.div
-                aria-hidden
-                className="absolute inset-0 pointer-events-none mix-blend-screen"
-                animate={{
-                  opacity: isHovered ? 0.95 : 0,
-                  scale: isHovered ? 1 : 0.96,
-                }}
-                transition={{ duration: 0.35, ease: SILKY_EASE }}
-                style={{ background: cardGlare }}
-              />
-              <div className="absolute inset-2 md:inset-3 border border-white/20 pointer-events-none" />
+              <div className="absolute inset-1.5 md:inset-2 overflow-hidden bg-neutral-950">
+                <img
+                  src={getCardImageUrl(card.image)}
+                  alt={card.nameEn}
+                  loading={priority ? "eager" : "lazy"}
+                  onLoad={() => setIsImageLoaded(true)}
+                  className={`w-full h-full object-cover transition-opacity duration-700 ${isImageLoaded ? "opacity-100" : "opacity-0"}`}
+                  style={{ filter: imageFilter }}
+                />
+                {!isImageLoaded && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-8 h-8 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-linear-to-t from-black/95 via-black/20 to-black/40" />
+                <motion.div
+                  aria-hidden
+                  className="absolute inset-0 pointer-events-none mix-blend-screen"
+                  animate={{
+                    opacity: isHovered ? 0.95 : 0,
+                    scale: isHovered ? 1 : 0.96,
+                  }}
+                  transition={{ duration: 0.35, ease: SILKY_EASE }}
+                  style={{ background: cardGlare }}
+                />
+              </div>
+              <div className="absolute inset-1.5 md:inset-2 border border-white/20 pointer-events-none">
+           
+              </div>
 
               <div className={`absolute bottom-0 w-full p-3 md:p-4 text-center transition-opacity duration-500 ${isRevealed ? "opacity-100" : "opacity-0"}`}>
                 {getRomanNumeral(card.id) && (
