@@ -10,6 +10,8 @@ export interface SpreadPosition {
   zIndex?: number;
 }
 
+type SpreadPositionLayout = Omit<SpreadPosition, "label">;
+
 // Single source of truth — all locale variants co-located per spread.
 export interface SpreadData {
   id: SpreadType;
@@ -19,8 +21,9 @@ export interface SpreadData {
   description_cn: string;
   cardCount: number;
   layoutType: "flex" | "absolute";
-  positions_en?: SpreadPosition[]; // For absolute layouts — English labels
-  positions_cn?: SpreadPosition[]; // For absolute layouts — Chinese labels
+  positions?: SpreadPositionLayout[]; // For absolute layouts — shared geometry
+  positionLabels_en?: string[]; // For absolute layouts — English labels
+  positionLabels_cn?: string[]; // For absolute layouts — Chinese labels
   labels_en?: string[]; // For flex layouts — English labels
   labels_cn?: string[]; // For flex layouts — Chinese labels
   cardPools?: CardPoolType[]; // Specific pool per position. Defaults to FULL if undefined.
@@ -447,29 +450,41 @@ Synthesis Goal: Provide a holistic life scan. Treat each card as a specific diag
       "这是经典的凯尔特十字牌阵，总共用到十张牌，提供对复杂问题的深入洞察。\n适合提问需要全面分析某个重要议题的情境，帮助你理清思路，找到解决方案。",
     cardCount: 10,
     layoutType: "absolute",
-    positions_en: [
-      { x: 35, y: 53, label: "1. Issue", zIndex: 10 },
-      { x: 35, y: 53, label: "2. Obstacle", rotation: 90, zIndex: 20 },
-      { x: 35, y: 20, label: "3. Past" },
-      { x: 10, y: 53, label: "4. Present" },
-      { x: 35, y: 85, label: "5. Near Future" },
-      { x: 60, y: 53, label: "6. Far Future" },
-      { x: 85, y: 90, label: "7. Yourself" },
-      { x: 85, y: 65, label: "8. Environment" },
-      { x: 85, y: 40, label: "9. Hopes/Fears" },
-      { x: 85, y: 15, label: "10. Outcome" },
+    positions: [
+      { x: 35, y: 53, zIndex: 10 },
+      { x: 35, y: 53, rotation: 90, zIndex: 20 },
+      { x: 35, y: 20 },
+      { x: 10, y: 53 },
+      { x: 35, y: 85 },
+      { x: 60, y: 53 },
+      { x: 85, y: 90 },
+      { x: 85, y: 65 },
+      { x: 85, y: 40 },
+      { x: 85, y: 15 },
     ],
-    positions_cn: [
-      { x: 35, y: 53, label: "1. 核心议题", zIndex: 10 },
-      { x: 35, y: 53, label: "2. 阻碍", rotation: 90, zIndex: 20 },
-      { x: 35, y: 20, label: "3. 过去" },
-      { x: 10, y: 53, label: "4. 现在" },
-      { x: 35, y: 85, label: "5. 近期未来" },
-      { x: 60, y: 53, label: "6. 远期未来" },
-      { x: 85, y: 90, label: "7. 你自己" },
-      { x: 85, y: 65, label: "8. 环境" },
-      { x: 85, y: 40, label: "9. 希望/恐惧" },
-      { x: 85, y: 15, label: "10. 结果" },
+    positionLabels_en: [
+      "1. Issue",
+      "2. Obstacle",
+      "3. Past",
+      "4. Present",
+      "5. Near Future",
+      "6. Far Future",
+      "7. Yourself",
+      "8. Environment",
+      "9. Hopes/Fears",
+      "10. Outcome",
+    ],
+    positionLabels_cn: [
+      "1. 核心议题",
+      "2. 阻碍",
+      "3. 过去",
+      "4. 现在",
+      "5. 近期未来",
+      "6. 远期未来",
+      "7. 你自己",
+      "8. 环境",
+      "9. 希望/恐惧",
+      "10. 结果",
     ],
     cardSize: {
       mobile: "w-12 aspect-[300/519]",
@@ -532,31 +547,44 @@ Synthesis Goal: First, analyze the 'Cross' to see the event flow (Issue -> Past 
       "这是需要用到11张塔罗牌的牌阵，深入探索双方的潜意识、阻碍与优势。\n提问不限于情感关系，也适用于合作伙伴、亲子关系等。可以换位思考，帮助你理解对方的视角与需求。",
     cardCount: 11,
     layoutType: "absolute",
-    positions_en: [
-      { x: 20, y: 80, label: "1. You Now", labelPosition: "bottom" },
-      { x: 20, y: 60, label: "2. Your Weakness", labelPosition: "right" },
-      { x: 20, y: 40, label: "3. Your Strength", labelPosition: "right" },
-      { x: 20, y: 20, label: "4. Your View", labelPosition: "top" },
-      { x: 80, y: 80, label: "5. Them Now", labelPosition: "bottom" },
-      { x: 80, y: 60, label: "6. Their Weakness", labelPosition: "left" },
-      { x: 80, y: 40, label: "7. Their Strength", labelPosition: "left" },
-      { x: 80, y: 20, label: "8. Their View", labelPosition: "top" },
-      { x: 50, y: 80, label: "9. Relationship Now", labelPosition: "top" },
-      { x: 50, y: 50, label: "10. Near Future", labelPosition: "top" },
-      { x: 50, y: 20, label: "11. Outcome", labelPosition: "top" },
+    positions: [
+      { x: 20, y: 80, labelPosition: "bottom" },
+      { x: 20, y: 60, labelPosition: "right" },
+      { x: 20, y: 40, labelPosition: "right" },
+      { x: 20, y: 20, labelPosition: "top" },
+      { x: 80, y: 80, labelPosition: "bottom" },
+      { x: 80, y: 60, labelPosition: "left" },
+      { x: 80, y: 40, labelPosition: "left" },
+      { x: 80, y: 20, labelPosition: "top" },
+      { x: 50, y: 80, labelPosition: "top" },
+      { x: 50, y: 50, labelPosition: "top" },
+      { x: 50, y: 20, labelPosition: "top" },
     ],
-    positions_cn: [
-      { x: 20, y: 80, label: "1. 你当下", labelPosition: "bottom" },
-      { x: 20, y: 60, label: "2. 你的弱点", labelPosition: "right" },
-      { x: 20, y: 40, label: "3. 你的优势", labelPosition: "right" },
-      { x: 20, y: 20, label: "4. 你的视角", labelPosition: "top" },
-      { x: 80, y: 80, label: "5. 对方当下", labelPosition: "bottom" },
-      { x: 80, y: 60, label: "6. 对方弱点", labelPosition: "left" },
-      { x: 80, y: 40, label: "7. 对方优势", labelPosition: "left" },
-      { x: 80, y: 20, label: "8. 对方视角", labelPosition: "top" },
-      { x: 50, y: 80, label: "9. 关系现况", labelPosition: "top" },
-      { x: 50, y: 50, label: "10. 近期发展", labelPosition: "top" },
-      { x: 50, y: 20, label: "11. 结果", labelPosition: "top" },
+    positionLabels_en: [
+      "1. You Now",
+      "2. Your Weakness",
+      "3. Your Strength",
+      "4. Your View",
+      "5. Them Now",
+      "6. Their Weakness",
+      "7. Their Strength",
+      "8. Their View",
+      "9. Relationship Now",
+      "10. Near Future",
+      "11. Outcome",
+    ],
+    positionLabels_cn: [
+      "1. 你当下",
+      "2. 你的弱点",
+      "3. 你的优势",
+      "4. 你的视角",
+      "5. 对方当下",
+      "6. 对方弱点",
+      "7. 对方优势",
+      "8. 对方视角",
+      "9. 关系现况",
+      "10. 近期发展",
+      "11. 结果",
     ],
     cardSize: {
       mobile: "w-14 aspect-[300/519]",
@@ -684,23 +712,32 @@ Synthesis Goal: Strictly follow this narrative formula: "When [Card 1 Situation]
       "这是用到七张塔罗牌的牌阵，深入分析实现目标过程中的心理与行动要素。\n适合提问需要设定并实现具体目标的情境，帮助你识别关键的心理动力和提供实际的方法论。",
     cardCount: 7,
     layoutType: "absolute",
-    positions_en: [
-      { x: 20, y: 30, label: "1. Focus", labelPosition: "top", zIndex: 10 },
-      { x: 20, y: 40, label: "2. Hidden", labelPosition: "bottom", rotation: 90, zIndex: 20 },
-      { x: 50, y: 30, label: "3. Action", labelPosition: "top", zIndex: 10 },
-      { x: 50, y: 40, label: "4. Challenge", labelPosition: "bottom", rotation: 90, zIndex: 20 },
-      { x: 80, y: 30, label: "5. Helpful", labelPosition: "top", zIndex: 10 },
-      { x: 80, y: 40, label: "6. Inspiration", labelPosition: "bottom", rotation: 90, zIndex: 20 },
-      { x: 50, y: 70, label: "7. Outcome", labelPosition: "bottom" },
+    positions: [
+      { x: 20, y: 30, labelPosition: "top", zIndex: 10 },
+      { x: 20, y: 40, labelPosition: "bottom", rotation: 90, zIndex: 20 },
+      { x: 50, y: 30, labelPosition: "top", zIndex: 10 },
+      { x: 50, y: 40, labelPosition: "bottom", rotation: 90, zIndex: 20 },
+      { x: 80, y: 30, labelPosition: "top", zIndex: 10 },
+      { x: 80, y: 40, labelPosition: "bottom", rotation: 90, zIndex: 20 },
+      { x: 50, y: 70, labelPosition: "bottom" },
     ],
-    positions_cn: [
-      { x: 20, y: 30, label: "1. 焦点", labelPosition: "top", zIndex: 10 },
-      { x: 20, y: 40, label: "2. 隐藏面", labelPosition: "bottom", rotation: 90, zIndex: 20 },
-      { x: 50, y: 30, label: "3. 行动", labelPosition: "top", zIndex: 10 },
-      { x: 50, y: 40, label: "4. 挑战", labelPosition: "bottom", rotation: 90, zIndex: 20 },
-      { x: 80, y: 30, label: "5. 助力", labelPosition: "top", zIndex: 10 },
-      { x: 80, y: 40, label: "6. 灵感", labelPosition: "bottom", rotation: 90, zIndex: 20 },
-      { x: 50, y: 70, label: "7. 结果", labelPosition: "bottom" },
+    positionLabels_en: [
+      "1. Focus",
+      "2. Hidden",
+      "3. Action",
+      "4. Challenge",
+      "5. Helpful",
+      "6. Inspiration",
+      "7. Outcome",
+    ],
+    positionLabels_cn: [
+      "1. 焦点",
+      "2. 隐藏面",
+      "3. 行动",
+      "4. 挑战",
+      "5. 助力",
+      "6. 灵感",
+      "7. 结果",
     ],
     cardSize: {
       mobile: "w-14 aspect-[300/519]",
@@ -766,39 +803,56 @@ Synthesis Goal: Reveal the psychological gap. Contrast the Conscious efforts (To
       "这是用到十五张塔罗牌的环形牌阵，预测未来一年的逐月运势。\n适合提问需要规划全年运势和重要时间节点的情境，帮助你把握节奏，优化决策。",
     cardCount: 15,
     layoutType: "absolute",
-    positions_en: [
-      { x: 42, y: 42, label: "Trend" },
-      { x: 24, y: 42, label: "Challenge" },
-      { x: 60, y: 42, label: "Helpful" },
-      { x: 42, y: 0, label: "Month 1", labelPosition: "bottom" },
-      { x: 63, y: 5, label: "Month 2", labelPosition: "bottom" },
-      { x: 79, y: 21, label: "Month 3", labelPosition: "bottom" },
-      { x: 84, y: 42, label: "Month 4", labelPosition: "bottom" },
-      { x: 79, y: 63, label: "Month 5", labelPosition: "bottom" },
-      { x: 63, y: 79, label: "Month 6", labelPosition: "top" },
-      { x: 42, y: 84, label: "Month 7", labelPosition: "top" },
-      { x: 21, y: 79, label: "Month 8", labelPosition: "top" },
-      { x: 5, y: 63, label: "Month 9", labelPosition: "bottom" },
-      { x: 0, y: 42, label: "Month 10", labelPosition: "bottom" },
-      { x: 5, y: 21, label: "Month 11", labelPosition: "bottom" },
-      { x: 21, y: 5, label: "Month 12", labelPosition: "bottom" },
+    positions: [
+      { x: 42, y: 42 },
+      { x: 24, y: 42 },
+      { x: 60, y: 42 },
+      { x: 42, y: 0, labelPosition: "bottom" },
+      { x: 63, y: 5, labelPosition: "bottom" },
+      { x: 79, y: 21, labelPosition: "bottom" },
+      { x: 84, y: 42, labelPosition: "bottom" },
+      { x: 79, y: 63, labelPosition: "bottom" },
+      { x: 63, y: 79, labelPosition: "top" },
+      { x: 42, y: 84, labelPosition: "top" },
+      { x: 21, y: 79, labelPosition: "top" },
+      { x: 5, y: 63, labelPosition: "bottom" },
+      { x: 0, y: 42, labelPosition: "bottom" },
+      { x: 5, y: 21, labelPosition: "bottom" },
+      { x: 21, y: 5, labelPosition: "bottom" },
     ],
-    positions_cn: [
-      { x: 42, y: 42, label: "年度主轴" },
-      { x: 24, y: 42, label: "挑战" },
-      { x: 60, y: 42, label: "助力" },
-      { x: 42, y: 0, label: "1 月", labelPosition: "bottom" },
-      { x: 63, y: 5, label: "2 月", labelPosition: "bottom" },
-      { x: 79, y: 21, label: "3 月", labelPosition: "bottom" },
-      { x: 84, y: 42, label: "4 月", labelPosition: "bottom" },
-      { x: 79, y: 63, label: "5 月", labelPosition: "bottom" },
-      { x: 63, y: 79, label: "6 月", labelPosition: "top" },
-      { x: 42, y: 84, label: "7 月", labelPosition: "top" },
-      { x: 21, y: 79, label: "8 月", labelPosition: "top" },
-      { x: 5, y: 63, label: "9 月", labelPosition: "bottom" },
-      { x: 0, y: 42, label: "10 月", labelPosition: "bottom" },
-      { x: 5, y: 21, label: "11 月", labelPosition: "bottom" },
-      { x: 21, y: 5, label: "12 月", labelPosition: "bottom" },
+    positionLabels_en: [
+      "Trend",
+      "Challenge",
+      "Helpful",
+      "Month 1",
+      "Month 2",
+      "Month 3",
+      "Month 4",
+      "Month 5",
+      "Month 6",
+      "Month 7",
+      "Month 8",
+      "Month 9",
+      "Month 10",
+      "Month 11",
+      "Month 12",
+    ],
+    positionLabels_cn: [
+      "年度主轴",
+      "挑战",
+      "助力",
+      "1 月",
+      "2 月",
+      "3 月",
+      "4 月",
+      "5 月",
+      "6 月",
+      "7 月",
+      "8 月",
+      "9 月",
+      "10 月",
+      "11 月",
+      "12 月",
     ],
     cardSize: {
       mobile: "w-12 aspect-[300/519]",
@@ -850,12 +904,24 @@ Synthesis Goal: Start by defining the 'Trend' (Card 1) as the year's theme. Cont
   },
 };
 
+const localizePositions = (
+  positions: SpreadPositionLayout[] | undefined,
+  labels: string[] | undefined
+): SpreadPosition[] | undefined => {
+  if (!positions || !labels) return undefined;
+  return positions.map((position, index) => ({
+    ...position,
+    label: labels[index] ?? "",
+  }));
+};
+
 export const getLocalizedSpread = (
   spread: SpreadType,
   locale: Locale
 ): SpreadDefinition => {
   const data = SPREADS[spread];
   const isCn = locale === "zh-CN";
+  const positionLabels = isCn ? data.positionLabels_cn : data.positionLabels_en;
 
   return {
     id: data.id,
@@ -863,7 +929,7 @@ export const getLocalizedSpread = (
     description: isCn ? data.description_cn : data.description_en,
     cardCount: data.cardCount,
     layoutType: data.layoutType,
-    positions: isCn ? data.positions_cn : data.positions_en,
+    positions: localizePositions(data.positions, positionLabels),
     labels: isCn ? data.labels_cn : data.labels_en,
     cardPools: data.cardPools,
     cardSize: data.cardSize,
