@@ -42,9 +42,12 @@ export interface TarotCard {
   descriptionCn?: string;
   descriptionEn?: string;
   keywords: string[];
+  keywordsEn?: string[];
   image: string; // Local asset filename
   positive?: string;
   negative?: string;
+  positiveEn?: string;
+  negativeEn?: string;
 }
 
 export interface PickedCard extends TarotCard {

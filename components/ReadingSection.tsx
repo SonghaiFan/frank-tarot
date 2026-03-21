@@ -83,8 +83,8 @@ const ReadingSection: React.FC<ReadingSectionProps> = ({
             ? spreadConfig.positions?.[index]?.label
             : spreadConfig.labels?.[index];
         const keywordText =
-          locale === "zh-CN" && card.keywords.length > 0
-            ? ` - ${card.keywords.join(", ")}`
+          (locale === "zh-CN" ? card.keywords : card.keywordsEn).length > 0
+            ? ` - ${(locale === "zh-CN" ? card.keywords : card.keywordsEn).join(", ")}`
             : "";
 
         return `${index + 1}. ${

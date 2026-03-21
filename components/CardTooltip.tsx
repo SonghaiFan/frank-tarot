@@ -23,7 +23,7 @@ const CardTooltip: React.FC<CardTooltipProps> = ({
   const locale = i18n.language as Locale;
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ x, y });
-  const keywords = locale === "zh-CN" ? card?.keywords?.slice(0, 6) || [] : [];
+  const keywords = locale === "zh-CN" ? card?.keywords?.slice(0, 6) || [] : card?.keywordsEn?.slice(0, 6) || [];
 
   useLayoutEffect(() => {
     if (tooltipRef.current) {

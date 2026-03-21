@@ -51,15 +51,17 @@ const TarotCard: React.FC<TarotCardProps> = ({
 }) => {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
+  const isEnglish = locale === "en";
   const [isImageLoaded, setIsImageLoaded] = React.useState(false);
   const isReversed =
     propIsReversed ??
     ("isReversed" in card ? (card as PickedCard).isReversed : false);
-  const primaryName = locale === "en" ? card.nameEn : card.nameCn;
-  const secondaryName = locale === "en" ? card.nameCn : card.nameEn;
-  const showKeywords = locale === "zh-CN";
-  const englishDescription = card.descriptionEn || card.descriptionCn;
-  const chineseDescription = card.descriptionCn || card.descriptionEn;
+  const primaryName = isEnglish ? card.nameEn : card.nameCn;
+  const secondaryName = isEnglish ? "" : card.nameEn;
+  const detailKeywords = isEnglish ? card.keywordsEn ?? [] : card.keywords;
+  const positiveMeaning = isEnglish ? card.positiveEn : card.positive;
+  const negativeMeaning = isEnglish ? card.negativeEn : card.negative;
+  const descriptionContent = isEnglish ? card.descriptionEn : card.descriptionCn;
 
   const labelClasses = {
     top: "bottom-full mb-2 left-1/2 -translate-x-1/2",
@@ -134,17 +136,20 @@ const TarotCard: React.FC<TarotCardProps> = ({
                     <div className="text-[10px] mb-1 text-amber-50/60 font-cinzel tracking-[0.2em]">{getRomanNumeral(card.id)}</div>
                   )}
                   <h3 className="text-xl font-cinzel text-amber-50/90 tracking-widest leading-tight mb-2">{primaryName}</h3>
-                  <p className="text-[10px] text-neutral-400 font-serif mb-4 uppercase tracking-widest">
-                    {secondaryName}{" "}
-                    {isReversed && (
-                      <span className="text-red-400/80 ml-1 italic">
-                        ({t("card.reversedShort")})
-                      </span>
-                    )}
-                  </p>
-                  {showKeywords && "keywords" in card && (
+                  {(secondaryName || isReversed) && (
+                    <p className="text-[10px] text-neutral-400 font-serif mb-4 uppercase tracking-widest">
+                      {secondaryName}
+                      {secondaryName && isReversed ? " " : ""}
+                      {isReversed && (
+                        <span className="text-red-400/80 ml-1 italic">
+                          ({t("card.reversedShort")})
+                        </span>
+                      )}
+                    </p>
+                  )}
+                  {detailKeywords.length > 0 && (
                     <div className="flex flex-wrap gap-1">
-                      {(card as PickedCard).keywords.slice(0, 3).map((kw) => (
+                      {detailKeywords.slice(0, 3).map((kw) => (
                         <span key={kw} className="text-[7px] px-1.5 py-0.5 bg-white/5 border border-white/10 text-neutral-400 uppercase tracking-tighter">{kw}</span>
                       ))}
                     </div>
@@ -160,18 +165,21 @@ const TarotCard: React.FC<TarotCardProps> = ({
                     <div className="text-sm md:text-base mb-2 text-amber-50/60 font-cinzel tracking-[0.2em]">{getRomanNumeral(card.id)}</div>
                   )}
                   <h2 className="text-4xl md:text-5xl mb-3 text-amber-50/90 font-cinzel tracking-widest drop-shadow-md">{primaryName}</h2>
-                  <p className="text-sm md:text-lg mb-6 text-neutral-400 font-serif tracking-wide">
-                    {secondaryName}{" "}
-                    {isReversed && (
-                      <span className="text-red-400/80 opacity-80 inline-block ml-2 italic">
-                        ({t("card.reversedLong")})
-                      </span>
-                    )}
-                  </p>
+                  {(secondaryName || isReversed) && (
+                    <p className="text-sm md:text-lg mb-6 text-neutral-400 font-serif tracking-wide">
+                      {secondaryName}
+                      {secondaryName && isReversed ? " " : ""}
+                      {isReversed && (
+                        <span className="text-red-400/80 opacity-80 inline-block ml-2 italic">
+                          ({t("card.reversedLong")})
+                        </span>
+                      )}
+                    </p>
+                  )}
 
-                  {showKeywords && "keywords" in card && (
+                  {detailKeywords.length > 0 && (
                     <div className="flex flex-wrap justify-center gap-3 mb-6">
-                      {(card as PickedCard).keywords.map((kw) => (
+                      {detailKeywords.map((kw) => (
                         <span key={kw} className="text-xs px-3 py-1 bg-white/5 border border-white/10 rounded-sm text-neutral-300 tracking-[0.15em] uppercase">{kw}</span>
                       ))}
                     </div>
@@ -180,59 +188,41 @@ const TarotCard: React.FC<TarotCardProps> = ({
 
                 {/* Shared Scrollable Content */}
                 <div className="flex-1 overflow-y-auto p-6 md:p-16 space-y-8 overscroll-contain touch-pan-y relative z-10 pointer-events-auto">
-                  {locale === "zh-CN" && "keywords" in card && (
-                    <div className="max-w-lg mx-auto space-y-8">
-                      {/* Interpretation */}
-                      <p className="text-sm md:text-base text-neutral-300 font-light leading-relaxed md:leading-loose text-justify tracking-wide">
-                        <span className="block mb-2 text-neutral-200">
-                          <span className="mr-2 text-xs text-neutral-400 align-middle">＋</span>
-                          {(card as PickedCard).positive}
-                        </span>
-                        <span className="block text-neutral-400">
-                          <span className="mr-2 text-xs text-neutral-500 align-middle">－</span>
-                          {(card as PickedCard).negative}
-                        </span>
-                      </p>
+                  <div className="max-w-lg mx-auto space-y-8">
+            
+                    {(positiveMeaning || negativeMeaning) && (
+                      <div className="pt-8 ">
+                        <h4 className="text-[10px] text-neutral-500 uppercase tracking-[0.3em] mb-4 text-center">
+                          {t("card.interpretationTitle")}
+                        </h4>
+                        <p className="text-sm md:text-base text-neutral-300 font-light leading-relaxed md:leading-loose text-justify tracking-wide">
+                          {positiveMeaning && (
+                            <span className="block mb-2 text-neutral-200">
+                              <span className="mr-2 text-xs text-neutral-400 align-middle">＋</span>
+                              {positiveMeaning}
+                            </span>
+                          )}
+                          {negativeMeaning && (
+                            <span className="block text-neutral-400">
+                              <span className="mr-2 text-xs text-neutral-500 align-middle">－</span>
+                              {negativeMeaning}
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    )}
 
-                      {/* Analysis Sections */}
-                      {["descriptionCn" as const, "descriptionEn" as const].map((key) =>
-                        (card as PickedCard)[key] && (
-                          <div key={key} className="pt-8 border-t border-white/5">
-                            {key === "descriptionCn" && (
-                              <h4 className="text-[10px] text-neutral-500 uppercase tracking-[0.3em] mb-4 text-center">Arcana Wisdom</h4>
-                            )}
-                            <p className={`text-xs md:text-sm text-neutral-400 font-light leading-relaxed text-justify opacity-80 ${key === 'descriptionEn' ? 'italic' : ''}`}>
-                              {(card as PickedCard)[key]}
-                            </p>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  )}
-                  {locale === "en" && (
-                    <div className="max-w-lg mx-auto space-y-8">
-                      {englishDescription && (
-                        <div className="pt-2">
-                          <h4 className="text-[10px] text-neutral-500 uppercase tracking-[0.3em] mb-4 text-center">
-                            {t("card.englishInsight")}
-                          </h4>
-                          <p className="text-sm md:text-base text-neutral-300 font-light leading-relaxed md:leading-loose text-justify tracking-wide italic">
-                            {englishDescription}
-                          </p>
-                        </div>
-                      )}
-                      {chineseDescription && card.descriptionCn && (
-                        <div className="pt-8 border-t border-white/5">
-                          <h4 className="text-[10px] text-neutral-500 uppercase tracking-[0.3em] mb-4 text-center">
-                            {t("card.chineseInsight")}
-                          </h4>
-                          <p className="text-xs md:text-sm text-neutral-400 font-light leading-relaxed text-justify opacity-80">
-                            {chineseDescription}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                    {descriptionContent && (
+                      <div className="pt-8 border-t border-white/5">
+                        <h4 className="text-[10px] text-neutral-500 uppercase tracking-[0.3em] mb-4 text-center">
+                          {t("card.arcanaWisdom")}
+                        </h4>
+                        <p className={`text-sm md:text-base text-neutral-300 font-light leading-relaxed md:leading-loose text-justify tracking-wide ${isEnglish ? 'italic' : ''}`}>
+                          {descriptionContent}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </>
@@ -260,14 +250,17 @@ const TarotCard: React.FC<TarotCardProps> = ({
                   <div className="text-[8px] md:text-[10px] mb-0.5 text-white/60 font-cinzel tracking-[0.2em]">{getRomanNumeral(card.id)}</div>
                 )}
                 <h2 className="text-[10px] md:text-sm mb-0.5 text-white font-cinzel tracking-widest truncate">{primaryName}</h2>
-                <p className="text-[9px] md:text-[10px] text-neutral-400 font-serif truncate">
-                  {secondaryName}{" "}
-                  {isReversed && (
-                    <span className="text-red-400/80 ml-1 italic opacity-80">
-                      ({t("card.reversedShort")})
-                    </span>
-                  )}
-                </p>
+                {(secondaryName || isReversed) && (
+                  <p className="text-[9px] md:text-[10px] text-neutral-400 font-serif truncate">
+                    {secondaryName}
+                    {secondaryName && isReversed ? " " : ""}
+                    {isReversed && (
+                      <span className="text-red-400/80 ml-1 italic opacity-80">
+                        ({t("card.reversedShort")})
+                      </span>
+                    )}
+                  </p>
+                )}
               </div>
             </div>
           )}
