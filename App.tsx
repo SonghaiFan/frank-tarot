@@ -386,24 +386,17 @@ const App: React.FC = () => {
   // --- Flow Handlers ---
 
   const enterInputPhase = async () => {
-    if (!hasPlayedIntroWelcomeRef.current) {
-      await playIntroWelcome();
-    }
-
     initAudio();
-
-    // Wait a bit for AudioContext to be ready
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    soundEngineRef.current?.startDrone();
     setGameState(GameState.INPUT);
     prefetchStaticAudio();
 
-    if (introWelcomePromiseRef.current) {
-      await introWelcomePromiseRef.current;
+    if (!hasPlayedIntroWelcomeRef.current) {
+      await playIntroWelcome();
     } else {
       await waitForVoiceToFinish();
     }
+
+    soundEngineRef.current?.startDrone();
   };
 
   const startRitual = async () => {
@@ -663,14 +656,7 @@ const App: React.FC = () => {
   const renderPhase = () => {
     switch (gameState) {
       case GameState.INTRO:
-        return (
-          <IntroSection
-            onEnter={enterInputPhase}
-            onEnterHover={() => {
-              void playIntroWelcome();
-            }}
-          />
-        );
+        return <IntroSection onEnter={enterInputPhase} />;
       case GameState.LIBRARY:
         return <DeckLibrary onClose={toggleLibrary} />;
       case GameState.INPUT:

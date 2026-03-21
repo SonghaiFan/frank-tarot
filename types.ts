@@ -17,7 +17,6 @@ export type SpreadType =
   | "RELATION"
   | "CELTIC"
   | "COURT"
-  | "ACTION"
   | "GOALS"
   | "YEARLY"
   | "AUTO";

@@ -84,7 +84,7 @@ const CosmicParticles: React.FC<CosmicParticlesProps> = ({ gameState }) => {
       p.draw = () => {
         // Create a trailing effect by drawing a semi-transparent background
         // The opacity allows previous frames to fade out slowly
-        p.background(0, 30); // 30/255 opacity creates a subtle trail
+        p.background(0, 140); // Higher opacity clears more each frame for a shorter trail
 
         // Smoothly interpolate current speed
         currentSpeedRef.current = p.lerp(
