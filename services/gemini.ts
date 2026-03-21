@@ -78,8 +78,10 @@ export const generateTarotReading = async (
 ): Promise<string> => {
   try {
     const ai = getAiClient();
-    const spreadConfig = getLocalizedSpread(spread, locale);
+    const spreadConfig = getLocalizedSpread(spread, "en");
     const t = i18n.getFixedT(locale);
+    const outputLanguage =
+      locale === "en" ? "English" : "Simplified Chinese";
 
     const cardDetails = cards
       .map((c, i) => {
@@ -98,22 +100,17 @@ export const generateTarotReading = async (
               c.descriptionEn ||
               "";
 
-        const orientation =
-          locale === "en"
-            ? c.isReversed
-              ? "REVERSED"
-              : "UPRIGHT"
-            : c.isReversed
-              ? "REVERSED (逆位)"
-              : "UPRIGHT (正位)";
+        const orientation = c.isReversed ? "REVERSED" : "UPRIGHT";
 
         const title =
           locale === "en"
-            ? `${c.nameEn}${c.nameCn ? ` (${c.nameCn})` : ""}`
-            : `${c.nameCn} (${c.nameEn})`;
+            ? c.nameEn
+            : c.nameCn;
 
         const keywordLine =
-          locale === "en" ? "" : `\n        - Core Keywords: ${c.keywords.join(", ")}`;
+          locale === "en"
+            ? `\n        - Core Keywords: ${(c.keywordsEn || []).join(", ")}`
+            : `\n        - Core Keywords: ${c.keywords.join("、")}`;
 
         return `Card ${i + 1} [${position}]: ${title}
         - Orientation: ${orientation}${keywordLine}
@@ -125,19 +122,16 @@ export const generateTarotReading = async (
 
     const userQuestion = question.trim()
       ? `Seeker's Question: "${question}"`
-      : locale === "en"
-        ? "Seeker's Question: General guidance for the path ahead."
-        : "Seeker's Question: 关于接下来道路的综合指引。";
+      : "Seeker's Question: General guidance for the path ahead.";
 
-    const prompt =
-      locale === "en"
-        ? `
+    const prompt = `
       Role: You are a Grand Tarot Master and ancient sage.
       Your voice is mystical, emotionally intelligent, and grounded rather than theatrical.
       You interpret spreads by how the card positions interact, not by listing separate dictionary meanings.
 
       Task: Provide a Tarot reading for the seeker based on the following details.
 
+      Spread: ${spreadConfig.name}
       ${userQuestion}
 
       ${spreadContext}
@@ -159,51 +153,14 @@ export const generateTarotReading = async (
          - Weave them into a single, fluid story or message.
          - Mention elemental harmony or tension only if it naturally helps the reading.
 
-      4. **Tone & Format:**
-         - Language: English.
+      4. Tone & Format:
+         - Output language: ${outputLanguage}.
          - Format: One cohesive paragraph. No bullet points. No card-by-card numbering.
-         - Speak directly to "you".
+         - Speak directly to "you" if the output language is English, or directly to "你" if the output language is Simplified Chinese.
          - End with a short empowering line or mantra, without a label.
-         - Length: 130-180 words.
+         - Length: ${locale === "en" ? "130-180 words" : "120-180 Chinese characters"}.
 
-      Start your interpretation immediately.
-    `
-        : `
-      Role: 你是一位塔罗大师与古老智者。
-      你的声音应当深邃、神秘、富有同理心，同时保持清晰与稳重。
-      你解读牌阵时要关注牌位之间的互动，而不是把每张牌拆成字典式定义。
-
-      Task: 请根据以下信息，为求问者提供一段塔罗解读。
-
-      ${userQuestion}
-
-      ${spreadContext}
-
-      Cards Drawn:
-      ${cardDetails}
-
-      Strict Interpretation Guidelines:
-      1. 正位与逆位：
-         - 正位代表外显、流动、主动或充分显化的能量。
-         - 逆位不等于“坏”，也可以表示内化、阻滞、延迟、过度，或需要先反思再行动。
-
-      2. 贴合问题：
-         - 必须直接回应求问者的问题与处境。
-         - 不要给泛泛而谈的牌义解释。
-
-      3. 叙事与综合：
-         - 不要逐张牌拆开说明。
-         - 请把它们编织成一段完整、流动、有连贯性的解读。
-         - 如果合适，可以提到元素之间的助力或冲突。
-
-      4. 语气与格式：
-         - 语言：简体中文。
-         - 格式：一整段完整文字，不要项目符号，不要写“第一张牌表示……”。
-         - 直接对“你”说话。
-         - 结尾给一句简短但有力量的建议或箴言，不要加前缀。
-         - 长度：120-180字。
-
-      直接开始解读。
+      Start your interpretation immediately in ${outputLanguage}.
     `;
 
     console.log("Tarot Reading Prompt:", prompt);
@@ -254,8 +211,9 @@ export const generateSpeech = async (
             {
               // Add the voice description to your text prompt
               text:
-                "Use deep, mystical, and empathetic voice suitable for an old sage/tarot master, say the following: " +
-                text,
+                locale === "en"
+                  ? "Use a deep, mystical, empathetic English voice suitable for an ancient sage/tarot master. Speak in English and deliver the following reading with wisdom and calm presence: " + text
+                  : "使用深沉、神秘、富有同理心的中文声音，模拟古老智者/塔罗大师的风格。请用普通话流畅地诵读以下解读，传递智慧和沉静的气场：" + text,
             },
           ],
         },
@@ -299,7 +257,7 @@ export const predictBestSpread = async (
 
     const spreadList = Object.values(SPREADS)
       .map((s) => {
-        const localized = getLocalizedSpread(s.id, locale);
+        const localized = getLocalizedSpread(s.id, "en");
         return `- ${localized.id}: ${localized.name} (${localized.description})`;
       })
       .join("\n");

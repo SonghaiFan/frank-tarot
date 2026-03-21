@@ -1,5 +1,4 @@
 import {
-  Sparkles,
   Library,
   ArrowLeft,
   Maximize2,
@@ -53,7 +52,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
       <div className="flex items-center gap-6 pointer-events-auto">
         <button onClick={onHomeClick} className="flex flex-col gap-1 group">
           <div className="flex items-center gap-2 text-white/80 group-hover:text-white transition-colors">
-            <Sparkles size={14} />
+
             <h1 className="text-xs font-cinzel tracking-[0.4em] font-bold">
               {t("header.brand")}
             </h1>

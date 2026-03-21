@@ -402,7 +402,7 @@ const App: React.FC = () => {
             sentences.length > 0 ? sentences[sentences.length - 1] : text;
 
           // Fire and forget TTS prefetch
-          generateSpeech(lastSentence, audioContextRef.current).then(
+          generateSpeech(lastSentence, audioContextRef.current, undefined, locale).then(
             (buffer) => {
               if (ritualIdRef.current === currentRitualId && buffer) {
                 setReadingAudioBuffer(buffer);

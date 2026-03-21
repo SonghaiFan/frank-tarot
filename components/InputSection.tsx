@@ -286,37 +286,43 @@ const SpreadCard = ({
   item: any;
   isSelected: boolean;
   onClick: () => void;
-}) => (
-  <button
-    onClick={onClick}
-    className={`relative p-1 md:p-4 border transition-all duration-500 flex flex-col items-center gap-1 md:gap-4 group ${isSelected
-      ? "border-white/60 bg-white/5"
-      : "border-white/10 hover:border-white/30"
-      }`}
-  >
-    <div className="flex gap-1 items-center justify-center h-6 w-6 md:h-8 md:w-8 relative">
-      {item.icon(isSelected)}
-    </div>
-    <span
-      className={`text-[9px] md:text-[10px] tracking-widest uppercase transition-colors ${isSelected ? "text-white" : "text-white/40"
+}) => {
+  const { i18n } = useTranslation();
+  const locale = i18n.language as Locale;
+  const localized = getLocalizedSpread(item.id, locale);
+
+  return (
+    <button
+      onClick={onClick}
+      className={`relative p-1 md:p-4 border transition-all duration-500 flex flex-col items-center gap-1 md:gap-4 group ${isSelected
+        ? "border-white/60 bg-white/5"
+        : "border-white/10 hover:border-white/30"
         }`}
     >
-      {item.id}
-    </span>
-    <AnimatePresence>
-      {isSelected && (
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0 }}
-          className="absolute top-1 right-1 md:top-2 md:right-2 text-white/60"
-        >
-          <Check size={10} className="md:w-3 md:h-3" />
-        </motion.div>
-      )}
-    </AnimatePresence>
-  </button>
-);
+      <div className="flex gap-1 items-center justify-center h-6 w-6 md:h-8 md:w-8 relative">
+        {item.icon(isSelected)}
+      </div>
+      <span
+        className={`text-[9px] md:text-[10px] tracking-wide transition-colors text-center leading-tight ${isSelected ? "text-white" : "text-white/40"
+          }`}
+      >
+        {localized.name}
+      </span>
+      <AnimatePresence>
+        {isSelected && (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            className="absolute top-1 right-1 md:top-2 md:right-2 text-white/60"
+          >
+            <Check size={10} className="md:w-3 md:h-3" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </button>
+  );
+};
 
 const ActionButton = ({
   disabled,

@@ -1,12 +1,12 @@
 {
-  "appTitle": "Mystic Tarot | 命运塔罗",
+  "appTitle": "Frank塔罗",
   "intro": {
     "focus": "命 运",
     "subtitle": "TAROT",
-    "enter": "ENTER THE VOID 开始占卜"
+    "enter": "开始占卜"
   },
   "header": {
-    "brand": "MYSTIC塔罗",
+    "brand": "F.塔罗",
     "library": "牌库",
     "back": "返回",
     "openLibraryTitle": "打开牌库",
@@ -46,14 +46,14 @@
   "reading": {
     "revealPrompt": "翻开每一张卡牌以显示解读",
     "questionPrefix": "正在回应：",
-    "replay": "REPLAY 再念一次",
+    "replay": "再念一次",
     "replayTitle": "重播解读音频",
-    "save": "SAVE 保存图文",
+    "save": "保存图文",
     "saveTitle": "下载解读图片",
-    "prompt": "PROMPT 提示词",
+    "prompt": "提示词",
     "promptTitle": "复制给其他 AI 的提示词",
-    "copied": "COPIED 复制成功",
-    "seekAgain": "SEEK AGAIN 再次探索",
+    "copied": "复制成功",
+    "seekAgain": "再次探索",
     "thinkingPhrases": [
       "正在向群星求问……",
       "正在编织命运的丝线……",

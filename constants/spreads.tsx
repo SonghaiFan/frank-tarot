@@ -760,18 +760,228 @@ const EN_SPREAD_OVERRIDES: Record<
   },
 };
 
+const ZH_SPREAD_OVERRIDES: Record<
+  SpreadType,
+  Pick<
+    SpreadDefinition,
+    "name" | "interpretationInstruction" | "labels" | "positions"
+  >
+> = {
+  AUTO: {
+    name: "AI 推荐",
+    labels: ["推荐牌阵"],
+    interpretationInstruction: "自动推荐牌阵。",
+  },
+  SINGLE: {
+    name: "单张指引",
+    labels: ["核心启示"],
+    interpretationInstruction: `
+单张牌阵。
+- 牌 1：当下最重要的核心提示。
+综合目标：不要给简单的是/否结论。请解释这张牌所指向的关键态度、注意事项或行动方向，并与求问者问题直接关联。
+    `,
+  },
+  THREE: {
+    name: "经典三张",
+    labels: ["过去", "现在", "未来"],
+    interpretationInstruction: `
+三张时间线牌阵。
+- 牌 1：过去（近期影响与成因）。
+- 牌 2：现在（当前主导能量）。
+- 牌 3：未来（趋势与发展方向）。
+综合目标：用连贯叙事说明过去如何塑造现在，以及现在如何推动未来。
+    `,
+  },
+  FOUR: {
+    name: "简易四张",
+    labels: ["现状", "阻碍", "助力", "答案"],
+    interpretationInstruction: `
+四张决策牌阵。
+- 牌 1：现状。
+- 牌 2：阻碍（Cons）。
+- 牌 3：助力（Pro）。
+- 牌 4：结果/答案。
+综合目标：对比阻碍与助力，解释现状为何会走向当前结果，并给出可执行建议。
+    `,
+  },
+  FIVE: {
+    name: "五张深入",
+    labels: ["过去", "现在", "隐藏", "建议", "结果"],
+    interpretationInstruction: `
+五张深入牌阵。
+- 牌 1：过去。
+- 牌 2：现在。
+- 牌 3：隐藏因素（关键）。
+- 牌 4：建议行动。
+- 牌 5：结果可能。
+综合目标：聚焦第 3 张隐藏因素，说明其如何影响现状，并指出遵循建议后的变化路径。
+    `,
+  },
+  TIMELINE: {
+    name: "时间轴",
+    labels: ["阶段 1", "阶段 2", "阶段 3", "阶段 4", "阶段 5"],
+    interpretationInstruction: `
+时间轴牌阵。
+- 牌 1-5：依次对应连续时间阶段（如未来 5 天/周/月）。
+综合目标：按时间顺序解读能量如何演进，指出转折点、风险点与关键机会。
+    `,
+  },
+  DIMENSION: {
+    name: "五维扫描",
+    labels: ["情感（圣杯）", "财务（星币）", "思维（宝剑）", "事业（权杖）", "灵性（大阿卡纳）"],
+    interpretationInstruction: `
+五维生活扫描牌阵。
+- 牌 1：情感。
+- 牌 2：财务。
+- 牌 3：思维。
+- 牌 4：事业。
+- 牌 5：灵性。
+综合目标：给出整体平衡评估，指出最需要优先调整的维度与现实行动。
+    `,
+  },
+  CELTIC: {
+    name: "凯尔特十字",
+    positions: [
+      { x: 35, y: 53, label: "1. 核心议题", zIndex: 10 },
+      { x: 35, y: 53, label: "2. 阻碍", rotation: 90, zIndex: 20 },
+      { x: 35, y: 20, label: "3. 过去" },
+      { x: 10, y: 53, label: "4. 现在" },
+      { x: 35, y: 85, label: "5. 近期未来" },
+      { x: 60, y: 53, label: "6. 远期未来" },
+      { x: 85, y: 90, label: "7. 你自己" },
+      { x: 85, y: 65, label: "8. 环境" },
+      { x: 85, y: 40, label: "9. 希望/恐惧" },
+      { x: 85, y: 15, label: "10. 结果" },
+    ],
+    interpretationInstruction: `
+凯尔特十字牌阵（10 张）。
+- 核心：现状与挑战。
+- 内圈：意识/潜意识、过去/未来。
+- 外圈：自我、外在环境、希望与恐惧、最终趋势。
+综合目标：先定义问题核心，再整合内外因素，形成完整的因果与走向判断。
+    `,
+  },
+  RELATION: {
+    name: "关系牌阵",
+    positions: [
+      { x: 20, y: 80, label: "1. 你当下", labelPosition: "bottom" },
+      { x: 20, y: 60, label: "2. 你的弱点", labelPosition: "right" },
+      { x: 20, y: 40, label: "3. 你的优势", labelPosition: "right" },
+      { x: 20, y: 20, label: "4. 你的视角", labelPosition: "top" },
+      { x: 80, y: 80, label: "5. 对方当下", labelPosition: "bottom" },
+      { x: 80, y: 60, label: "6. 对方弱点", labelPosition: "left" },
+      { x: 80, y: 40, label: "7. 对方优势", labelPosition: "left" },
+      { x: 80, y: 20, label: "8. 对方视角", labelPosition: "top" },
+      { x: 50, y: 80, label: "9. 关系现况", labelPosition: "top" },
+      { x: 50, y: 50, label: "10. 近期发展", labelPosition: "top" },
+      { x: 50, y: 20, label: "11. 结果", labelPosition: "top" },
+    ],
+    interpretationInstruction: `
+关系牌阵（11 张）。
+- 覆盖双方表层状态、深层需求、关系动力与未来方向。
+综合目标：同时看见双方立场与互动模式，指出误区、潜力与可改善的沟通/行动策略。
+    `,
+  },
+  COURT: {
+    name: "宫廷行为模式",
+    labels: ["情境（小阿卡纳）", "角色（宫廷牌）", "根因（大阿卡纳）"],
+    interpretationInstruction: `
+三张行为模式牌阵。
+- 牌 1：情境。
+- 牌 2：你呈现的角色/行为。
+- 牌 3：背后真实驱动。
+综合目标：揭示你在特定压力下的惯性反应，并给出可替代的更成熟应对方式。
+    `,
+  },
+  GOALS: {
+    name: "目标推进",
+    positions: [
+      { x: 20, y: 30, label: "1. 焦点", labelPosition: "top", zIndex: 10 },
+      {
+        x: 20,
+        y: 40,
+        label: "2. 隐藏面",
+        labelPosition: "bottom",
+        rotation: 90,
+        zIndex: 20,
+      },
+      { x: 50, y: 30, label: "3. 行动", labelPosition: "top", zIndex: 10 },
+      {
+        x: 50,
+        y: 40,
+        label: "4. 挑战",
+        labelPosition: "bottom",
+        rotation: 90,
+        zIndex: 20,
+      },
+      { x: 80, y: 30, label: "5. 助力", labelPosition: "top", zIndex: 10 },
+      {
+        x: 80,
+        y: 40,
+        label: "6. 灵感",
+        labelPosition: "bottom",
+        rotation: 90,
+        zIndex: 20,
+      },
+      { x: 50, y: 70, label: "7. 结果", labelPosition: "bottom" },
+    ],
+    interpretationInstruction: `
+七张目标实现牌阵。
+- 上层：当下焦点、行动方向、助力。
+- 中层：隐藏自我、挑战、灵感动机。
+- 下层：一年后的结果。
+综合目标：对照“显性努力”与“隐性心理”，说明怎样对齐两者以提升达成率。
+    `,
+  },
+  YEARLY: {
+    name: "年度轮盘",
+    positions: [
+      { x: 50, y: 50, label: "年度主轴" },
+      { x: 32, y: 50, label: "挑战" },
+      { x: 68, y: 50, label: "助力" },
+      { x: 50, y: 8, label: "1 月", labelPosition: "bottom" },
+      { x: 71, y: 13, label: "2 月", labelPosition: "bottom" },
+      { x: 87, y: 29, label: "3 月", labelPosition: "bottom" },
+      { x: 92, y: 50, label: "4 月", labelPosition: "bottom" },
+      { x: 87, y: 71, label: "5 月", labelPosition: "bottom" },
+      { x: 71, y: 87, label: "6 月", labelPosition: "top" },
+      { x: 50, y: 92, label: "7 月", labelPosition: "top" },
+      { x: 29, y: 87, label: "8 月", labelPosition: "top" },
+      { x: 13, y: 71, label: "9 月", labelPosition: "bottom" },
+      { x: 8, y: 50, label: "10 月", labelPosition: "bottom" },
+      { x: 13, y: 29, label: "11 月", labelPosition: "bottom" },
+      { x: 29, y: 13, label: "12 月", labelPosition: "bottom" },
+    ],
+    interpretationInstruction: `
+年度轮盘牌阵（15 张）。
+- 中央 3 张：年度主轴、挑战、助力。
+- 外圈 12 张：按顺时针对应 1-12 月。
+综合目标：先定全年主题，再串联每月节奏，指出关键月份与策略重点。
+    `,
+  },
+};
+
 export const getLocalizedSpread = (
   spread: SpreadType,
   locale: Locale
 ): SpreadDefinition => {
   const base = SPREADS[spread];
 
-  if (locale !== "en") {
-    return base;
+  if (locale === "en") {
+    return {
+      ...base,
+      ...EN_SPREAD_OVERRIDES[spread],
+    };
+  }
+
+  if (locale === "zh-CN") {
+    return {
+      ...base,
+      ...ZH_SPREAD_OVERRIDES[spread],
+    };
   }
 
   return {
     ...base,
-    ...EN_SPREAD_OVERRIDES[spread],
   };
 };

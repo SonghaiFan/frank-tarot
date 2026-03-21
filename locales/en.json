@@ -1,12 +1,12 @@
 {
-  "appTitle": "Mystic Tarot",
+  "appTitle": "F.Tarot",
   "intro": {
-    "focus": "MYSTIC TAROT",
-    "subtitle": "DIVINATION",
+    "focus": "Fa Te For Tune",
+    "subtitle": "TAROT",
     "enter": "ENTER THE VOID"
   },
   "header": {
-    "brand": "MYSTIC TAROT",
+    "brand": "F.TAROT",
     "library": "Library",
     "back": "Back",
     "openLibraryTitle": "Open library",
