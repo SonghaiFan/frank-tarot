@@ -200,7 +200,10 @@ const PickingSection: React.FC<PickingSectionProps> = ({
     </motion.div>
 
     {/* Slots - Persist on exit for layout transition */}
-    <div className="fixed bottom-12 flex gap-3 justify-center w-full pointer-events-none z-50">
+    <motion.div
+      layoutRoot
+      className="fixed bottom-12 flex gap-3 justify-center w-full pointer-events-none z-50"
+    >
       {pickedCards.map((c) => (
         <TarotCard
           key={`slot-${c.id}`}
@@ -212,7 +215,7 @@ const PickingSection: React.FC<PickingSectionProps> = ({
           className="shadow-2xl"
         />
       ))}
-    </div>
+    </motion.div>
   </motion.div>
   );
 };

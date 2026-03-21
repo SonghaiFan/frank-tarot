@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 import {
   GameState,
   TarotCard,
@@ -740,7 +740,8 @@ const App: React.FC = () => {
       />
 
       {/* Main Content Area - No Scroll */}
-      <main
+      <motion.main
+        layoutScroll
         className={`absolute inset-0 z-10 perspective-1000 overflow-hidden ${gameState === GameState.READING ||
           gameState === GameState.REVEAL ||
           gameState === GameState.INPUT ||
@@ -759,9 +760,11 @@ const App: React.FC = () => {
             : "h-full justify-center py-24"
             }`}
         >
-          <AnimatePresence mode="popLayout">{renderPhase()}</AnimatePresence>
+          <LayoutGroup id="ritual-cards">
+            <AnimatePresence mode="sync">{renderPhase()}</AnimatePresence>
+          </LayoutGroup>
         </div>
-      </main>
+      </motion.main>
 
       {/* Creator Credit */}
       <div className="fixed bottom-4 right-6 z-50 text-[9px] text-neutral-600 font-sans tracking-widest opacity-50 select-none pointer-events-none mix-blend-difference">

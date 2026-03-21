@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { motion, AnimatePresence, LayoutGroup } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { Download, RefreshCw, Volume2, Copy, Check } from "lucide-react";
 import { SpreadType, PickedCard } from "../types";
 import { SILKY_EASE } from "../constants/ui";
@@ -181,44 +181,43 @@ ${t("reading.copyPrompt.request")}`;
       className="flex flex-col items-center w-full max-w-7xl gap-8 md:gap-16 mt-30 mb-12 px-4 md:px-8"
       layout
     >
-      <LayoutGroup id="reading-cards">
-        <div
-          className={`${spreadConfig.layoutType === "absolute" && !isMobile
-            ? "relative w-full h-[70vh] md:h-[80vh] max-w-4xl lg:max-w-6xl mx-auto"
-            : "flex flex-wrap justify-center items-center gap-6 md:gap-12"
-            }`}
-        >
-          <AnimatePresence mode="popLayout">
-            {displayedCards.map((card, index) => {
-              const isHovered =
-                hoveredCardId === card.id && selectedCardId === null;
-              const position = spreadConfig.positions?.[index];
+      <div
+        className={`${spreadConfig.layoutType === "absolute" && !isMobile
+          ? "relative w-full h-[70vh] md:h-[80vh] max-w-4xl lg:max-w-6xl mx-auto"
+          : "flex flex-wrap justify-center items-center gap-6 md:gap-12"
+          }`}
+      >
+        <AnimatePresence mode="popLayout">
+          {displayedCards.map((card, index) => {
+            const isHovered =
+              hoveredCardId === card.id && selectedCardId === null;
+            const position = spreadConfig.positions?.[index];
 
-              const cardWidthClass = isMobile
-                ? spreadConfig.cardSize.mobile
-                : spreadConfig.cardSize.desktop;
+            const cardWidthClass = isMobile
+              ? spreadConfig.cardSize.mobile
+              : spreadConfig.cardSize.desktop;
 
-              const absoluteStyle = getAbsoluteCardStyle(position, isHovered);
+            const absoluteStyle = getAbsoluteCardStyle(position, isHovered);
 
-              const label =
-                spreadConfig.layoutType === "absolute"
-                  ? position?.label
-                  : spreadConfig.labels?.[index];
+            const label =
+              spreadConfig.layoutType === "absolute"
+                ? position?.label
+                : spreadConfig.labels?.[index];
 
-              const labelPosition =
-                spreadConfig.layoutType === "absolute" && !isMobile
-                  ? position?.labelPosition || "bottom"
-                  : "bottom";
+            const labelPosition =
+              spreadConfig.layoutType === "absolute" && !isMobile
+                ? position?.labelPosition || "bottom"
+                : "bottom";
 
-              return (
-                <TarotCard
-                  key={card.id}
-                  layoutId={`card-${card.id}`}
-                  card={card}
-                  isRevealed={revealedCardIds.has(card.id)}
-                  isHovered={isHovered}
-                  isHorizontal={!!position?.rotation && !isMobile}
-                  onHover={onCardHover}
+            return (
+              <TarotCard
+                key={card.id}
+                layoutId={`card-${card.id}`}
+                card={card}
+                isRevealed={revealedCardIds.has(card.id)}
+                isHovered={isHovered}
+                isHorizontal={!!position?.rotation && !isMobile}
+                onHover={onCardHover}
                 onClick={() => handleCardClick(card.id)}
                 style={absoluteStyle}
                 label={label}
@@ -228,11 +227,11 @@ ${t("reading.copyPrompt.request")}`;
                   scale: isHovered ? 1.1 : 1,
                   zIndex: isHovered ? 100 : absoluteStyle?.zIndex || "auto",
                 }}
-                />
-              );
-            })}
-          </AnimatePresence>
-        </div>
+              />
+            );
+          })}
+        </AnimatePresence>
+      </div>
 
       {/* Tooltip Portal */}
       {createPortal(
@@ -437,7 +436,6 @@ ${t("reading.copyPrompt.request")}`;
           </AnimatePresence>,
           document.body
         )}
-      </LayoutGroup>
     </motion.div>
   );
 };
