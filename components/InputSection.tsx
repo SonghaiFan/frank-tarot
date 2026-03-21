@@ -184,10 +184,6 @@ const InputSection: React.FC<InputSectionProps> = ({
                       : ""
                   }
                 />
-                {/* Description Panel (Phase 2 - Reduced Opacity) */}
-                <div className="opacity-50 transform scale-95">
-                  <DescriptionPanel spread={spread} />
-                </div>
               </div>
             </div>
 
@@ -302,11 +298,7 @@ function FlexLayoutPreview({ data, locale }: { data: SpreadData; locale: Locale 
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="flex flex-col items-center gap-1">
           <div className="border border-white/40 bg-white/8 rounded-[1px]" style={{ width: 9, height: 14 }} />
-          {labels?.[i] && (
-            <span className="text-[7px] text-white/30 tracking-wide text-center leading-tight max-w-[28px] truncate">
-              {labels[i]}
-            </span>
-          )}
+          
         </div>
       ))}
     </div>
@@ -345,6 +337,7 @@ const DescriptionPanel = ({ spread }: { spread: SpreadType | null }) => {
   const locale = i18n.language as Locale;
   return (
     <div className="text-center space-y-2">
+      
       <SpreadLayoutPreview spread={spread} />
       <AnimatePresence mode="wait">
         <motion.p

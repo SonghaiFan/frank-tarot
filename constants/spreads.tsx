@@ -202,10 +202,68 @@ Synthesis Goal: Distill the interpretation to the most important events or influ
       "这件事的过去、现在和未来是怎样的?",
     ],
   },
+    COURT: {
+    id: "COURT",
+    name_en: "Court Card Behavior",
+    name_cn: "宫廷行为模式",
+    description_en:
+      "A three-card behavior pattern spread that reveals the situation, the role or persona you adopt, and the deeper cause behind it. It helps you understand your habitual reactions more clearly.",
+    description_cn:
+      "这是用到三张塔罗牌的牌阵，分别代表情境（小阿卡纳）、人格（宫廷牌）和原因（大阿卡纳）。\n适合提问用来了解自己在某类情境下的典型反应与行为模式，帮助你更好地认识自我。",
+    cardCount: 3,
+    layoutType: "flex",
+    labels_en: ["Situation (Pip)", "Persona (Court)", "Cause (Major)"],
+    labels_cn: ["情境(小阿卡纳)", "角色(宫廷牌)", "根因(大阿卡纳)"],
+    cardPools: ["MINOR_PIP", "COURT", "MAJOR"],
+    cardSize: {
+      mobile: "w-24 aspect-[300/519]",
+      desktop: "w-36 aspect-[300/519]",
+    },
+    icon: (isActive) => (
+      <div className="flex gap-1 items-end">
+        <div
+          className={`w-1 h-2  transition-all duration-300 ${isActive ? "bg-white/90" : "bg-white/30"
+            }`}
+        />
+        <div
+          className={`w-1 h-2.5 transition-all duration-300 ${isActive ? "bg-white/90" : "bg-white/30"
+            }`}
+        />
+        <div
+          className={`w-1 h-3 transition-all duration-300 ${isActive ? "bg-white/90" : "bg-white/30"
+            }`}
+        />
+      </div>
+    ),
+    interpretationInstruction_en: `
+Court Card Spread" .
+- Card 1 (Pip): The Situation (Daily life trigger) .
+- Card 2 (Court): The Persona (The mask/role you adopt) .
+- Card 3 (Major): The Cause (Deep psychological root) .
+Synthesis Goal: Strictly follow this narrative formula: "When [Card 1 Situation] arises, you become [Card 2 Persona] because of [Card 3 Cause]." Focus on the psychological shift and the underlying root cause .
+    `,
+    interpretationInstruction_cn: `
+三张行为模式牌阵。
+- 牌 1：情境。
+- 牌 2：你呈现的角色/行为。
+- 牌 3：背后真实驱动。
+综合目标：揭示你在特定压力下的惯性反应，并给出可替代的更成熟应对方式。
+    `,
+    defaultQuestions_en: [
+      "What do I become when I am under pressure?",
+      "Why do I react this way in this kind of situation?",
+      "What is my usual pattern when handling everyday conflict?",
+    ],
+    defaultQuestions_cn: [
+      "我在面对压力时会变成什么样?",
+      "为什么我在这种情况下会这样反应?",
+      "我处理日常冲突的典型模式是什么?",
+    ],
+  },
   FOUR: {
     id: "FOUR",
     name_en: "Simple Four Card",
-    name_cn: "简易四张",
+    name_cn: "决策四张",
     description_en:
       "A clear decision-making spread that maps the current situation, what works against you, what helps you, and the final answer. Ideal when you need clarity before choosing.",
     description_cn:
@@ -648,64 +706,7 @@ Synthesis Goal: Compare parallel cards. Contrast 'Your View' (4) vs 'Their View'
       "在这段关系中，我们需要克服什么阻碍?",
     ],
   },
-  COURT: {
-    id: "COURT",
-    name_en: "Court Card Behavior",
-    name_cn: "宫廷行为模式",
-    description_en:
-      "A three-card behavior pattern spread that reveals the situation, the role or persona you adopt, and the deeper cause behind it. It helps you understand your habitual reactions more clearly.",
-    description_cn:
-      "这是用到三张塔罗牌的牌阵，分别代表情境（小阿卡纳）、人格（宫廷牌）和原因（大阿卡纳）。\n适合提问用来了解自己在某类情境下的典型反应与行为模式，帮助你更好地认识自我。",
-    cardCount: 3,
-    layoutType: "flex",
-    labels_en: ["Situation (Pip)", "Persona (Court)", "Cause (Major)"],
-    labels_cn: ["情境(小阿卡纳)", "角色(宫廷牌)", "根因(大阿卡纳)"],
-    cardPools: ["MINOR_PIP", "COURT", "MAJOR"],
-    cardSize: {
-      mobile: "w-24 aspect-[300/519]",
-      desktop: "w-36 aspect-[300/519]",
-    },
-    icon: (isActive) => (
-      <div className="flex gap-1 items-end">
-        <div
-          className={`w-1 h-2  transition-all duration-300 ${isActive ? "bg-white/90" : "bg-white/30"
-            }`}
-        />
-        <div
-          className={`w-1 h-2.5 transition-all duration-300 ${isActive ? "bg-white/90" : "bg-white/30"
-            }`}
-        />
-        <div
-          className={`w-1 h-3 transition-all duration-300 ${isActive ? "bg-white/90" : "bg-white/30"
-            }`}
-        />
-      </div>
-    ),
-    interpretationInstruction_en: `
-Court Card Spread" .
-- Card 1 (Pip): The Situation (Daily life trigger) .
-- Card 2 (Court): The Persona (The mask/role you adopt) .
-- Card 3 (Major): The Cause (Deep psychological root) .
-Synthesis Goal: Strictly follow this narrative formula: "When [Card 1 Situation] arises, you become [Card 2 Persona] because of [Card 3 Cause]." Focus on the psychological shift and the underlying root cause .
-    `,
-    interpretationInstruction_cn: `
-三张行为模式牌阵。
-- 牌 1：情境。
-- 牌 2：你呈现的角色/行为。
-- 牌 3：背后真实驱动。
-综合目标：揭示你在特定压力下的惯性反应，并给出可替代的更成熟应对方式。
-    `,
-    defaultQuestions_en: [
-      "What do I become when I am under pressure?",
-      "Why do I react this way in this kind of situation?",
-      "What is my usual pattern when handling everyday conflict?",
-    ],
-    defaultQuestions_cn: [
-      "我在面对压力时会变成什么样?",
-      "为什么我在这种情况下会这样反应?",
-      "我处理日常冲突的典型模式是什么?",
-    ],
-  },
+
   GOALS: {
     id: "GOALS",
     name_en: "Kicking Goals",
@@ -866,23 +867,55 @@ Synthesis Goal: Reveal the psychological gap. Contrast the Conscious efforts (To
     },
     icon: (isActive) => (
       <div className="relative w-6 h-6 flex items-center justify-center">
-        <div
-          className={`w-1 h-1 rounded-[0.5px] ${isActive ? "bg-white/90" : "bg-white/30"
+        {[
+          "top-0 left-1/2 -translate-x-1/2",
+          "top-[2px] right-[5px]",
+          "top-1/2 right-0 -translate-y-1/2",
+          "bottom-[2px] right-[5px]",
+          "bottom-0 left-1/2 -translate-x-1/2",
+          "bottom-[2px] left-[5px]",
+          "top-1/2 left-0 -translate-y-1/2",
+          "top-[2px] left-[5px]",
+        ].map((position, i) => (
+          <div
+            key={i}
+            className={`absolute ${position} w-1 h-1 rounded-[0.5px] ${
+              isActive ? "bg-white/80" : "bg-white/30"
             }`}
-        />
-        {[...Array(6)].map((_, i) => {
-          const angle = i * 60;
-          return (
-            <div
-              key={i}
-              className={`absolute w-1 h-2 rounded-[0.5px] ${isActive ? "bg-white/90" : "bg-white/30"
-                }`}
-              style={{
-                transform: `rotate(${angle}deg) translateY(-7px)`,
-              }}
-            />
-          );
-        })}
+          />
+        ))}
+
+        {[
+          "top-[4px] left-1/2 -translate-x-1/2",
+          "top-1/2 right-[4px] -translate-y-1/2",
+          "bottom-[4px] left-1/2 -translate-x-1/2",
+          "top-1/2 left-[4px] -translate-y-1/2",
+        ].map((position, i) => (
+          <div
+            key={`major-${i}`}
+            className={`absolute ${position} w-1 h-2 rounded-[0.5px] ${
+              isActive ? "bg-white/55" : "bg-white/20"
+            } ${i % 2 === 1 ? "rotate-90" : ""}`}
+          />
+        ))}
+
+        <div className="relative flex items-center justify-center gap-[2px] z-10">
+          <div
+            className={`w-[3px] h-[8px] rounded-[1px] transition-all duration-300 ${
+              isActive ? "bg-white/55" : "bg-white/20"
+            }`}
+          />
+          <div
+            className={`w-[3px] h-[10px] rounded-[1px] transition-all duration-300 ${
+              isActive ? "bg-white/95" : "bg-white/40"
+            }`}
+          />
+          <div
+            className={`w-[3px] h-[8px] rounded-[1px] transition-all duration-300 ${
+              isActive ? "bg-white/55" : "bg-white/20"
+            }`}
+          />
+        </div>
       </div>
     ),
     interpretationInstruction_en: `
