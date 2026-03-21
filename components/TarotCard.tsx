@@ -1,9 +1,18 @@
 import React from "react";
-import { motion, HTMLMotionProps } from "motion/react";
+import {
+  motion,
+  HTMLMotionProps,
+  useMotionTemplate,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from "motion/react";
 import { TarotCard as TarotCardType, PickedCard } from "../types";
 import { getCardImageUrl } from "../constants/cards";
 import { getRomanNumeral } from "../utils/getRomanNumeral";
 import { useTranslation } from "react-i18next";
+import { SILKY_EASE } from "../constants/ui";
 
 interface TarotCardProps
   extends Omit<
@@ -30,6 +39,9 @@ interface TarotCardProps
   priority?: boolean;
 }
 
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, value));
+
 const TarotCard: React.FC<TarotCardProps> = ({
   card,
   isRevealed = false,
@@ -50,6 +62,7 @@ const TarotCard: React.FC<TarotCardProps> = ({
   ...motionProps
 }) => {
   const { t, i18n } = useTranslation();
+  const prefersReducedMotion = useReducedMotion();
   const locale = i18n.language;
   const isEnglish = locale === "en";
   const [isImageLoaded, setIsImageLoaded] = React.useState(false);
@@ -74,35 +87,158 @@ const TarotCard: React.FC<TarotCardProps> = ({
     ? "grayscale(0%) contrast(1.1) brightness(1.05)"
     : "grayscale(100%) contrast(1.2) brightness(0.9)";
 
+  const cardTiltX = useMotionValue(0);
+  const cardTiltY = useMotionValue(0);
+  const detailTiltX = useMotionValue(0);
+  const detailTiltY = useMotionValue(0);
+
+  const smoothCardTiltX = useSpring(cardTiltX, {
+    stiffness: 220,
+    damping: 24,
+    mass: 0.7,
+  });
+  const smoothCardTiltY = useSpring(cardTiltY, {
+    stiffness: 220,
+    damping: 24,
+    mass: 0.7,
+  });
+  const smoothDetailTiltX = useSpring(detailTiltX, {
+    stiffness: 180,
+    damping: 22,
+    mass: 0.8,
+  });
+  const smoothDetailTiltY = useSpring(detailTiltY, {
+    stiffness: 180,
+    damping: 22,
+    mass: 0.8,
+  });
+
+  const cardSheenAngle = useTransform(
+    () => `${118 + smoothCardTiltY.get() * 2.8 - smoothCardTiltX.get() * 1.6}deg`
+  );
+  const cardSheenStart = useTransform(
+    () => `${6 + smoothCardTiltY.get() * 0.8 - smoothCardTiltX.get() * 0.45}%`
+  );
+  const cardSheenLead = useTransform(
+    () => `${26 + smoothCardTiltY.get() * 0.95 - smoothCardTiltX.get() * 0.5}%`
+  );
+  const cardSheenPeak = useTransform(
+    () => `${44 + smoothCardTiltY.get() * 1.2 - smoothCardTiltX.get() * 0.65}%`
+  );
+  const cardSheenFade = useTransform(
+    () => `${82 + smoothCardTiltY.get() * 1.15 - smoothCardTiltX.get() * 0.35}%`
+  );
+  const cardSheenStrength = useTransform(() =>
+    clamp((Math.abs(smoothCardTiltX.get()) + Math.abs(smoothCardTiltY.get())) / 28, 0.14, 0.4)
+  );
+  const cardGlare = useMotionTemplate`linear-gradient(${cardSheenAngle}, rgba(255,255,255,0) ${cardSheenStart}, rgba(255,248,229,0.16) ${cardSheenLead}, rgba(255,244,214,${cardSheenStrength}) ${cardSheenPeak}, rgba(255,255,255,0.14) ${cardSheenFade}, rgba(255,255,255,0) 100%)`;
+
+  const detailSheenAngle = useTransform(
+    () => `${112 + smoothDetailTiltY.get() * 2.6 - smoothDetailTiltX.get() * 1.4}deg`
+  );
+  const detailSheenStart = useTransform(
+    () => `${4 + smoothDetailTiltY.get() * 0.7 - smoothDetailTiltX.get() * 0.35}%`
+  );
+  const detailSheenLead = useTransform(
+    () => `${24 + smoothDetailTiltY.get() * 0.95 - smoothDetailTiltX.get() * 0.45}%`
+  );
+  const detailSheenPeak = useTransform(
+    () => `${40 + smoothDetailTiltY.get() * 1.15 - smoothDetailTiltX.get() * 0.55}%`
+  );
+  const detailSheenFade = useTransform(
+    () => `${84 + smoothDetailTiltY.get() * 1.05 - smoothDetailTiltX.get() * 0.25}%`
+  );
+  const detailSheenStrength = useTransform(() =>
+    clamp((Math.abs(smoothDetailTiltX.get()) + Math.abs(smoothDetailTiltY.get())) / 24, 0.16, 0.44)
+  );
+  const detailSurface = useMotionTemplate`linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 34%, rgba(0, 0, 0, 0.18) 100%), linear-gradient(${detailSheenAngle}, rgba(255,255,255,0) ${detailSheenStart}, rgba(255,248,230,0.18) ${detailSheenLead}, rgba(246,223,177,${detailSheenStrength}) ${detailSheenPeak}, rgba(255,255,255,0.16) ${detailSheenFade}, rgba(255,255,255,0) 100%)`;
+
+  const resetCardTilt = React.useCallback(() => {
+    cardTiltX.set(0);
+    cardTiltY.set(0);
+  }, [cardTiltX, cardTiltY]);
+
+  const resetDetailTilt = React.useCallback(() => {
+    detailTiltX.set(0);
+    detailTiltY.set(0);
+  }, [detailTiltX, detailTiltY]);
+
+  const handleCardPointerMove = React.useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (prefersReducedMotion || isDetailed || event.pointerType !== "mouse") {
+        return;
+      }
+
+      const rect = event.currentTarget.getBoundingClientRect();
+      const px = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+      const py = clamp((event.clientY - rect.top) / rect.height, 0, 1);
+
+      cardTiltX.set((0.5 - py) * 15);
+      cardTiltY.set((px - 0.5) * 18);
+    },
+    [cardTiltX, cardTiltY, isDetailed, prefersReducedMotion]
+  );
+
+  const handleDetailPointerMove = React.useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (prefersReducedMotion || event.pointerType !== "mouse") {
+        return;
+      }
+
+      const rect = event.currentTarget.getBoundingClientRect();
+      const px = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+      const py = clamp((event.clientY - rect.top) / rect.height, 0, 1);
+
+      detailTiltX.set((0.5 - py) * 12);
+      detailTiltY.set((px - 0.5) * 15);
+    },
+    [detailTiltX, detailTiltY, prefersReducedMotion]
+  );
+
   return (
     <motion.div
       layoutId={!isDetailed ? (layoutId || `card-${card.id}`) : undefined}
       layout={!isDetailed}
       style={{
         transformStyle: "preserve-3d",
+        perspective: isDetailed ? "2200px" : "1400px",
         rotate: isHorizontal ? 90 : 0,
         touchAction: isDetailed ? "auto" : undefined,
         ...style,
       }}
       onClick={onClick}
+      onPointerMove={handleCardPointerMove}
+      onPointerLeave={resetCardTilt}
       onMouseEnter={() => !isDetailed && onHover?.(card.id)}
-      onMouseLeave={() => !isDetailed && onHover?.(null)}
+      onMouseLeave={() => {
+        resetCardTilt();
+        !isDetailed && onHover?.(null);
+      }}
       className={`relative ${!isDetailed ? "cursor-pointer group" : ""} ${width} ${height} ${className}`}
       {...motionProps}
     >
       <motion.div
         className="w-full h-full relative"
-        style={{ transformStyle: "preserve-3d" }}
-        initial={{
-          rotateY: isRevealed ? 0 : 180,
-          rotateZ: isReversed && !isDetailed ? 180 : 0,
+        style={{
+          transformStyle: "preserve-3d",
+          rotateX: prefersReducedMotion ? 0 : smoothCardTiltX,
+          rotateY: prefersReducedMotion ? 0 : smoothCardTiltY,
+          willChange: "transform",
         }}
-        animate={{
-          rotateY: isRevealed ? 0 : 180,
-          rotateZ: isReversed && !isDetailed ? 180 : 0,
-        }}
-        transition={{ duration: 0.8, ease: "easeInOut" }}
       >
+        <motion.div
+          className="w-full h-full relative"
+          style={{ transformStyle: "preserve-3d" }}
+          initial={{
+            rotateY: isRevealed ? 0 : 180,
+            rotateZ: isReversed && !isDetailed ? 180 : 0,
+          }}
+          animate={{
+            rotateY: isRevealed ? 0 : 180,
+            rotateZ: isReversed && !isDetailed ? 180 : 0,
+          }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+        >
         {/* Front Face */}
         <div
           className={`absolute inset-0 bg-black border border-white/20 shadow-[0_0_50px_rgba(255,255,255,0.05)] overflow-hidden ${isDetailed ? "flex flex-col md:flex-row" : "flex"}`}
@@ -120,14 +256,48 @@ const TarotCard: React.FC<TarotCardProps> = ({
                 />
 
                 {/* Card Art Panel */}
-                <div className="w-[45%] md:w-full h-full flex items-center justify-center p-4 md:p-8 relative z-10">
-                  <img
-                    src={getCardImageUrl(card.image)}
-                    alt={card.nameEn}
-                    loading="eager"
-                    className="w-full h-full object-contain drop-shadow-2xl"
-                    style={{ filter: imageFilter }}
-                  />
+                <div
+                  className="w-[45%] md:w-full h-full flex items-center justify-center p-4 md:p-8 relative z-10"
+                  onPointerMove={handleDetailPointerMove}
+                  onPointerLeave={resetDetailTilt}
+                >
+                  <div className="absolute inset-x-8 bottom-3 md:bottom-10 h-16 md:h-28 rounded-full bg-amber-100/10 blur-3xl opacity-40 pointer-events-none" />
+
+                  <motion.div
+                    className="relative w-full max-w-[17rem] md:max-w-[24rem] aspect-[300/519] flex-none"
+                    style={{
+                      transformStyle: "preserve-3d",
+                      rotateX: prefersReducedMotion ? 0 : smoothDetailTiltX,
+                      rotateY: prefersReducedMotion ? 0 : smoothDetailTiltY,
+                      willChange: "transform",
+                    }}
+                    transition={{ duration: 0.45, ease: SILKY_EASE }}
+                  >
+                    <div
+                      className="absolute inset-x-[14%] bottom-[3%] h-[10%] rounded-full bg-black/60 blur-2xl opacity-80 pointer-events-none"
+                      style={{ transform: "translateZ(2px) translateY(18px)" }}
+                    />
+
+                    <div
+                      className="relative w-full h-full overflow-hidden border border-white/20 bg-neutral-900 shadow-[0_28px_60px_rgba(0,0,0,0.55)]"
+                      style={{ transform: "translateZ(24px)" }}
+                    >
+                      <img
+                        src={getCardImageUrl(card.image)}
+                        alt={card.nameEn}
+                        loading="eager"
+                        className="absolute inset-0 w-full h-full object-cover"
+                        style={{ filter: imageFilter }}
+                      />
+                      <motion.div
+                        aria-hidden
+                        className="absolute inset-0 pointer-events-none mix-blend-screen"
+                        style={{ background: detailSurface }}
+                      />
+                      <div className="absolute inset-0 bg-linear-to-t from-black/92 via-black/10 to-black/25 pointer-events-none" />
+                      <div className="absolute inset-2 md:inset-3 border border-white/20 pointer-events-none" />
+                    </div>
+                  </motion.div>
                 </div>
 
                 {/* Mobile Meta (Visible next to art on mobile, hidden on desktop) */}
@@ -243,6 +413,16 @@ const TarotCard: React.FC<TarotCardProps> = ({
                 </div>
               )}
               <div className="absolute inset-0 bg-linear-to-t from-black/95 via-black/20 to-black/40" />
+              <motion.div
+                aria-hidden
+                className="absolute inset-0 pointer-events-none mix-blend-screen"
+                animate={{
+                  opacity: isHovered ? 0.95 : 0,
+                  scale: isHovered ? 1 : 0.96,
+                }}
+                transition={{ duration: 0.35, ease: SILKY_EASE }}
+                style={{ background: cardGlare }}
+              />
               <div className="absolute inset-2 md:inset-3 border border-white/20 pointer-events-none" />
 
               <div className={`absolute bottom-0 w-full p-3 md:p-4 text-center transition-opacity duration-500 ${isRevealed ? "opacity-100" : "opacity-0"}`}>
@@ -275,6 +455,7 @@ const TarotCard: React.FC<TarotCardProps> = ({
           <div className="absolute inset-1 border-[0.5px] border-white/5" />
           <div className="w-4 h-4 border border-white/10 rotate-45 group-hover:rotate-90 transition-transform duration-700" />
         </div>
+      </motion.div>
       </motion.div>
 
       {label && (

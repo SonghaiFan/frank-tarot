@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Check, ChevronUp } from "lucide-react";
 import { SpreadType } from "../types";
 import { SILKY_EASE } from "../constants/ui";
-import { getLocalizedSpread, SPREADS } from "../constants/spreads";
+import { getLocalizedSpread, SPREADS, SpreadData } from "../constants/spreads";
 import { useTranslation } from "react-i18next";
 import { Locale } from "../types";
 
@@ -185,7 +185,7 @@ const InputSection: React.FC<InputSectionProps> = ({
                   }
                 />
                 {/* Description Panel (Phase 2 - Reduced Opacity) */}
-                <div className="h-20 opacity-60 transform scale-95">
+                <div className="opacity-50 transform scale-95">
                   <DescriptionPanel spread={spread} />
                 </div>
               </div>
@@ -258,11 +258,94 @@ const SubLabel = ({ text }: { text: string }) => (
   <p className="text-center text-xs text-neutral-400">{text}</p>
 );
 
+// ── Layout preview helpers ────────────────────────────────────────────────────
+
+function AbsoluteLayoutPreview({ data }: { data: SpreadData }) {
+  if (!data.positions || data.positions.length === 0) return null;
+  const xs = data.positions.map((p) => (typeof p.x === "number" ? p.x : 0));
+  const ys = data.positions.map((p) => (typeof p.y === "number" ? p.y : 0));
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const W = 100, H = 80, PAD = 8;
+  return (
+    <div className="relative mx-auto" style={{ width: W, height: H }}>
+      {data.positions.map((pos, i) => {
+        const nx = typeof pos.x === "number" ? pos.x : 0;
+        const ny = typeof pos.y === "number" ? pos.y : 0;
+        const cx = PAD + ((nx - minX) / (maxX - minX || 1)) * (W - PAD * 2);
+        const cy = PAD + ((ny - minY) / (maxY - minY || 1)) * (H - PAD * 2);
+        const isRotated = !!pos.rotation;
+        return (
+          <div
+            key={i}
+            className="absolute border border-white/40 bg-white/8 rounded-[1px]"
+            style={{
+              width: isRotated ? 14 : 9,
+              height: isRotated ? 9 : 14,
+              left: cx - (isRotated ? 7 : 4.5),
+              top: cy - (isRotated ? 4.5 : 7),
+              zIndex: pos.zIndex || 1,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function FlexLayoutPreview({ data, locale }: { data: SpreadData; locale: Locale }) {
+  const isCn = locale === "zh-CN";
+  const labels = isCn ? data.labels_cn : data.labels_en;
+  const count = data.cardCount;
+  return (
+    <div className="flex gap-2 items-end justify-center">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="flex flex-col items-center gap-1">
+          <div className="border border-white/40 bg-white/8 rounded-[1px]" style={{ width: 9, height: 14 }} />
+          {labels?.[i] && (
+            <span className="text-[7px] text-white/30 tracking-wide text-center leading-tight max-w-[28px] truncate">
+              {labels[i]}
+            </span>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const SpreadLayoutPreview = ({ spread }: { spread: SpreadType | null }) => {
+  const { i18n } = useTranslation();
+  const locale = i18n.language as Locale;
+  return (
+    <AnimatePresence mode="wait">
+      {spread && (
+        <motion.div
+          key={spread}
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -4 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="flex items-center justify-center py-3"
+        >
+          {SPREADS[spread].layoutType === "absolute" && SPREADS[spread].positions ? (
+            <AbsoluteLayoutPreview data={SPREADS[spread]} />
+          ) : (
+            <FlexLayoutPreview data={SPREADS[spread]} locale={locale} />
+          )}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 const DescriptionPanel = ({ spread }: { spread: SpreadType | null }) => {
   const { i18n } = useTranslation();
   const locale = i18n.language as Locale;
   return (
-    <div className="h-8 text-center">
+    <div className="text-center space-y-2">
+      <SpreadLayoutPreview spread={spread} />
       <AnimatePresence mode="wait">
         <motion.p
           key={spread || "none"}

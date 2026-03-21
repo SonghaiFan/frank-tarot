@@ -716,7 +716,7 @@ Synthesis Goal: Strictly follow this narrative formula: "When [Card 1 Situation]
       "这是用到七张塔罗牌的牌阵，深入分析实现目标过程中的心理与行动要素。\n适合提问需要设定并实现具体目标的情境，帮助你识别关键的心理动力和提供实际的方法论。",
     cardCount: 7,
     layoutType: "absolute",
-    layoutOffset: { x: 0, y: -54 },
+    layoutOffset: { x: 0, y: -50 },
     positions: [
       { x: -80, y: -27, labelPosition: "top", zIndex: 10 },
       { x: -80, y: 0, labelPosition: "bottom", rotation: 90, zIndex: 20 },

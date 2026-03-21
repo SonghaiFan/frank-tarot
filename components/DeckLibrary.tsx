@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { TarotCard as TarotCardType, CardPoolType } from "../types";
+import { CardPoolType } from "../types";
 import { FULL_DECK, getDeckForPool } from "../constants/cards";
 import TarotCard from "./TarotCard";
 import { useTranslation } from "react-i18next";
@@ -9,7 +9,7 @@ interface DeckLibraryProps {
   onClose: () => void;
 }
 
-const DeckLibrary: React.FC<DeckLibraryProps> = ({ onClose }) => {
+const DeckLibrary: React.FC<DeckLibraryProps> = (_props) => {
   const { t } = useTranslation();
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [hoveredCardId, setHoveredCardId] = useState<number | null>(null);
