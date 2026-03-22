@@ -1,12 +1,12 @@
 {
-  "appTitle": "Frank塔罗",
+  "appTitle": "F.Tarot",
   "intro": {
     "focus": "命 运",
     "subtitle": "TAROT",
     "enter": "开始占卜"
   },
   "header": {
-    "brand": "F.塔罗",
+    "brand": "F.Tarot",
     "library": "牌库",
     "back": "返回",
     "openLibraryTitle": "打开牌库",

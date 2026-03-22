@@ -3443,8 +3443,8 @@
         "layout": {
           "type": "absolute",
           "offset": {
-            "x": 0,
-            "y": -8
+            "x": -16,
+            "y": -48
           },
           "positions": [
             {
@@ -3640,8 +3640,8 @@
         "layout": {
           "type": "absolute",
           "offset": {
-            "x": 0,
-            "y": -30
+            "x": -16,
+            "y": -48
           },
           "positions": [
             {
@@ -3727,8 +3727,8 @@
         "layout": {
           "type": "absolute",
           "offset": {
-            "x": 0,
-            "y": 8
+            "x": -16,
+            "y": -48
           },
           "positions": [
             {
@@ -3820,8 +3820,8 @@
         "layout": {
           "type": "absolute",
           "offset": {
-            "x": 0,
-            "y": -27
+            "x": -16,
+            "y": -40
           },
           "positions": [
             {
@@ -3935,8 +3935,8 @@
         "layout": {
           "type": "absolute",
           "offset": {
-            "x": 0,
-            "y": -30
+            "x": -16,
+            "y": -20
           },
           "positions": [
             {
@@ -4064,8 +4064,8 @@
         "layout": {
           "type": "absolute",
           "offset": {
-            "x": 0,
-            "y": -50
+            "x": -16,
+            "y": -30
           },
           "positions": [
             {
@@ -4174,7 +4174,7 @@
         "layout": {
           "type": "absolute",
           "offset": {
-            "x": -14,
+            "x": -16,
             "y": -30
           },
           "positions": [
