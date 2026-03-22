@@ -21,6 +21,8 @@ const CosmicParticles: React.FC<CosmicParticlesProps> = ({ gameState }) => {
   const p5InstanceRef = useRef<p5 | null>(null);
   const targetSpeedRef = useRef(1.0);
   const currentSpeedRef = useRef(1.0);
+  const targetHueRef = useRef(224);
+  const currentHueRef = useRef(224);
 
   // Update target speed based on game state
   useEffect(() => {
@@ -28,18 +30,23 @@ const CosmicParticles: React.FC<CosmicParticlesProps> = ({ gameState }) => {
       case GameState.INTRO:
       case GameState.INPUT:
         targetSpeedRef.current = 5.0; // Normal drift
+        targetHueRef.current = 222;
         break;
       case GameState.PICKING:
         targetSpeedRef.current = 1.0; // Time slows down
+        targetHueRef.current = 282;
         break;
       case GameState.REVEAL:
         targetSpeedRef.current = 5.0; // Moderate drift
+        targetHueRef.current = 196;
         break;
       case GameState.READING:
         targetSpeedRef.current = 1.0; // Deep stillness
+        targetHueRef.current = 34;
         break;
       default:
         targetSpeedRef.current = 5.0; // Fallback
+        targetHueRef.current = 222;
     }
   }, [gameState]);
 
@@ -92,11 +99,64 @@ const CosmicParticles: React.FC<CosmicParticlesProps> = ({ gameState }) => {
           targetSpeedRef.current,
           0.02
         );
+        currentHueRef.current = p.lerp(
+          currentHueRef.current,
+          targetHueRef.current,
+          0.02
+        );
 
         // Center of the screen
         const cx = p.width / 2;
         const cy = p.height / 2;
         const ctx = p.drawingContext as CanvasRenderingContext2D;
+
+        // Layered glow adds depth without replacing the existing starfield language.
+        const t = p.millis() * 0.001;
+        const baseRadius = p.max(p.width, p.height) * 0.44;
+        const pulse = 1 + 0.09 * p.sin(t * 0.9);
+
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        const coreGlow = ctx.createRadialGradient(
+          cx,
+          cy,
+          0,
+          cx,
+          cy,
+          baseRadius * pulse
+        );
+        coreGlow.addColorStop(0, `hsla(${currentHueRef.current}, 85%, 68%, 0.19)`);
+        coreGlow.addColorStop(
+          0.45,
+          `hsla(${currentHueRef.current + 26}, 72%, 56%, 0.08)`
+        );
+        coreGlow.addColorStop(1, "hsla(0, 0%, 0%, 0)");
+        ctx.fillStyle = coreGlow;
+        ctx.fillRect(0, 0, p.width, p.height);
+
+        ctx.globalCompositeOperation = "lighter";
+        for (let i = 0; i < 3; i++) {
+          const glowAngle = t * (0.14 + i * 0.05) + i * 2.1;
+          const orbitRadius = baseRadius * (0.34 + i * 0.12 + 0.04 * p.sin(t + i));
+          const gx = cx + p.cos(glowAngle) * orbitRadius;
+          const gy = cy + p.sin(glowAngle) * orbitRadius;
+          const gr = baseRadius * (0.19 - i * 0.03) * (1 + 0.16 * p.sin(t * 1.6 + i));
+          const glowBlob = ctx.createRadialGradient(gx, gy, 0, gx, gy, gr);
+
+          glowBlob.addColorStop(
+            0,
+            `hsla(${currentHueRef.current + i * 20 + 12}, 90%, 70%, ${0.1 - i * 0.02})`
+          );
+          glowBlob.addColorStop(1, "hsla(0, 0%, 0%, 0)");
+          ctx.fillStyle = glowBlob;
+          ctx.beginPath();
+          ctx.arc(gx, gy, gr, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.globalCompositeOperation = "source-over";
+        ctx.restore();
 
         p.translate(cx, cy);
 
@@ -127,6 +187,12 @@ const CosmicParticles: React.FC<CosmicParticlesProps> = ({ gameState }) => {
             ctx.globalAlpha = alpha;
             p.fill(255);
             p.circle(x, y, s.size);
+
+            // A soft secondary pass gives larger stars an atmospheric halo.
+            if (s.size > 1.25) {
+              ctx.globalAlpha = alpha * 0.35;
+              p.circle(x, y, s.size * 3.2);
+            }
           }
         }
 
