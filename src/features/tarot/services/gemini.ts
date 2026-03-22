@@ -5,6 +5,7 @@ import i18n from "@/i18n/config";
 
 // Helper to create a fresh client instance (important for key updates)
 const getAiClient = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
+export const hasAiKey = () => Boolean(process.env.API_KEY?.trim());
 
 // --- Audio Helper Functions ---
 
@@ -79,6 +80,10 @@ export const generateTarotReading = async (
   question: string,
   locale: Locale
 ): Promise<string> => {
+  if (!hasAiKey()) {
+    return i18n.getFixedT(locale)("errors.missingApiKeyReading");
+  }
+
   try {
     const ai = getAiClient();
     const spreadConfig = getLocalizedSpread(spread, "en");
@@ -202,6 +207,8 @@ export const generateSpeech = async (
     console.warn(`本地音频不可用: ${staticKey} (${locale})`);
   }
 
+  if (!hasAiKey()) return null;
+
   // 2. Try Gemini TTS
   try {
     const ai = getAiClient();
@@ -258,6 +265,10 @@ export const predictBestSpread = async (
   question: string,
   locale: Locale
 ): Promise<SpreadType> => {
+  if (!hasAiKey()) {
+    return "SINGLE";
+  }
+
   try {
     const ai = getAiClient();
 

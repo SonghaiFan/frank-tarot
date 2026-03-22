@@ -45,10 +45,11 @@
     "replayTitle": "Replay the reading audio",
     "save": "SAVE IMAGE",
     "saveTitle": "Download the reading as an image",
-    "prompt": "COPY PROMPT",
-    "promptTitle": "Copy a follow-up prompt for another AI",
+    "prompt": "ASK DEEPER",
+    "promptTitle": "Copy this reading context and open ChatGPT for a deeper follow-up",
     "copied": "COPIED",
     "seekAgain": "SEEK AGAIN",
+    "deeperNotice": "Want a deeper follow-up? Tap Ask Deeper, then paste the copied reading into ChatGPT and continue your question.",
     "thinkingPhrases": [
       "Consulting the stars...",
       "Weaving the threads of fate...",
@@ -110,6 +111,7 @@
   "errors": {
     "readingSoftFail": "The mist is too dense for me to see the path ahead...",
     "readingHardFail": "The threads of fate are tangled for the moment. Please breathe and try again shortly.",
-    "silentStars": "The stars are silent for now. Please try again in a moment."
+    "silentStars": "The stars are silent for now. Please try again in a moment.",
+    "missingApiKeyReading": "No AI key is connected right now. Your cards are ready. Use the button below to copy this spread and continue the reading in ChatGPT."
   }
 }

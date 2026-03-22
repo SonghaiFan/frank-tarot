@@ -19,7 +19,7 @@ import {
   getCardImageUrl,
 } from "@/features/tarot/constants/cards";
 import { SPREADS } from "@/features/tarot/constants/spreads";
-import { generateTarotReading, generateSpeech, predictBestSpread } from "@/features/tarot/services/gemini";
+import { generateTarotReading, generateSpeech, hasAiKey, predictBestSpread } from "@/features/tarot/services/gemini";
 import CosmicParticles from "@/app/components/CosmicParticles";
 import HeaderBar from "@/app/components/HeaderBar";
 import IntroSection from "@/features/tarot/components/IntroSection";
@@ -96,6 +96,7 @@ class SoundEngine {
 const App: React.FC = () => {
   const { t, i18n } = useTranslation();
   const locale = i18n.language as Locale;
+  const aiEnabled = hasAiKey();
   // --- State ---
   const [gameState, setGameState] = useState<GameState>(GameState.INTRO);
   const [previousGameState, setPreviousGameState] = useState<GameState | null>(
@@ -402,7 +403,7 @@ const App: React.FC = () => {
   const startRitual = async () => {
     // 0. Auto-Select Spread
     let selectedSpread = spread;
-    if (!selectedSpread || selectedSpread === "AUTO") {
+    if ((!selectedSpread || selectedSpread === "AUTO") && aiEnabled) {
         setIsThinking(true);
         try {
             selectedSpread = await predictBestSpread(question, locale);
@@ -413,6 +414,10 @@ const App: React.FC = () => {
             setSpread("SINGLE");
         }
         setIsThinking(false);
+    }
+    if ((!selectedSpread || selectedSpread === "AUTO") && !aiEnabled) {
+      selectedSpread = "SINGLE";
+      setSpread("SINGLE");
     }
     
     // Safety check mostly for TypeScript, practically handled above
@@ -473,42 +478,48 @@ const App: React.FC = () => {
     });
 
     // 2. Start Gemini Generation in Background
-    readingPromiseRef.current = generateTarotReading(
-      targets,
-      selectedSpread,
-      question,
-      locale
-    )
-      .then((text) => {
-        // Check if this result is for the current ritual
-        if (ritualIdRef.current !== currentRitualId) return text;
+    if (aiEnabled) {
+      readingPromiseRef.current = generateTarotReading(
+        targets,
+        selectedSpread,
+        question,
+        locale
+      )
+        .then((text) => {
+          // Check if this result is for the current ritual
+          if (ritualIdRef.current !== currentRitualId) return text;
 
-        readingReadyRef.current = true;
+          readingReadyRef.current = true;
 
-        if (audioContextRef.current) {
-          const sentences = text
-            .split(/[。！？.!?]/)
-            .filter((s) => s.trim().length > 0);
+          if (audioContextRef.current) {
+            const sentences = text
+              .split(/[。！？.!?]/)
+              .filter((s) => s.trim().length > 0);
 
-          const firstSentence = sentences.length > 0 ? sentences[0] : text;
-          const lastSentence =
-            sentences.length > 0 ? sentences[sentences.length - 1] : text;
+            const lastSentence =
+              sentences.length > 0 ? sentences[sentences.length - 1] : text;
 
-          // Fire and forget TTS prefetch
-          generateSpeech(lastSentence, audioContextRef.current, undefined, locale).then(
-            (buffer) => {
-              if (ritualIdRef.current === currentRitualId && buffer) {
-                setReadingAudioBuffer(buffer);
+            // Fire and forget TTS prefetch
+            generateSpeech(lastSentence, audioContextRef.current, undefined, locale).then(
+              (buffer) => {
+                if (ritualIdRef.current === currentRitualId && buffer) {
+                  setReadingAudioBuffer(buffer);
+                }
               }
-            }
-          );
-        }
-        return text;
-      })
-      .catch((err) => {
-        console.error("Background generation failed", err);
-        return t("errors.silentStars");
-      });
+            );
+          }
+          return text;
+        })
+        .catch((err) => {
+          console.error("Background generation failed", err);
+          return t("errors.silentStars");
+        });
+    } else {
+      readingReadyRef.current = true;
+      readingPromiseRef.current = Promise.resolve(
+        t("errors.missingApiKeyReading")
+      );
+    }
 
     playVoice(staticScripts.PICK, "PICK", "pick");
   };

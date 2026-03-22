@@ -4,11 +4,12 @@ import { motion, AnimatePresence } from "motion/react";
 import { Download, RefreshCw, Volume2, Copy, Check } from "lucide-react";
 import { SpreadType, PickedCard } from "@/features/tarot/types";
 import { SILKY_EASE } from "@/shared/constants/ui";
-import { getLocalizedSpread, SPREADS } from "@/features/tarot/constants/spreads";
+import { getLocalizedSpread } from "@/features/tarot/constants/spreads";
 import TarotCard from "./TarotCard";
 import CardTooltip from "./CardTooltip";
 import { useTranslation } from "react-i18next";
 import { Locale } from "@/features/tarot/types";
+import buildFollowUpPrompt from "@/features/tarot/utils/buildFollowUpPrompt";
 
 const ABSOLUTE_LAYOUT_UNIT_REM = 0.25;
 const CARD_ASPECT_RATIO = 519 / 300;
@@ -84,39 +85,19 @@ const ReadingSection: React.FC<ReadingSectionProps> = ({
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopyPrompt = async () => {
-    const cardsList = displayedCards
-      .map((card, index) => {
-        const positionLabel =
-          spreadConfig.layoutType === "absolute"
-            ? spreadConfig.positions?.[index]?.label
-            : spreadConfig.labels?.[index];
-        const keywordText =
-          (locale === "zh-CN" ? card.keywords : card.keywordsEn).length > 0
-            ? ` - ${(locale === "zh-CN" ? card.keywords : card.keywordsEn).join(", ")}`
-            : "";
-
-        return `${index + 1}. ${
-          positionLabel || t("reading.copyPrompt.positionFallback")
-        }: ${card.nameEn} (${card.isReversed ? "Reversed" : "Upright"})${keywordText}`;
-      })
-      .join("\n");
-
-    const prompt = `${t("reading.copyPrompt.title", { spreadName: spreadConfig.name })}
-
-${t("reading.copyPrompt.question", { question: question || t("reading.copyPrompt.defaultQuestion") })}
-
-${t("reading.copyPrompt.cardsDrawn")}
-${cardsList}
-
-${t("reading.copyPrompt.initialInterpretation")}
-${readingText}
-
-${t("reading.copyPrompt.request")}`;
+    const prompt = buildFollowUpPrompt(
+      displayedCards,
+      spread,
+      question,
+      readingText,
+      locale
+    );
 
     try {
       await navigator.clipboard.writeText(prompt);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
+      window.open("https://chatgpt.com/", "_blank", "noopener,noreferrer");
     } catch (err) {
       console.error("Failed to copy:", err);
     }
@@ -382,6 +363,9 @@ ${t("reading.copyPrompt.request")}`;
                     )
                   )}
                 </div>
+                <p className="text-xs md:text-sm text-neutral-500 text-center max-w-2xl mx-auto mb-10 leading-relaxed">
+                  {t("reading.deeperNotice")}
+                </p>
               </div>
 
               <div className="shrink-0 flex flex-col items-center w-full">

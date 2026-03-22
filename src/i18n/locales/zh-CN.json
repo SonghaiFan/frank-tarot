@@ -45,10 +45,11 @@
     "replayTitle": "重播解读音频",
     "save": "保存图文",
     "saveTitle": "下载解读图片",
-    "prompt": "提示词",
-    "promptTitle": "复制给其他 AI 的提示词",
+    "prompt": "深入问问",
+    "promptTitle": "复制这次解读上下文，并在 ChatGPT 中继续深问",
     "copied": "复制成功",
     "seekAgain": "再次探索",
+    "deeperNotice": "如果你想继续深挖这次解读，点击“深入问问”后，把剪贴板中的内容粘贴到 ChatGPT 里继续追问。",
     "thinkingPhrases": [
       "正在向群星求问……",
       "正在编织命运的丝线……",
@@ -110,6 +111,7 @@
   "errors": {
     "readingSoftFail": "迷雾太浓，我看不到前路...",
     "readingHardFail": "命运的丝线暂时纠缠不清，请静心片刻后再试。",
-    "silentStars": "星象暂时沉默，请稍后再试。"
+    "silentStars": "星象暂时沉默，请稍后再试。",
+    "missingApiKeyReading": "当前没有连接 AI key，但你的牌已经准备好了。点击下方按钮即可复制本次牌阵内容，并前往 ChatGPT 继续解读。"
   }
 }
