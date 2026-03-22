@@ -1,7 +1,7 @@
-# Mystic Tarot | 命运塔罗
+# Frank Tarot | 命运塔罗
 
 <div align="center">
-  <img src="docs/teaser.png" alt="Mystic Tarot Teaser" width="100%" />
+  <img src="docs/teaser.png" alt="Frank Tarot Teaser" width="100%" />
   <p>
     <em>An immersive, AI-powered Tarot reading experience.</em>
   </p>
@@ -35,8 +35,8 @@
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/SonghaiFan/mystic-tarot.git
-   cd mystic-tarot
+   git clone https://github.com/SonghaiFan/frank-tarot.git
+   cd frank-tarot
    ```
 
 2. **Install dependencies**
