@@ -22,61 +22,23 @@ def order_points(pts: np.ndarray) -> np.ndarray:
 
 
 def find_quad_in_contours(contours: Iterable[np.ndarray], min_area: float) -> np.ndarray | None:
-    found_quads = []
-    candidates = []
-
     for contour in sorted(contours, key=cv2.contourArea, reverse=True):
         area = cv2.contourArea(contour)
         if area < min_area:
             continue
 
         perimeter = cv2.arcLength(contour, True)
-        is_quad = False
         for ratio in (0.01, 0.015, 0.02, 0.03, 0.04, 0.05):
             approx = cv2.approxPolyDP(contour, ratio * perimeter, True)
             if len(approx) == 4 and cv2.isContourConvex(approx):
                 pts = approx.reshape(4, 2).astype("float32")
-                found_quads.append(order_points(pts))
-                is_quad = True
-                break
-        
-        if not is_quad:
-            candidates.append(contour)
-    
-    # Heuristic: If we found multiple large quads (e.g. outer frame with text vs inner frame),
-    # pick the *smallest* one that is still > min_area. This avoids the "white strip".
-    if found_quads:
-        # Sort by area (approximation using cross product or similar logic isn't needed here,
-        # we can just assume list order because contours were sorted by area).
-        # Actually, sorted(contours) was descending. So found_quads[0] is largest.
-        # We want the *last* one in the list (smallest valid quad found so far above min_area).
-        # BUT, the smallest one might be an inner box in the art.
-        # Let's filter: We want the one that is closest to the *expected* card aspect ratio (0.6).
-        # Or just pick the largest one that doesn't have an insane aspect ratio.
-        #
-        # A safer bet for "white strip removal":
-        # If found_quads[1] is > 85% area of found_quads[0], it's likely the inner frame.
-        if len(found_quads) >= 2:
-            # Simple area check
-            # We don't have area calculated for these ordered points, let's re-calc quickly
-            # contourArea works on points too.
-            area0 = cv2.contourArea(found_quads[0])
-            area1 = cv2.contourArea(found_quads[1])
-            
-            # If the second largest is almost as big as the first (e.g. within 15% diff),
-            # it's very likely the inner border without text/margin.
-            if area1 > 0.85 * area0:
-                return found_quads[1]
-        
-        return found_quads[0]
+                return order_points(pts)
 
-    # Fallback to minAreaRect of the largest contour if no clean 4-point contour is found.
-    if candidates:
-        contour = candidates[0]
         rect = cv2.minAreaRect(contour)
         box = cv2.boxPoints(rect)
         if cv2.contourArea(box.astype(np.float32)) >= min_area:
             return order_points(box.astype("float32"))
+
     return None
 
 
@@ -85,50 +47,19 @@ def find_card_quad(image: np.ndarray) -> np.ndarray | None:
     h, w = gray.shape
     min_area = (h * w) * 0.10
 
-    # Pre-process images
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
-
-    # 1. Binary Threshold (High Contrast / Black & White - Strong approach)
     _, binary = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    edges = cv2.Canny(blur, 40, 140)
+    closed_edges = cv2.morphologyEx(
+        edges,
+        cv2.MORPH_CLOSE,
+        np.ones((3, 3), np.uint8),
+        iterations=2,
+    )
 
-    # 2. Erosion on Binary (Disconnect text from frame)
-    kernel_sm = np.ones((3, 3), np.uint8)
-    eroded = cv2.erode(binary, kernel_sm, iterations=1)
-
-    # 3. CLAHE (Adaptive Contrast Enhancement)
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    enhanced = clahe.apply(blur)
-
-    # Strategies: (source_image, lower_thresh, upper_thresh, morph_iterations)
-    strategies = [
-        # 1. Standard Strict
-        (blur, 40, 140, 0),
-
-        # 2. Binary Threshold (Strong Black/White)
-        (binary, 40, 140, 0),
-
-        # 3. Eroded Binary (Crucial for disconnecting text!)
-        (eroded, 40, 140, 0),
-
-        # 4. Enhanced Contrast (CLAHE)
-        (enhanced, 50, 150, 0),
-
-        # 5. Looser Canny (Catch faint edges)
-        (blur, 10, 200, 0),
-
-        # 6. Fallbacks with Morphology (Connects broken lines)
-        (blur, 40, 140, 2),
-    ]
-
-    for src_img, lower, upper, morph_iters in strategies:
-        edges = cv2.Canny(src_img, lower, upper)
-        
-        if morph_iters > 0:
-            kernel = np.ones((3, 3), np.uint8)
-            edges = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel, iterations=morph_iters)
-
-        # Use RETR_LIST to find all contours, including nested ones
-        contours, _ = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    # Only inspect external contours so we favor the full card boundary.
+    for src_img in (closed_edges, binary):
+        contours, _ = cv2.findContours(src_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         if not contours:
             continue
 
