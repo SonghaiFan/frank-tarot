@@ -1,80 +1,110 @@
 # Frank Tarot | 命运塔罗
 
 <div align="center">
-  <img src="docs/teaser.png" alt="Frank Tarot Teaser" width="100%" />
-  <p>
-    <em>An immersive, AI-powered Tarot reading experience.</em>
-  </p>
+  <img src="docs/teaser.png" alt="Frank Tarot teaser" width="100%" />
+  <p><em>An immersive AI tarot reading ritual for the web.</em></p>
 </div>
 
-## ✨ Features
+Frank Tarot is a bilingual tarot reading experience built with React, Vite, and Google Gemini. It combines cinematic presentation, guided card selection, spoken readings, and spread-aware interpretation to turn a simple prompt into a ritual-style session.
 
-- **🔮 AI-Powered Readings**: Leverages Google's Gemini AI to provide deep, personalized interpretations of your Tarot spreads.
-- **🌌 Immersive Atmosphere**: Features cosmic particle effects that react to game stages, ambient background music, and a "breathing" ritual glow for a mystical experience.
-- **🃏 Diverse Spreads**:
-  - **Single Card Oracle**: For quick daily guidance.
-  - **Three Card Spread**: Past, Present, Future.
-  - **Four Card Clarity**: Situation, Obstacles, Advice, Outcome.
-  - **Five Dimensions**: A holistic scan of Romance, Finance, Mental, Career, and Spirit.
-  - **Relationship Mirror**: Deep dive into connection dynamics.
-  - **Court Card Spread**: Focus on personalities and archetypes.
-- **🎴 Smart Deck Logic**: Advanced card pooling ensures specific spreads draw from appropriate subsets (e.g., only Major Arcana for spiritual positions, specific suits for elemental positions).
-- **🗣️ Voice Synthesis**: Listen to your reading with integrated text-to-speech capabilities.
-- **📱 Fully Responsive**: Optimized for both desktop and mobile devices, ensuring a seamless ritual anywhere.
-- **⚡ Modern Tech Stack**: Built with React 19, Vite, Tailwind CSS, and Framer Motion for smooth, responsive performance.
+The app supports English and Simplified Chinese, adapts across desktop and mobile, and is structured as a static site that can be deployed to GitHub Pages.
 
-## 🚀 Getting Started
+## Live Site
+
+https://songhaifan.github.io/frank-tarot/
+
+## Highlights
+
+- AI-generated tarot readings shaped by the selected spread, card positions, and upright or reversed orientation
+- Voice-guided ritual flow with ambient audio and generated speech for the final reading
+- Multiple spreads, including single-card, three-card, clarity, relationship, and other themed layouts
+- Bilingual interface with English and Simplified Chinese content
+- Printable reading output for saving or sharing a session
+- Responsive presentation designed for both mobile and desktop use
+
+## Tech Stack
+
+- React 19
+- Vite 7
+- TypeScript
+- Tailwind CSS 4
+- Motion
+- Google GenAI SDK
+- i18next
+
+## Project Structure
+
+```text
+src/
+  app/                  App shell, layout, and global UI
+  features/tarot/       Tarot spreads, cards, reading flow, Gemini services
+  i18n/                 Localization setup and translations
+public/
+  audio/                Ritual and fallback audio assets
+  images/cards/         Card artwork
+  og/                   Social preview assets
+scripts/
+  export_ground_truth.py
+  rectify_cards.py
+```
+
+## Getting Started
 
 ### Prerequisites
 
-- Node.js (v18 or higher recommended)
-- A Google Gemini API Key
+- Node.js 18+
+- npm
+- A Google Gemini API key
 
 ### Installation
 
-1. **Clone the repository**
+```bash
+git clone https://github.com/SonghaiFan/frank-tarot.git
+cd frank-tarot
+npm install
+```
 
-   ```bash
-   git clone https://github.com/SonghaiFan/frank-tarot.git
-   cd frank-tarot
-   ```
+### Environment Variables
 
-2. **Install dependencies**
+Create `.env.local` in the project root:
 
-   ```bash
-   npm install
-   ```
+```env
+GEMINI_API_KEY=your_api_key_here
+```
 
-3. **Configure Environment Variables**
+### Run Locally
 
-   Create a `.env.local` file in the root directory and add your Gemini API key:
+```bash
+npm run dev
+```
 
-   ```env
-   GEMINI_API_KEY=your_api_key_here
-   ```
+The app runs on `http://localhost:3000`.
 
-4. **Run the Development Server**
+## Available Scripts
 
-   ```bash
-   npm run dev
-   ```
+```bash
+npm run dev
+npm run build
+npm run preview
+```
 
-   Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
+## Deployment Notes
 
-## 🛠️ Scripts
+This project is configured for GitHub Pages and currently uses:
 
-- `npm run dev`: Start the development server.
-- `npm run build`: Build the app for production.
-- `npm run preview`: Preview the production build locally.
+- Vite base path: `/frank-tarot/`
+- Canonical site URL: `https://songhaifan.github.io/frank-tarot/`
 
-## 🧩 Tech Stack
+If you deploy under a different repository name or custom domain, update the base path and public metadata accordingly.
 
-- **Framework**: [React](https://react.dev/) + [Vite](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **AI**: [Google GenAI SDK](https://www.npmjs.com/package/@google/genai)
-- **Icons**: [Lucide React](https://lucide.dev/)
+## How It Works
 
-## 📄 License
+1. The seeker enters a question or leaves it open for general guidance.
+2. The app selects or predicts an appropriate spread.
+3. Cards are drawn from spread-specific pools and can appear upright or reversed.
+4. Gemini generates a synthesized reading based on spread context and card meaning hints.
+5. The reading can be spoken aloud and printed from the browser.
 
-This project is licensed under the MIT License.
+## License
+
+MIT
