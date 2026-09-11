@@ -475,7 +475,7 @@ const TarotCard: React.FC<TarotCardProps> = ({
         >
           <div className={`relative flex h-full w-full items-center justify-center overflow-hidden bg-neutral-950 ${isDetailed ? "" : "border border-black/80"}`}>
             <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "6px 6px" }} />
-<div className="w-4 h-4 border border-white/10 rotate-45 group-hover:rotate-90 transition-transform duration-700" />
+            <div className="w-4 h-4 border border-white/10 rotate-45 group-hover:rotate-90 transition-transform duration-700" />
           </div>
         </div>
         {!isDetailed && (
