@@ -20,7 +20,7 @@ import {
 } from "@/features/tarot/constants/cards";
 import { SPREADS } from "@/features/tarot/constants/spreads";
 import { generateTarotReading, generateSpeech, hasAiKey, predictBestSpread } from "@/features/tarot/services/gemini";
-import CosmicParticles from "@/app/components/CosmicParticles";
+import Galaxy from "@/app/components/Galaxy";
 import HeaderBar from "@/app/components/HeaderBar";
 import IntroSection from "@/features/tarot/components/IntroSection";
 import InputSection from "@/features/tarot/components/InputSection";
@@ -729,14 +729,33 @@ const App: React.FC = () => {
 
   return (
     <div className="fixed inset-0 bg-black text-neutral-200 font-serif select-none cursor-default overflow-hidden">
-      {/* Cosmic Particle Background (Persistent) */}
+      {/* Galaxy Background (Persistent) */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: bgOpacity }}
         transition={{ duration: 2 }}
         className="absolute inset-0 z-0 pointer-events-none"
       >
-        <CosmicParticles gameState={gameState} />
+        <Galaxy
+          speed={
+            gameState === GameState.PICKING
+              ? 0.2
+              : gameState === GameState.READING
+              ? 0.15
+              : gameState === GameState.REVEAL
+              ? 0.8
+              : 1.0
+          }
+          hueShift={260}
+          saturation={hoveredCardId !== null && gameState === GameState.READING ? 0.9 : 0.15}
+          density={0.8}
+          glowIntensity={hoveredCardId !== null && gameState === GameState.READING ? 0.5 : 0.22}
+          twinkleIntensity={0.18}
+          rotationSpeed={0.08}
+          mouseRepulsion={false}
+          mouseInteraction={false}
+          transparent={true}
+        />
       </motion.div>
 
       {/* Header */}

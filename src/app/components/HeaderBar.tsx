@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import AudioVisualizer from "./AudioVisualizer";
+import FrankSignature from "./FrankSignature";
 import { GameState } from "@/features/tarot/types";
 import { LANGUAGE_LABELS } from "@/shared/constants/i18n";
 import { useTranslation } from "react-i18next";
@@ -52,9 +53,9 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
       <div className="flex items-center gap-6 pointer-events-auto">
         <button onClick={onHomeClick} className="flex flex-col gap-1 group">
           <div className="flex items-center gap-2 text-white/80 group-hover:text-white transition-colors">
-
+            <FrankSignature className="h-5 w-auto" />
             <h1 className="text-xs font-cinzel tracking-[0.4em] font-bold">
-              {t("header.brand")}
+              TAROT
             </h1>
           </div>
           <div className="w-full h-px bg-white/10 group-hover:bg-white/30 transition-colors" />

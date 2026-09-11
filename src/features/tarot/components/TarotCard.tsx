@@ -160,6 +160,15 @@ const TarotCard: React.FC<TarotCardProps> = ({
   );
   const detailSurface = useMotionTemplate`linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 34%, rgba(0, 0, 0, 0.18) 100%), linear-gradient(${detailSheenAngle}, rgba(255,255,255,0) ${detailSheenStart}, rgba(255,248,230,0.18) ${detailSheenLead}, rgba(246,223,177,${detailSheenStrength}) ${detailSheenPeak}, rgba(255,255,255,0.16) ${detailSheenFade}, rgba(255,255,255,0) 100%)`;
 
+  const isPointerOverRef = React.useRef(false);
+
+  // When the card flips to revealed while pointer is already over it, fire onHover immediately
+  React.useEffect(() => {
+    if (isRevealed && isPointerOverRef.current && !isDetailed) {
+      onHover?.(card.id);
+    }
+  }, [isRevealed]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const resetCardTilt = React.useCallback(() => {
     cardTiltX.set(0);
     cardTiltY.set(0);
@@ -216,8 +225,12 @@ const TarotCard: React.FC<TarotCardProps> = ({
       onClick={onClick}
       onPointerMove={handleCardPointerMove}
       onPointerLeave={resetCardTilt}
-      onMouseEnter={() => !isDetailed && onHover?.(card.id)}
+      onMouseEnter={() => {
+        isPointerOverRef.current = true;
+        !isDetailed && isRevealed && onHover?.(card.id);
+      }}
       onMouseLeave={() => {
+        isPointerOverRef.current = false;
         resetCardTilt();
         !isDetailed && onHover?.(null);
       }}
@@ -462,7 +475,7 @@ const TarotCard: React.FC<TarotCardProps> = ({
         >
           <div className={`relative flex h-full w-full items-center justify-center overflow-hidden bg-neutral-950 ${isDetailed ? "" : "border border-black/80"}`}>
             <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "6px 6px" }} />
-            <div className="w-4 h-4 border border-white/10 rotate-45 group-hover:rotate-90 transition-transform duration-700" />
+<div className="w-4 h-4 border border-white/10 rotate-45 group-hover:rotate-90 transition-transform duration-700" />
           </div>
         </div>
         {!isDetailed && (
