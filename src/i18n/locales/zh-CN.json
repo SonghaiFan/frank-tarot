@@ -11,6 +11,8 @@
     "back": "返回",
     "openLibraryTitle": "打开牌库",
     "closeLibraryTitle": "关闭牌库",
+    "switchToChinese": "切换至中文",
+    "switchToEnglish": "切换至英文",
     "fullscreen": "全屏",
     "exitFullscreen": "退出全屏",
     "stateLabels": {
@@ -40,6 +42,7 @@
   },
   "reading": {
     "revealPrompt": "翻开每一张卡牌以显示解读",
+    "scrollForReading": "向下滚动查看解析",
     "questionPrefix": "正在回应：",
     "replay": "再念一次",
     "replayTitle": "重播解读音频",
@@ -92,7 +95,8 @@
     "reversedLong": "逆位",
     "interpretationTitle": "牌义启示",
     "arcanaWisdom": "秘境智慧",
-    "keywords": "关键词"
+    "keywords": "关键词",
+    "scrollToRead": "上滑阅读"
   },
   "print": {
     "title": "塔罗解读",

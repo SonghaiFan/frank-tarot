@@ -90,7 +90,7 @@ const InputSection: React.FC<InputSectionProps> = ({
     // 1. min-h-[80vh] + justify-center: 实现垂直居中
     // 2. items-center: 实现水平居中
     // 3. overflow-hidden: 保持动画边界整洁
-    <div className="w-full max-w-3xl px-4 flex flex-col justify-center items-center min-h-[80vh] overflow-hidden relative">
+    <div className="w-full max-w-3xl px-0 sm:px-4 flex flex-col justify-center items-center min-h-[calc(100dvh-var(--safe-top)-7.5rem)] py-4 md:py-8 relative">
       <AnimatePresence mode="wait" custom={direction}>
         {/* === PHASE 1: SPREAD SELECTION (选牌阵) === */}
         {!isSpreadConfirmed ? (
@@ -101,7 +101,7 @@ const InputSection: React.FC<InputSectionProps> = ({
             initial={direction === 0 ? "center" : "enter"}
             animate="center"
             exit="exit"
-            className="w-full flex flex-col gap-8 md:gap-16 items-center"
+            className="w-full flex flex-col gap-[clamp(1.5rem,6dvh,4rem)] items-center"
           >
 
             {/* Spread Grid */}
@@ -141,7 +141,7 @@ const InputSection: React.FC<InputSectionProps> = ({
             animate="center"
             exit="exit"
             // 增加 pt-20，给顶部带有文字的箭头留出足够空间
-            className="w-full flex flex-col items-center relative pt-20 px-4"
+            className="w-full flex flex-col items-center relative pt-[clamp(4rem,10dvh,5rem)] px-1 sm:px-4"
           >
             {/* Back Arrow with Hint */}
             <motion.button
@@ -334,7 +334,7 @@ const ActionButton = ({
     disabled={disabled}
     whileHover={!disabled ? { scale: 1.05 } : {}}
     whileTap={!disabled ? { scale: 0.95 } : {}}
-    className={`block mx-auto mt-16 px-6 py-2 border text-xs tracking-[0.3em] transition-all ${!disabled
+    className={`block mx-auto mt-[clamp(2rem,7dvh,4rem)] px-6 py-2 border text-xs tracking-[0.3em] transition-all ${!disabled
       ? "bg-white/5 hover:bg-white/10 border-white/20 text-white cursor-pointer"
       : "bg-transparent border-white/5 text-white/20 cursor-not-allowed"
       }`}

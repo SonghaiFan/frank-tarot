@@ -31,6 +31,7 @@ import IntroSection from "@/features/tarot/components/IntroSection";
 import InputSection from "@/features/tarot/components/InputSection";
 import PickingSection from "@/features/tarot/components/PickingSection";
 import ReadingSection from "@/features/tarot/components/ReadingSection";
+import RitualCardStage from "@/features/tarot/components/RitualCardStage";
 import DeckLibrary from "@/features/tarot/components/DeckLibrary";
 import printTheReading from "@/features/tarot/utils/printTheReading";
 import { useTarotAudio } from "@/features/tarot/hooks/useTarotAudio";
@@ -43,7 +44,7 @@ const App: React.FC = () => {
   const locale = i18n.language as Locale;
   const aiEnabled = hasAiKey();
 
-  const { isMobile, isTablet } = useResponsive();
+  const { isMobile, isTablet, isShortViewport } = useResponsive();
 
   const staticScripts = useMemo(
     () => ({
@@ -93,6 +94,7 @@ const App: React.FC = () => {
   // System State
   const [isThinking, setIsThinking] = useState(false);
   const [hoveredCardId, setHoveredCardId] = useState<number | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [thinkingKeywordIndex, setThinkingKeywordIndex] = useState(0);
 
   // --- Refs ---
@@ -168,6 +170,7 @@ const App: React.FC = () => {
 
     setGameState(GameState.PICKING);
     setPickedCards([]);
+    setSelectedCardId(null);
     setRevealedCardIds(new Set());
     setHasPlayedReadingAudio(false);
     setReadingText("");
@@ -333,6 +336,7 @@ const App: React.FC = () => {
     stopVoice();
     setGameState(GameState.INPUT);
     setPickedCards([]);
+    setSelectedCardId(null);
     setRevealedCardIds(new Set());
     setHasPlayedReadingAudio(false);
     setReadingText("");
@@ -357,6 +361,7 @@ const App: React.FC = () => {
   );
 
   const toggleLibrary = () => {
+    setSelectedCardId(null);
     if (gameState === GameState.LIBRARY) {
       if (previousGameState) {
         setGameState(previousGameState);
@@ -377,7 +382,14 @@ const App: React.FC = () => {
       case GameState.INTRO:
         return <IntroSection onEnter={enterInputPhase} />;
       case GameState.LIBRARY:
-        return <DeckLibrary onClose={toggleLibrary} />;
+        return (
+          <DeckLibrary
+            selectedCardId={selectedCardId}
+            isMobile={isMobile}
+            isTablet={isTablet}
+            onCardFocus={setSelectedCardId}
+          />
+        );
       case GameState.INPUT:
         return (
           <InputSection
@@ -410,15 +422,9 @@ const App: React.FC = () => {
         return (
           <ReadingSection
             spread={spread}
-            isMobile={isMobile}
-            isTablet={isTablet}
             pickedCards={pickedCards}
             revealedCardIds={revealedCardIds}
-            onCardReveal={(id) =>
-              setRevealedCardIds((prev) => new Set(prev).add(id))
-            }
-            hoveredCardId={hoveredCardId}
-            onCardHover={setHoveredCardId}
+            isObscured={selectedCardId !== null}
             isThinking={isThinking}
             thinkingKeywordIndex={thinkingKeywordIndex}
             question={question}
@@ -436,7 +442,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black text-neutral-200 font-serif select-none cursor-default overflow-hidden">
+    <div className="fixed inset-0 h-[100dvh] bg-black text-neutral-200 font-serif select-none cursor-default overflow-hidden">
       {/* Galaxy Background (Persistent) */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -460,7 +466,7 @@ const App: React.FC = () => {
               ? 0.9
               : 0.15
           }
-          density={0.8}
+          density={1.05}
           glowIntensity={
             hoveredCardId !== null && gameState === GameState.READING
               ? 0.5
@@ -475,21 +481,36 @@ const App: React.FC = () => {
       </motion.div>
 
       {/* Header */}
-      <HeaderBar
-        gameState={gameState}
-        isAudioPlaying={isAudioPlaying}
-        onLibraryClick={toggleLibrary}
-        onHomeClick={() => {
-          stopDrone();
-          setGameState(GameState.INTRO);
-          setPreviousGameState(null);
+      <motion.div
+        animate={{
+          opacity: selectedCardId === null ? 1 : 0,
+          filter: selectedCardId === null ? "blur(0px)" : "blur(8px)",
         }}
-      />
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        className={`relative z-[60] ${
+          selectedCardId === null ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+      >
+        <HeaderBar
+          gameState={gameState}
+          isAudioPlaying={isAudioPlaying}
+          pickingCount={spread ? SPREADS[spread].cardCount : 0}
+          pickedCount={pickedCards.length}
+          onLibraryClick={toggleLibrary}
+          onHomeClick={() => {
+            stopDrone();
+            setSelectedCardId(null);
+            setGameState(GameState.INTRO);
+            setPreviousGameState(null);
+          }}
+        />
+      </motion.div>
 
-      {/* Main Content Area - No Scroll */}
+      {/* Main content uses the dynamic viewport so mobile browser chrome does not
+          steal space from fixed-height layouts. */}
       <motion.main
         layoutScroll
-        className={`absolute inset-0 z-10 perspective-1000 overflow-hidden ${
+        className={`absolute inset-0 ${selectedCardId !== null ? "z-[100]" : "z-10"} h-[100dvh] overflow-hidden overscroll-y-contain ${
           gameState === GameState.READING ||
           gameState === GameState.REVEAL ||
           gameState === GameState.INPUT ||
@@ -498,25 +519,48 @@ const App: React.FC = () => {
             : "overflow-hidden"
         }`}
       >
-        {/* Inner Container - Full Height Centered */}
+        {/* Scrollable phases start below the safe-area header instead of being
+            vertically forced into a viewport that may be shorter than content. */}
         <div
-          className={`w-full flex flex-col items-center px-4 ${
+          className={`relative w-full flex flex-col items-center px-4 ${
             gameState === GameState.READING ||
-            gameState === GameState.REVEAL ||
-            gameState === GameState.INPUT ||
-            gameState === GameState.LIBRARY
-              ? "min-h-full py-12 justify-center"
-              : "h-full justify-center py-24"
+            gameState === GameState.REVEAL
+              ? "min-h-full pt-[calc(var(--safe-top)+1rem)] pb-[calc(var(--safe-bottom)+3rem)] justify-start"
+              : gameState === GameState.INPUT ||
+                gameState === GameState.LIBRARY
+              ? "min-h-full pt-[calc(var(--safe-top)+4.5rem)] pb-[calc(var(--safe-bottom)+3rem)] justify-start md:justify-center"
+              : "h-full justify-center pt-[calc(var(--safe-top)+4rem)] pb-[calc(var(--safe-bottom)+2rem)]"
           }`}
         >
           <LayoutGroup id="ritual-cards">
+            {(gameState === GameState.PICKING ||
+              gameState === GameState.REVEAL ||
+              gameState === GameState.READING) &&
+              spread && (
+                <RitualCardStage
+                  gameState={gameState}
+            spread={spread}
+                  pickedCards={pickedCards}
+                  revealedCardIds={revealedCardIds}
+                  hoveredCardId={hoveredCardId}
+                  selectedCardId={selectedCardId}
+                  isMobile={isMobile}
+                  isTablet={isTablet}
+                  isShortViewport={isShortViewport}
+                  onCardReveal={(id) =>
+                    setRevealedCardIds((prev) => new Set(prev).add(id))
+                  }
+                  onCardHover={setHoveredCardId}
+                  onCardFocus={setSelectedCardId}
+                />
+              )}
             <AnimatePresence mode="sync">{renderPhase()}</AnimatePresence>
           </LayoutGroup>
         </div>
       </motion.main>
 
       {/* Creator Credit */}
-      <div className="fixed bottom-4 right-6 z-50 text-[9px] text-neutral-600 font-sans tracking-widest opacity-50 select-none pointer-events-none mix-blend-difference">
+      <div className="fixed bottom-[calc(var(--safe-bottom)+0.75rem)] right-[calc(var(--safe-right)+1rem)] md:right-6 z-50 text-[9px] text-neutral-600 font-sans tracking-widest opacity-50 select-none pointer-events-none mix-blend-difference">
         Created by 范松海frank
       </div>
     </div>

@@ -1,0 +1,344 @@
+import React from "react";
+import { createPortal } from "react-dom";
+import { AnimatePresence } from "motion/react";
+import { ChevronsDown } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { CARD_ASPECT_CLASS, CARD_ASPECT_RATIO } from "@/features/tarot/constants/cards";
+import { getLocalizedSpread, SPREADS } from "@/features/tarot/constants/spreads";
+import { GameState, Locale, PickedCard, SpreadType } from "@/features/tarot/types";
+import { SILKY_EASE } from "@/shared/constants/ui";
+import CardTooltip from "./CardTooltip";
+import RitualCard from "./RitualCard";
+
+const ABSOLUTE_LAYOUT_UNIT_REM = 0.25;
+
+const parseWidthUnits = (widthClass: string) => {
+  const match = widthClass.match(/\bw-(\d+(?:\.\d+)?)\b/);
+  return match ? Number(match[1]) : null;
+};
+
+interface RitualCardStageProps {
+  gameState: GameState;
+  spread: SpreadType;
+  pickedCards: PickedCard[];
+  revealedCardIds: Set<number>;
+  hoveredCardId: number | null;
+  selectedCardId: number | null;
+  isMobile: boolean;
+  isTablet: boolean;
+  isShortViewport: boolean;
+  onCardReveal: (id: number) => void;
+  onCardHover: (id: number | null) => void;
+  onCardFocus: (id: number | null) => void;
+}
+
+const RitualCardStage: React.FC<RitualCardStageProps> = ({
+  gameState,
+  spread,
+  pickedCards,
+  revealedCardIds,
+  hoveredCardId,
+  selectedCardId,
+  isMobile,
+  isTablet,
+  isShortViewport,
+  onCardReveal,
+  onCardHover,
+  onCardFocus,
+}) => {
+  const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
+  const absoluteStageRef = React.useRef<HTMLDivElement>(null);
+  const [absoluteStageSize, setAbsoluteStageSize] = React.useState(() => ({
+    width: typeof window === "undefined" ? 1152 : Math.min(1152, window.innerWidth - 64),
+    height: typeof window === "undefined"
+      ? 640
+      : Math.min(768, Math.max(400, window.innerHeight * 0.72)),
+  }));
+  const { i18n } = useTranslation();
+  const spreadConfig = getLocalizedSpread(spread, i18n.language as Locale);
+  const displayedCards = pickedCards.slice(0, spreadConfig.cardCount);
+  const isPicking = gameState === GameState.PICKING;
+  const isReading = gameState === GameState.READING || gameState === GameState.REVEAL;
+  const useCompactLayout = isMobile || isTablet || isShortViewport;
+  const allCardsRevealed =
+    displayedCards.length > 0 &&
+    displayedCards.every((card) => revealedCardIds.has(card.id));
+
+  React.useLayoutEffect(() => {
+    if (useCompactLayout || spreadConfig.layoutType !== "absolute") return;
+    const stage = absoluteStageRef.current;
+    if (!stage) return;
+
+    const updateStageSize = () => {
+      const rect = stage.getBoundingClientRect();
+      setAbsoluteStageSize({ width: rect.width, height: rect.height });
+    };
+
+    updateStageSize();
+    const observer = new ResizeObserver(updateStageSize);
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, [spreadConfig.layoutType, useCompactLayout]);
+
+  React.useEffect(() => {
+    if (!isReading || useCompactLayout) return;
+    const handleMouseMove = (event: MouseEvent) => {
+      setMousePos({ x: event.clientX, y: event.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [isReading, useCompactLayout]);
+
+  const absoluteLayoutMetrics = React.useMemo(() => {
+    if (spreadConfig.layoutType !== "absolute" || !spreadConfig.positions?.length) {
+      return {
+        offset: spreadConfig.layoutOffset ?? { x: 0, y: 0 },
+        cardWidthUnits: null,
+        boundsWidthUnits: 0,
+        boundsHeightUnits: 0,
+      };
+    }
+
+    const cardWidthUnits = parseWidthUnits(spreadConfig.cardSize.desktop);
+
+    if (!cardWidthUnits) {
+      return {
+        offset: spreadConfig.layoutOffset ?? { x: 0, y: 0 },
+        cardWidthUnits: null,
+        boundsWidthUnits: 0,
+        boundsHeightUnits: 0,
+      };
+    }
+
+    const cardHeightUnits = cardWidthUnits * CARD_ASPECT_RATIO;
+    let minLeft = Infinity;
+    let maxRight = -Infinity;
+    let minTop = Infinity;
+    let maxBottom = -Infinity;
+
+    spreadConfig.positions.forEach((position) => {
+      const x = typeof position.x === "number" ? position.x : 0;
+      const y = typeof position.y === "number" ? position.y : 0;
+      const isRotated = !!position.rotation;
+      const halfWidth = (isRotated ? cardHeightUnits : cardWidthUnits) / 2;
+      const halfHeight = (isRotated ? cardWidthUnits : cardHeightUnits) / 2;
+
+      minLeft = Math.min(minLeft, x - halfWidth);
+      maxRight = Math.max(maxRight, x + halfWidth);
+      minTop = Math.min(minTop, y - halfHeight);
+      maxBottom = Math.max(maxBottom, y + halfHeight);
+    });
+
+    return {
+      offset: {
+        x: -((minLeft + maxRight) / 2),
+        y: -((minTop + maxBottom) / 2),
+      },
+      cardWidthUnits,
+      boundsWidthUnits: maxRight - minLeft,
+      boundsHeightUnits: maxBottom - minTop,
+    };
+  }, [spreadConfig]);
+
+  const absoluteLayoutScale = React.useMemo(() => {
+    if (
+      useCompactLayout ||
+      !absoluteLayoutMetrics.boundsWidthUnits ||
+      !absoluteLayoutMetrics.boundsHeightUnits
+    ) {
+      return 1;
+    }
+
+    const rootFontSize = typeof window === "undefined"
+      ? 16
+      : Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const unitPixels = rootFontSize * ABSOLUTE_LAYOUT_UNIT_REM;
+    const horizontalPadding = Math.min(64, absoluteStageSize.width * 0.08);
+    const verticalPadding = Math.min(48, absoluteStageSize.height * 0.08);
+    const availableWidth = Math.max(1, absoluteStageSize.width - horizontalPadding * 2);
+    const availableHeight = Math.max(1, absoluteStageSize.height - verticalPadding * 2);
+
+    return Math.min(
+      1,
+      availableWidth / (absoluteLayoutMetrics.boundsWidthUnits * unitPixels),
+      availableHeight / (absoluteLayoutMetrics.boundsHeightUnits * unitPixels)
+    );
+  }, [absoluteLayoutMetrics, absoluteStageSize, useCompactLayout]);
+
+  const getAbsoluteCardStyle = (
+    position: (typeof spreadConfig.positions)[number] | undefined,
+    isHovered: boolean
+  ): React.CSSProperties | undefined => {
+    if (spreadConfig.layoutType !== "absolute" || useCompactLayout || !position) {
+      return undefined;
+    }
+
+    const x = typeof position.x === "number" ? position.x : 0;
+    const y = typeof position.y === "number" ? position.y : 0;
+    const cardWidthUnits = absoluteLayoutMetrics.cardWidthUnits;
+    if (!cardWidthUnits) return undefined;
+
+    const cardWidthRem =
+      cardWidthUnits * ABSOLUTE_LAYOUT_UNIT_REM * absoluteLayoutScale;
+    const cardHeightRem = cardWidthRem * CARD_ASPECT_RATIO;
+    const centerXRem =
+      (absoluteLayoutMetrics.offset.x + x) *
+      ABSOLUTE_LAYOUT_UNIT_REM *
+      absoluteLayoutScale;
+    const centerYRem =
+      (absoluteLayoutMetrics.offset.y + y) *
+      ABSOLUTE_LAYOUT_UNIT_REM *
+      absoluteLayoutScale;
+
+    return {
+      position: "absolute",
+      left: `calc(50% + ${centerXRem - cardWidthRem / 2}rem)`,
+      top: `calc(50% + ${centerYRem - cardHeightRem / 2}rem)`,
+      width: `${cardWidthRem}rem`,
+      zIndex: isHovered ? 100 : position.zIndex || 5,
+    };
+  };
+
+  const slotWidth =
+    isMobile && SPREADS[spread].cardCount > 5
+      ? "w-[clamp(2rem,7vw,3rem)]"
+      : "w-[clamp(2.5rem,8vmin,5rem)]";
+
+  const hoveredCard = displayedCards.find((card) => card.id === hoveredCardId);
+  const hoveredCardIndex = displayedCards.findIndex((card) => card.id === hoveredCardId);
+  const hoveredCardLabel = hoveredCardIndex >= 0
+    ? spreadConfig.layoutType === "absolute"
+      ? spreadConfig.positions?.[hoveredCardIndex]?.label
+      : spreadConfig.labels?.[hoveredCardIndex]
+    : undefined;
+
+  const handleCardClick = (id: number) => {
+    if (!isReading) return;
+    if (!revealedCardIds.has(id)) {
+      onCardReveal(id);
+      return;
+    }
+    onCardHover(null);
+    onCardFocus(id);
+  };
+
+  return (
+    <>
+      <section
+        className={isPicking
+          ? "pointer-events-none absolute inset-0 z-30"
+          : useCompactLayout
+          ? "relative z-20 w-full max-w-7xl shrink-0 px-0 md:px-8"
+          : "relative z-20 flex min-h-[calc(100dvh-var(--safe-top)-1rem)] w-full max-w-7xl shrink-0 items-center justify-center px-8"}
+      >
+        <div
+          ref={absoluteStageRef}
+          className={isPicking
+            ? "absolute inset-x-0 bottom-[calc(var(--safe-bottom)+1.5rem)] flex justify-center gap-[clamp(0.25rem,1vw,0.75rem)] px-4 md:bottom-10"
+            : useCompactLayout
+            ? "grid w-full max-w-xl grid-cols-3 items-start justify-items-center gap-x-3 gap-y-12 px-2 py-8"
+            : spreadConfig.layoutType === "absolute"
+            ? "relative mx-auto h-[calc(100dvh-var(--safe-top)-4rem)] min-h-[28rem] w-full max-w-4xl lg:max-w-6xl"
+            : "flex flex-wrap items-center justify-center gap-6 md:gap-12"}
+        >
+          {displayedCards.map((card, index) => {
+            const isDetailed = selectedCardId === card.id;
+            const isHovered = hoveredCardId === card.id && selectedCardId === null;
+            const position = spreadConfig.positions?.[index];
+            const readingWidth = useCompactLayout
+              ? "w-full max-w-[clamp(5.5rem,26vw,7.5rem)] justify-self-center"
+              : spreadConfig.layoutType === "absolute"
+              ? spreadConfig.cardSize.desktop
+              : "w-[clamp(6rem,18vmin,13rem)]";
+            const wrapperWidth = isPicking ? slotWidth : readingWidth;
+            const usesScaledAbsoluteLayout =
+              !isPicking && !useCompactLayout && spreadConfig.layoutType === "absolute";
+            const absoluteStyle = isPicking
+              ? undefined
+              : getAbsoluteCardStyle(position, isHovered);
+            const label = isPicking
+              ? undefined
+              : spreadConfig.layoutType === "absolute"
+              ? position?.label
+              : spreadConfig.labels?.[index];
+            const labelPosition =
+              spreadConfig.layoutType === "absolute" && !useCompactLayout
+                ? position?.labelPosition || "bottom"
+                : "bottom";
+
+            return (
+              <div
+                key={card.id}
+                style={absoluteStyle}
+                className={`pointer-events-none ${usesScaledAbsoluteLayout ? "" : wrapperWidth} ${CARD_ASPECT_CLASS} ${
+                  !isPicking && useCompactLayout ? "shrink-0 snap-center" : "shrink-0"
+                }`}
+              >
+                <RitualCard
+                  layoutId={`card-${card.id}`}
+                  card={card}
+                  isRevealed={isReading && revealedCardIds.has(card.id)}
+                  isDetailed={isDetailed}
+                  isDesktopDetail={!isMobile && !isTablet}
+                  isHovered={isHovered}
+                  isHorizontal={
+                    isReading && !isDetailed && !!position?.rotation && !useCompactLayout
+                  }
+                  onHover={isReading ? onCardHover : undefined}
+                  onDetailClose={() => onCardFocus(null)}
+                  onClick={isDetailed
+                    ? (event) => event.stopPropagation()
+                    : () => handleCardClick(card.id)}
+                  label={isDetailed ? undefined : label}
+                  labelPosition={labelPosition}
+                  width="w-full"
+                  height={isDetailed ? "h-[100dvh]" : CARD_ASPECT_CLASS}
+                  className={`${isPicking ? "pointer-events-none" : "pointer-events-auto"} ${
+                    isDetailed ? "cursor-default" : ""
+                  }`}
+                  style={{
+                    position: isDetailed ? "fixed" : "relative",
+                    inset: isDetailed ? 0 : "auto",
+                    zIndex: isDetailed ? 10000 : "auto",
+                  }}
+                  animate={isDetailed
+                    ? { opacity: 1, filter: "blur(0px)" }
+                    : {
+                        opacity: selectedCardId === null ? 1 : 0.16,
+                        filter: selectedCardId === null ? "blur(0px)" : "blur(12px)",
+                      }}
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        {!useCompactLayout && isReading && allCardsRevealed && selectedCardId === null && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-[calc(var(--safe-bottom)+0.75rem)] flex justify-center text-white/40">
+            <ChevronsDown className="h-5 w-5" aria-hidden="true" strokeWidth={1.25} />
+            <span className="sr-only">
+              {i18n.t("reading.scrollForReading")}
+            </span>
+          </div>
+        )}
+      </section>
+
+      {createPortal(
+        <AnimatePresence>
+          {hoveredCardId !== null && isReading && !useCompactLayout && selectedCardId === null && (
+            <CardTooltip
+              x={mousePos.x + 15}
+              y={mousePos.y + 15}
+              isRevealed={revealedCardIds.has(hoveredCardId)}
+              card={hoveredCard}
+              positionLabel={hoveredCardLabel}
+            />
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+    </>
+  );
+};
+
+export default RitualCardStage;

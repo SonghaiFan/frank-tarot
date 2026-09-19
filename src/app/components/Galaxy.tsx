@@ -71,57 +71,52 @@ vec3 hsv2rgb(vec3 c) {
 }
 
 float Star(vec2 uv, float flare) {
-  float d = length(uv);
+  // Keep every glow well inside its procedural cell. A radius close to one
+  // becomes a huge, visibly clipped tile when a depth layer approaches the
+  // camera, especially on wide/high-DPI displays.
+  float d = max(length(uv), 0.0001);
   float m = (0.05 * uGlowIntensity) / d;
-  float rays = smoothstep(0.0, 1.0, 1.0 - abs(uv.x * uv.y * 1000.0));
-  m += rays * flare * uGlowIntensity;
+  float rays = 1.0 - smoothstep(0.0, 0.001, abs(uv.x * uv.y));
+  m += rays * flare * uGlowIntensity * 0.35;
   uv *= MAT45;
-  rays = smoothstep(0.0, 1.0, 1.0 - abs(uv.x * uv.y * 1000.0));
-  m += rays * 0.3 * flare * uGlowIntensity;
-  m *= smoothstep(1.0, 0.2, d);
+  rays = 1.0 - smoothstep(0.0, 0.001, abs(uv.x * uv.y));
+  m += rays * flare * uGlowIntensity * 0.12;
+  m *= 1.0 - smoothstep(0.12, 0.40, d);
   return m;
 }
 
 vec3 StarLayer(vec2 uv) {
-  vec3 col = vec3(0.0);
-
   vec2 gv = fract(uv) - 0.5;
   vec2 id = floor(uv);
+  float seed = Hash21(id);
+  float size = fract(seed * 345.32);
+  float glossLocal = tri(uStarSpeed / (PERIOD * seed + 1.0));
+  float flareSize = smoothstep(0.9, 1.0, size) * glossLocal;
 
-  for (int y = -1; y <= 1; y++) {
-    for (int x = -1; x <= 1; x++) {
-      vec2 offset = vec2(float(x), float(y));
-      vec2 si = id + vec2(float(x), float(y));
-      float seed = Hash21(si);
-      float size = fract(seed * 345.32);
-      float glossLocal = tri(uStarSpeed / (PERIOD * seed + 1.0));
-      float flareSize = smoothstep(0.9, 1.0, size) * glossLocal;
+  float red = smoothstep(STAR_COLOR_CUTOFF, 1.0, Hash21(id + 1.0)) + STAR_COLOR_CUTOFF;
+  float blu = smoothstep(STAR_COLOR_CUTOFF, 1.0, Hash21(id + 3.0)) + STAR_COLOR_CUTOFF;
+  float grn = min(red, blu) * seed;
+  vec3 base = vec3(red, grn, blu);
 
-      float red = smoothstep(STAR_COLOR_CUTOFF, 1.0, Hash21(si + 1.0)) + STAR_COLOR_CUTOFF;
-      float blu = smoothstep(STAR_COLOR_CUTOFF, 1.0, Hash21(si + 3.0)) + STAR_COLOR_CUTOFF;
-      float grn = min(red, blu) * seed;
-      vec3 base = vec3(red, grn, blu);
+  float hue = atan(base.g - base.r, base.b - base.r) / (2.0 * 3.14159) + 0.5;
+  hue = fract(hue + uHueShift / 360.0);
+  float sat = length(base - vec3(dot(base, vec3(0.299, 0.587, 0.114)))) * uSaturation;
+  float val = max(max(base.r, base.g), base.b);
+  base = hsv2rgb(vec3(hue, sat, val));
 
-      float hue = atan(base.g - base.r, base.b - base.r) / (2.0 * 3.14159) + 0.5;
-      hue = fract(hue + uHueShift / 360.0);
-      float sat = length(base - vec3(dot(base, vec3(0.299, 0.587, 0.114)))) * uSaturation;
-      float val = max(max(base.r, base.g), base.b);
-      base = hsv2rgb(vec3(hue, sat, val));
+  // Keep the moving star within the centre of its cell. Together with the
+  // compact Star() envelope this guarantees zero energy at every cell edge,
+  // so adjacent procedural tiles cannot expose seams.
+  vec2 pad = (vec2(
+    tris(seed * 34.0 + uTime * uSpeed / 10.0),
+    tris(seed * 38.0 + uTime * uSpeed / 30.0)
+  ) - 0.5) * 0.16;
 
-      vec2 pad = vec2(tris(seed * 34.0 + uTime * uSpeed / 10.0), tris(seed * 38.0 + uTime * uSpeed / 30.0)) - 0.5;
+  float star = Star(gv - pad, flareSize);
+  float twinkle = trisn(uTime * uSpeed + seed * 6.2831) * 0.5 + 1.0;
+  twinkle = mix(1.0, twinkle, uTwinkleIntensity);
 
-      float star = Star(gv - offset - pad, flareSize);
-      vec3 color = base;
-
-      float twinkle = trisn(uTime * uSpeed + seed * 6.2831) * 0.5 + 1.0;
-      twinkle = mix(1.0, twinkle, uTwinkleIntensity);
-      star *= twinkle;
-
-      col += star * size * color;
-    }
-  }
-
-  return col;
+  return star * twinkle * size * base;
 }
 
 void main() {
@@ -132,13 +127,17 @@ void main() {
 
   if (uAutoCenterRepulsion > 0.0) {
     vec2 centerUV = vec2(0.0, 0.0);
-    float centerDist = length(uv - centerUV);
-    vec2 repulsion = normalize(uv - centerUV) * (uAutoCenterRepulsion / (centerDist + 0.1));
+    vec2 centerDelta = uv - centerUV;
+    float centerDist = length(centerDelta);
+    vec2 centerDirection = centerDelta / max(centerDist, 0.0001);
+    vec2 repulsion = centerDirection * (uAutoCenterRepulsion / (centerDist + 0.1));
     uv += repulsion * 0.05;
   } else if (uMouseRepulsion) {
     vec2 mousePosUV = (uMouse * uResolution.xy - focalPx) / uResolution.y;
-    float mouseDist = length(uv - mousePosUV);
-    vec2 repulsion = normalize(uv - mousePosUV) * (uRepulsionStrength / (mouseDist + 0.1));
+    vec2 mouseDelta = uv - mousePosUV;
+    float mouseDist = length(mouseDelta);
+    vec2 mouseDirection = mouseDelta / max(mouseDist, 0.0001);
+    vec2 repulsion = mouseDirection * (uRepulsionStrength / (mouseDist + 0.1));
     uv += repulsion * 0.05 * uMouseActiveFactor;
   } else {
     vec2 mouseOffset = mouseNorm * 0.1 * uMouseActiveFactor;
@@ -156,7 +155,7 @@ void main() {
   for (float i = 0.0; i < 1.0; i += 1.0 / NUM_LAYER) {
     float depth = fract(i + uStarSpeed * uSpeed);
     float scale = mix(20.0 * uDensity, 0.5 * uDensity, depth);
-    float fade = depth * smoothstep(1.0, 0.9, depth);
+    float fade = depth * (1.0 - smoothstep(0.9, 1.0, depth));
     col += StarLayer(uv * scale + i * 453.32) * fade;
   }
 
@@ -253,8 +252,10 @@ export default function Galaxy({
     if (lightMode) {
       gl.clearColor(1, 1, 1, 1);
     } else if (transparent) {
-      gl.enable(gl.BLEND);
-      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      // The scene is a single fullscreen primitive, so framebuffer blending is
+      // unnecessary. Writing straight RGBA directly also avoids alpha being
+      // applied twice by the WebGL buffer and the browser compositor.
+      gl.disable(gl.BLEND);
       gl.clearColor(0, 0, 0, 0);
     } else {
       gl.clearColor(0, 0, 0, 1);

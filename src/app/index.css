@@ -8,10 +8,27 @@
 /* 配置暗黑模式为 class 策略 */
 @variant dark (&:where(.dark, .dark *));
 
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}
+
 body {
   background-color: #030308;
   color: #f0ede8;
   font-family: var(--font-noto);
+  overscroll-behavior: none;
 }
 
 /* Film grain — analog texture, kills the "flat digital" feel */
@@ -37,6 +54,30 @@ body::after {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* The whole deck orbits as one compositor layer. Promoting every card made
+   mobile GPUs allocate dozens of layers and was the source of the stutter. */
+@keyframes tarot-card-cloud-orbit {
+  from {
+    transform: translateZ(0) rotate(0deg);
+  }
+
+  to {
+    transform: translateZ(0) rotate(360deg);
+  }
+}
+
+.tarot-card-cloud {
+  animation: tarot-card-cloud-orbit 180s linear infinite;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarot-card-cloud {
+    animation: none;
+  }
 }
 
 /* Custom Scrollbar */

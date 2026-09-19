@@ -1,19 +1,31 @@
-import React, { useState, useMemo } from "react";
-import { motion, AnimatePresence, LayoutGroup } from "motion/react";
+import React, { useMemo, useState } from "react";
+import { motion } from "motion/react";
 import { CardPoolType } from "@/features/tarot/types";
-import { FULL_DECK, getDeckForPool, CARD_ASPECT_CLASS } from "@/features/tarot/constants/cards";
-import TarotCard from "./TarotCard";
+import {
+  getDeckForPool,
+  CARD_ASPECT_CLASS,
+} from "@/features/tarot/constants/cards";
+import RitualCard from "./RitualCard";
 import { useTranslation } from "react-i18next";
 
 interface DeckLibraryProps {
-  onClose: () => void;
+  selectedCardId: number | null;
+  isMobile: boolean;
+  isTablet: boolean;
+  onCardFocus: (id: number | null) => void;
 }
 
-const DeckLibrary: React.FC<DeckLibraryProps> = (_props) => {
+const DeckLibrary: React.FC<DeckLibraryProps> = ({
+  selectedCardId,
+  isMobile,
+  isTablet,
+  onCardFocus,
+}) => {
   const { t } = useTranslation();
-  const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [hoveredCardId, setHoveredCardId] = useState<number | null>(null);
   const [activeCategory, setActiveCategory] = useState<CardPoolType>("FULL");
+  const isDesktopDetail = !isMobile && !isTablet;
+
   const categories: { id: CardPoolType; label: string }[] = [
     { id: "FULL", label: t("deck.categories.FULL") },
     { id: "MAJOR", label: t("deck.categories.MAJOR") },
@@ -23,90 +35,87 @@ const DeckLibrary: React.FC<DeckLibraryProps> = (_props) => {
     { id: "SUIT_PENTACLES", label: t("deck.categories.SUIT_PENTACLES") },
   ];
 
-  const selectedCard =
-    selectedCardId !== null
-      ? FULL_DECK.find((c) => c.id === selectedCardId)
-      : null;
+  const filteredCards = useMemo(
+    () => getDeckForPool(activeCategory),
+    [activeCategory]
+  );
 
-  const filteredCards = useMemo(() => {
-    return getDeckForPool(activeCategory);
-  }, [activeCategory]);
   return (
-    <div className="w-full pt-24 pb-12">
-      <LayoutGroup id="deck-cards">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-2xl font-cinzel text-center mb-8 tracking-[0.2em] text-white/80">
+    <div className="w-full pb-12 pt-24">
+      <div className="mx-auto max-w-7xl px-4">
+        <motion.div
+          animate={{
+            opacity: selectedCardId === null ? 1 : 0.12,
+            filter: selectedCardId === null ? "blur(0px)" : "blur(10px)",
+          }}
+          className={selectedCardId === null ? "pointer-events-auto" : "pointer-events-none"}
+        >
+          <h2 className="mb-8 text-center text-2xl text-white/80 font-cinzel tracking-[0.2em]">
             {t("deck.title")}
           </h2>
 
-        {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8 top-24 z-30 py-4 bg-black/80 backdrop-blur-md -mx-4 px-4 border-b border-white/5">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`
-                px-3 py-1.5 text-[10px] md:text-xs tracking-widest uppercase border transition-all duration-300
-                ${
-                  activeCategory === cat.id
-                    ? "bg-white text-black border-white"
-                    : "bg-transparent text-neutral-500 border-neutral-800 hover:border-neutral-600 hover:text-neutral-300"
-                }
-              `}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
+          <div className="-mx-4 mb-8 flex flex-wrap justify-center gap-2 border-b border-white/5 bg-black/80 px-4 py-4 backdrop-blur-md">
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setActiveCategory(category.id)}
+                className={`border px-3 py-1.5 text-[10px] uppercase tracking-widest transition-all duration-300 md:text-xs ${
+                  activeCategory === category.id
+                    ? "border-white bg-white text-black"
+                    : "border-neutral-800 bg-transparent text-neutral-500 hover:border-neutral-600 hover:text-neutral-300"
+                }`}
+              >
+                {category.label}
+              </button>
+            ))}
+          </div>
+        </motion.div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-8">
-            {filteredCards.map((card) => (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 md:gap-8 lg:grid-cols-6">
+          {filteredCards.map((card) => {
+            const isDetailed = selectedCardId === card.id;
+            const isHovered = hoveredCardId === card.id && selectedCardId === null;
+
+            return (
               <div
                 key={card.id}
-                className="flex justify-center"
-                onClick={() => setSelectedCardId(card.id)}
+                className={`flex justify-center ${CARD_ASPECT_CLASS}`}
               >
-                <TarotCard
+                <RitualCard
                   layoutId={`card-${card.id}`}
                   card={card}
                   isRevealed={true}
-                  isHovered={hoveredCardId === card.id}
+                  isDetailed={isDetailed}
+                  isDesktopDetail={isDesktopDetail}
+                  isHovered={isHovered}
                   onHover={setHoveredCardId}
+                  onDetailClose={() => onCardFocus(null)}
+                  onClick={isDetailed
+                    ? (event) => event.stopPropagation()
+                    : () => {
+                        setHoveredCardId(null);
+                        onCardFocus(card.id);
+                      }}
                   width="w-full"
-                  height={CARD_ASPECT_CLASS}
-                  className="hover:scale-105 transition-transform duration-300"
+                  height={isDetailed ? "h-[100dvh]" : CARD_ASPECT_CLASS}
+                  className={isDetailed ? "cursor-default" : ""}
+                  style={{
+                    position: isDetailed ? "fixed" : "relative",
+                    inset: isDetailed ? 0 : "auto",
+                    zIndex: isDetailed ? 10000 : "auto",
+                  }}
+                  animate={isDetailed
+                    ? { opacity: 1, filter: "blur(0px)" }
+                    : {
+                        opacity: selectedCardId === null ? 1 : 0.12,
+                        filter: selectedCardId === null ? "blur(0px)" : "blur(10px)",
+                      }}
                 />
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
-
-        {/* Card Detail Overlay */}
-        <AnimatePresence>
-          {selectedCardId !== null && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.14 }}
-              className="fixed inset-0 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 md:p-8"
-              style={{ zIndex: 9999 }}
-              onClick={() => setSelectedCardId(null)}
-            >
-              <TarotCard
-                card={selectedCard!}
-                layoutId={`card-${selectedCardId}`}
-                isRevealed={true}
-                isDetailed={true}
-                width="w-full max-w-md md:max-w-5xl"
-                height="h-[80vh] md:h-[75vh]"
-                className="shadow-2xl cursor-default"
-                onClick={(e) => e.stopPropagation()}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </LayoutGroup>
+      </div>
     </div>
   );
 };

@@ -11,6 +11,8 @@
     "back": "Back",
     "openLibraryTitle": "Open library",
     "closeLibraryTitle": "Close library",
+    "switchToChinese": "Switch to Chinese",
+    "switchToEnglish": "Switch to English",
     "fullscreen": "Fullscreen",
     "exitFullscreen": "Exit Fullscreen",
     "stateLabels": {
@@ -40,6 +42,7 @@
   },
   "reading": {
     "revealPrompt": "Reveal every card to unlock the reading",
+    "scrollForReading": "Scroll to reveal the reading",
     "questionPrefix": "Reflecting on:",
     "replay": "REPLAY AUDIO",
     "replayTitle": "Replay the reading audio",
@@ -92,7 +95,8 @@
     "reversedLong": "Reversed",
     "interpretationTitle": "Interpretation",
     "arcanaWisdom": "Arcana Wisdom",
-    "keywords": "Keywords"
+    "keywords": "Keywords",
+    "scrollToRead": "Swipe up to read"
   },
   "print": {
     "title": "Tarot Reading",

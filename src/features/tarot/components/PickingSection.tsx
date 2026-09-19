@@ -2,10 +2,7 @@ import React from "react";
 import { motion } from "motion/react";
 import { SpreadType, TarotCard as TarotCardType, PickedCard } from "@/features/tarot/types";
 import { SILKY_EASE } from "@/shared/constants/ui";
-import { SPREADS } from "@/features/tarot/constants/spreads";
 import { CARD_ASPECT_CLASS } from "@/features/tarot/constants/cards";
-import TarotCard from "./TarotCard";
-import { useTranslation } from "react-i18next";
 
 interface CloudCardRenderData {
   card: TarotCardType;
@@ -31,8 +28,7 @@ const PickingCloudCard: React.FC<PickingCloudCardProps> = React.memo(
     return (
       <motion.div
         style={{
-          transformStyle: "preserve-3d",
-          willChange: "transform",
+          backfaceVisibility: "hidden",
           ...style,
         }}
         className={`relative cursor-pointer group ${width} ${height}`}
@@ -47,7 +43,7 @@ const PickingCloudCard: React.FC<PickingCloudCardProps> = React.memo(
           className="w-full h-full relative"
           layoutId={layoutId}
           transition={{ layout: { type: "tween", duration: 0.18, ease: [0.16, 1, 0.3, 1] } }}
-          style={{ transformStyle: "preserve-3d" }}
+          style={{ backfaceVisibility: "hidden" }}
         >
           <div className="absolute inset-0 overflow-hidden bg-black border border-black/80">
             <div
@@ -96,28 +92,38 @@ const PickingSection: React.FC<PickingSectionProps> = ({
   onCardHover,
   onCardSelect,
 }) => {
-  const { t } = useTranslation();
+  const stageRef = React.useRef<HTMLDivElement>(null);
+  const [stageSize, setStageSize] = React.useState({ width: 0, height: 0 });
+
+  React.useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const updateSize = () => {
+      const rect = stage.getBoundingClientRect();
+      setStageSize({ width: rect.width, height: rect.height });
+    };
+
+    updateSize();
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, []);
 
   const pickedIdSet = React.useMemo(() => {
     return new Set(pickedCards.map((c) => c.id));
   }, [pickedCards]);
 
   const cloudCards = React.useMemo<CloudCardRenderData[]>(() => {
-    let minRadius = 180;
-    let maxRadius = 450;
-    let stretchX = 1.4;
-
-    if (isMobile) {
-      minRadius = 80;
-      maxRadius = 180;
-      stretchX = 1;
-    } else if (isTablet) {
-      minRadius = 140;
-      maxRadius = 320;
-      stretchX = 1.25;
-    }
-
-    const cardWidth = isMobile ? "w-12" : isTablet ? "w-16" : "w-24";
+    const stageWidth = stageSize.width || (isMobile ? 360 : isTablet ? 820 : 1280);
+    const stageHeight = stageSize.height || (isMobile ? 520 : 720);
+    const shortSide = Math.min(stageWidth, stageHeight);
+    const estimatedCardWidth = Math.min(96, Math.max(40, shortSide * 0.08));
+    const estimatedCardHeight = estimatedCardWidth * 1.72;
+    const cardBoundingRadius = Math.hypot(estimatedCardWidth, estimatedCardHeight) / 2;
+    const radiusX = Math.max(72, stageWidth / 2 - cardBoundingRadius - 8);
+    const radiusY = Math.max(72, stageHeight / 2 - cardBoundingRadius - 8);
+    const cardWidth = "w-[clamp(2.5rem,8vmin,6rem)]";
 
     return activeDeck
       .filter((card) => !pickedIdSet.has(card.id))
@@ -128,18 +134,18 @@ const PickingSection: React.FC<PickingSectionProps> = ({
         const r3 =
           Math.sin(seed * 2) * 10000 - Math.floor(Math.sin(seed * 2) * 10000);
 
-        const radius = Math.sqrt(r1) * (maxRadius - minRadius) + minRadius;
+        const radius = 0.2 + Math.sqrt(r1) * 0.8;
         const angle = r2 * 2 * Math.PI;
 
         return {
           card,
-          x: Math.cos(angle) * radius * stretchX,
-          y: Math.sin(angle) * radius,
+          x: Math.cos(angle) * radiusX * radius,
+          y: Math.sin(angle) * radiusY * radius,
           randomRotate: r3 * 360,
           cardWidth,
         };
       });
-  }, [activeDeck, isMobile, isTablet, pickedIdSet]);
+  }, [activeDeck, isMobile, isTablet, pickedIdSet, stageSize.height, stageSize.width]);
 
   return (
   <motion.div
@@ -154,69 +160,34 @@ const PickingSection: React.FC<PickingSectionProps> = ({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 text-center space-y-2 px-6 z-50">
-        <p className="text-xs text-neutral-300">
-          {t("picking.instruction", { count: SPREADS[spread].cardCount })}
-        </p>
-        <div className="flex justify-center gap-2 flex-wrap max-w-md mx-auto px-4">
-          {Array.from({
-            length: SPREADS[spread].cardCount,
-          }).map((_, i) => (
-            <div
-              key={i}
-              className={`w-2 h-2 border border-white/30 rotate-45 transition-all duration-500 ${i < pickedCards.length
-                ? "bg-white scale-110"
-                : "bg-transparent scale-90"
-                }`}
+      <div
+        ref={stageRef}
+        className="absolute inset-x-0 top-[calc(var(--safe-top)+3rem)] bottom-[calc(var(--safe-bottom)+5rem)] overflow-visible md:top-[calc(var(--safe-top)+4rem)] md:bottom-[calc(var(--safe-bottom)+5rem)]"
+      >
+        <div className="tarot-card-cloud absolute w-0 h-0 flex items-center justify-center top-1/2 left-1/2">
+          {cloudCards.map(({ card, x, y, randomRotate, cardWidth }) => (
+            <PickingCloudCard
+              key={card.id}
+              layoutId={`card-${card.id}`}
+              card={card}
+              isHovered={hoveredCardId === card.id}
+              onHover={onCardHover}
+              width={cardWidth}
+              height={CARD_ASPECT_CLASS}
+              style={{
+                position: "absolute",
+                left: x,
+                top: y,
+                transform: "translate(-50%, -50%)",
+                rotate: `${randomRotate}deg`,
+              }}
+              onClick={() => onCardSelect(card)}
             />
           ))}
         </div>
       </div>
-
-      <motion.div
-        className="absolute w-0 h-0 flex items-center justify-center top-1/2 left-1/2"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 240, ease: "linear", repeat: Infinity }}
-      >
-        {cloudCards.map(({ card, x, y, randomRotate, cardWidth }) => (
-          <PickingCloudCard
-            key={card.id}
-            layoutId={`card-${card.id}`}
-            card={card}
-            isHovered={hoveredCardId === card.id}
-            onHover={onCardHover}
-            width={cardWidth}
-            height={CARD_ASPECT_CLASS}
-            style={{
-              position: "absolute",
-              left: x,
-              top: y,
-              transform: "translate(-50%, -50%)",
-              rotate: `${randomRotate}deg`,
-            }}
-            onClick={() => onCardSelect(card)}
-          />
-        ))}
-      </motion.div>
     </motion.div>
 
-    {/* Slots - Persist on exit for layout transition */}
-    <motion.div
-      layoutRoot
-      className="fixed bottom-12 flex gap-3 justify-center w-full pointer-events-none z-50"
-    >
-      {pickedCards.map((c) => (
-        <TarotCard
-          key={`slot-${c.id}`}
-          layoutId={`card-${c.id}`}
-          card={c}
-          isRevealed={false}
-          width={isMobile ? "w-12" : isTablet ? "w-16" : "w-24"}
-          height={CARD_ASPECT_CLASS}
-          className="shadow-2xl"
-        />
-      ))}
-    </motion.div>
   </motion.div>
   );
 };

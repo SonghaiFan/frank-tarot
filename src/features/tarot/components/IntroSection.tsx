@@ -14,7 +14,7 @@ const IntroSection: React.FC<IntroSectionProps> = ({ onEnter }) => {
   return (
     <motion.div
     key="intro"
-    className="h-screen w-full flex flex-col items-center justify-center text-center space-y-12 z-20"
+    className="min-h-[100dvh] w-full flex flex-col items-center justify-center text-center space-y-10 md:space-y-12 px-4 pt-[var(--safe-top)] pb-[var(--safe-bottom)] z-20"
     exit={{
       opacity: 0,
       filter: "blur(20px)",
