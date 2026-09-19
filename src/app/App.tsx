@@ -38,6 +38,7 @@ import { useTarotAudio } from "@/features/tarot/hooks/useTarotAudio";
 import { useResponsive } from "@/shared/hooks/useResponsive";
 import { useTranslation } from "react-i18next";
 import { Locale } from "@/i18n/types";
+import { CardBackId, DEFAULT_CARD_BACK_ID } from "@/features/tarot/constants/cardBacks";
 
 const App: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -96,6 +97,15 @@ const App: React.FC = () => {
   const [hoveredCardId, setHoveredCardId] = useState<number | null>(null);
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [thinkingKeywordIndex, setThinkingKeywordIndex] = useState(0);
+  const [cardBackId, setCardBackId] = useState<CardBackId>(() => {
+    const savedCardBack = window.localStorage.getItem("f-tarot-card-back");
+    return savedCardBack === "celestial-compass" ||
+      savedCardBack === "eclipse-nocturne" ||
+      savedCardBack === "thorn-bloom" ||
+      savedCardBack === "sacred-geometry"
+      ? savedCardBack
+      : DEFAULT_CARD_BACK_ID;
+  });
 
   // --- Refs ---
   const readingPromiseRef = useRef<Promise<string> | null>(null);
@@ -112,6 +122,10 @@ const App: React.FC = () => {
     }, 1500);
     return () => clearInterval(interval);
   }, [isThinking]);
+
+  useEffect(() => {
+    window.localStorage.setItem("f-tarot-card-back", cardBackId);
+  }, [cardBackId]);
 
   // --- Computed Deck ---
   const activeDeck = useMemo(() => {
@@ -388,6 +402,8 @@ const App: React.FC = () => {
             isMobile={isMobile}
             isTablet={isTablet}
             onCardFocus={setSelectedCardId}
+            cardBackId={cardBackId}
+            onCardBackChange={setCardBackId}
           />
         );
       case GameState.INPUT:
@@ -414,6 +430,7 @@ const App: React.FC = () => {
             hoveredCardId={hoveredCardId}
             onCardHover={setHoveredCardId}
             onCardSelect={handleCardSelect}
+            cardBackId={cardBackId}
           />
         );
       case GameState.REVEAL:
@@ -552,6 +569,7 @@ const App: React.FC = () => {
                   }
                   onCardHover={setHoveredCardId}
                   onCardFocus={setSelectedCardId}
+                  cardBackId={cardBackId}
                 />
               )}
             <AnimatePresence mode="sync">{renderPhase()}</AnimatePresence>

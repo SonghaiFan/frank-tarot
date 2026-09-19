@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 960" role="img" aria-labelledby="title">
+  <title id="title">Woven diagonal lines tarot card back</title>
+  <defs>
+    <pattern id="weave" width="96" height="96" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#fff" stroke-width="1.5">
+        <path d="M-24 24L24-24M-16 32L32-16M-8 40L40-8M0 48L48 0M48 96L96 48M56 104L104 56M64 112L112 64M72 120L120 72"/>
+        <path d="M-24 72L24 120M-16 64L32 112M-8 56L40 104M0 48L48 96M48 0L96 48M56-8L104 40M64-16L112 32M72-24L120 24"/>
+      </g>
+    </pattern>
+  </defs>
+  <g transform="scale(1.09375 1.25)">
+  <rect width="512" height="768" fill="#000"/>
+  <rect x="16" y="16" width="480" height="736" rx="10" fill="url(#weave)" stroke="#fff" stroke-width="3"/>
+  <rect x="28" y="28" width="456" height="712" rx="5" fill="none" stroke="#000" stroke-width="8"/>
+  <rect x="34" y="34" width="444" height="700" rx="3" fill="none" stroke="#fff" stroke-width="1.5"/>
+  </g>
+</svg>

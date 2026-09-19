@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 960" role="img" aria-labelledby="title">
+  <title id="title">Scattered stars tarot card back</title>
+  <defs>
+    <pattern id="stars" width="152" height="152" patternUnits="userSpaceOnUse">
+      <g fill="#fff">
+        <circle cx="24" cy="30" r="2.5"/>
+        <circle cx="113" cy="23" r="1.8"/>
+        <circle cx="55" cy="105" r="2"/>
+        <path d="M119 70l2.6 7.4 7.4 2.6-7.4 2.6-2.6 7.4-2.6-7.4-7.4-2.6 7.4-2.6 2.6-7.4z"/>
+        <path d="M28 128l1.8 4.7 4.7 1.8-4.7 1.8-1.8 4.7-1.8-4.7-4.7-1.8 4.7-1.8 1.8-4.7z"/>
+      </g>
+    </pattern>
+  </defs>
+  <g transform="scale(1.09375 1.25)">
+  <rect width="512" height="768" fill="#000"/>
+  <rect x="16" y="16" width="480" height="736" rx="12" fill="#000" stroke="#fff" stroke-width="3"/>
+  <rect x="30" y="30" width="452" height="708" rx="6" fill="url(#stars)" stroke="#fff" stroke-width="1.5"/>
+  </g>
+</svg>

@@ -10,13 +10,16 @@ import {
 } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { CARD_ASPECT_CLASS, getCardImageUrl } from "@/features/tarot/constants/cards";
+import { CardBackId } from "@/features/tarot/constants/cardBacks";
 import { PickedCard, TarotCard as TarotCardData } from "@/features/tarot/types";
 import { getRomanNumeral } from "@/features/tarot/utils/getRomanNumeral";
 import { SILKY_EASE } from "@/shared/constants/ui";
+import CardBackSurface from "./CardBackSurface";
 
 interface RitualCardProps extends Omit<HTMLMotionProps<"div">, "onAnimationStart"> {
   card: PickedCard | TarotCardData;
   isRevealed: boolean;
+  cardBackId: CardBackId;
   isDetailed: boolean;
   isDesktopDetail?: boolean;
   isHovered?: boolean;
@@ -48,6 +51,7 @@ const labelClasses = {
 const RitualCard: React.FC<RitualCardProps> = ({
   card,
   isRevealed,
+  cardBackId,
   isDetailed,
   isDesktopDetail = false,
   isHovered = false,
@@ -138,6 +142,24 @@ const RitualCard: React.FC<RitualCardProps> = ({
   const description = isEnglish ? card.descriptionEn : card.descriptionCn;
   const romanNumeral = getRomanNumeral(card.id);
   const isReversed = "isReversed" in card && card.isReversed;
+  const [isSnappingToSpreadOrientation, setIsSnappingToSpreadOrientation] =
+    React.useState(false);
+
+  const requestDetailClose = React.useCallback(() => {
+    if (!onDetailClose) return;
+
+    if (isReversed) {
+      // Restore the spread orientation on this frame, without rotating through it.
+      setIsSnappingToSpreadOrientation(true);
+      window.requestAnimationFrame(() => setIsSnappingToSpreadOrientation(false));
+    }
+
+    onDetailClose();
+  }, [isReversed, onDetailClose]);
+
+  const isArtworkReversed = isReversed && !isDetailed;
+  const shouldSnapArtworkOrientation =
+    isDetailed || isSnappingToSpreadOrientation;
 
   React.useLayoutEffect(() => {
     if (!isDetailed || isDesktopDetail) scrollProgress.set(0);
@@ -234,7 +256,7 @@ const RitualCard: React.FC<RitualCardProps> = ({
 
     if (!clickedArtwork && !clickedContent) {
       event.stopPropagation();
-      onDetailClose();
+      requestDetailClose();
       return;
     }
 
@@ -437,8 +459,11 @@ const RitualCard: React.FC<RitualCardProps> = ({
                 className={`absolute inset-0 h-full w-full object-cover transition-[filter,opacity] duration-500 ${isImageLoaded ? "opacity-100" : "opacity-0"}`}
                 style={{ filter: imageFilter }}
                 initial={false}
-                animate={{ rotateZ: isReversed && !isDetailed ? 180 : 0 }}
-                transition={{ duration: 0.32, ease: SILKY_EASE }}
+                animate={{ rotateZ: isArtworkReversed ? 180 : 0 }}
+                transition={{
+                  duration: shouldSnapArtworkOrientation ? 0 : 0.32,
+                  ease: SILKY_EASE,
+                }}
               />
               {hasImageError && (
                 <div className="absolute inset-0 flex items-center justify-center bg-neutral-900 p-4 text-center text-xs text-white/40 font-cinzel tracking-widest uppercase">
@@ -483,10 +508,7 @@ const RitualCard: React.FC<RitualCardProps> = ({
               transform: "rotateY(180deg)",
             }}
           >
-            <div className="relative flex h-full w-full items-center justify-center overflow-hidden border border-black/80 bg-neutral-950">
-              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "6px 6px" }} />
-              <div className="h-4 w-4 rotate-45 border border-white/10 transition-transform duration-700 group-hover:rotate-90" />
-            </div>
+            <CardBackSurface cardBackId={cardBackId} className="border border-black/80" />
           </div>
           {!isDetailed && (
             <div
@@ -512,7 +534,7 @@ const RitualCard: React.FC<RitualCardProps> = ({
           transition={{ delay: 0.2 }}
           onClick={(event) => {
             event.stopPropagation();
-            onDetailClose();
+            requestDetailClose();
           }}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">

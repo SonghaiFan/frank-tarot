@@ -4,6 +4,7 @@ import { AnimatePresence } from "motion/react";
 import { ChevronsDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { CARD_ASPECT_CLASS, CARD_ASPECT_RATIO } from "@/features/tarot/constants/cards";
+import { CardBackId } from "@/features/tarot/constants/cardBacks";
 import { getLocalizedSpread, SPREADS } from "@/features/tarot/constants/spreads";
 import { GameState, Locale, PickedCard, SpreadType } from "@/features/tarot/types";
 import { SILKY_EASE } from "@/shared/constants/ui";
@@ -15,6 +16,24 @@ const ABSOLUTE_LAYOUT_UNIT_REM = 0.25;
 const parseWidthUnits = (widthClass: string) => {
   const match = widthClass.match(/\bw-(\d+(?:\.\d+)?)\b/);
   return match ? Number(match[1]) : null;
+};
+
+const getBalancedRows = <T,>(items: T[], maxColumns: number): T[][] => {
+  if (items.length === 0) return [];
+
+  const rowCount = Math.ceil(items.length / maxColumns);
+  const baseRowSize = Math.floor(items.length / rowCount);
+  const largerRowCount = items.length % rowCount;
+  const rows: T[][] = [];
+  let itemIndex = 0;
+
+  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+    const rowSize = baseRowSize + (rowIndex < largerRowCount ? 1 : 0);
+    rows.push(items.slice(itemIndex, itemIndex + rowSize));
+    itemIndex += rowSize;
+  }
+
+  return rows;
 };
 
 interface RitualCardStageProps {
@@ -30,6 +49,7 @@ interface RitualCardStageProps {
   onCardReveal: (id: number) => void;
   onCardHover: (id: number | null) => void;
   onCardFocus: (id: number | null) => void;
+  cardBackId: CardBackId;
 }
 
 const RitualCardStage: React.FC<RitualCardStageProps> = ({
@@ -45,6 +65,7 @@ const RitualCardStage: React.FC<RitualCardStageProps> = ({
   onCardReveal,
   onCardHover,
   onCardFocus,
+  cardBackId,
 }) => {
   const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
   const absoluteStageRef = React.useRef<HTMLDivElement>(null);
@@ -60,6 +81,22 @@ const RitualCardStage: React.FC<RitualCardStageProps> = ({
   const isPicking = gameState === GameState.PICKING;
   const isReading = gameState === GameState.READING || gameState === GameState.REVEAL;
   const useCompactLayout = isMobile || isTablet || isShortViewport;
+  const compactCards = React.useMemo(
+    () => displayedCards.map((card, index) => ({ card, index })),
+    [displayedCards]
+  );
+  const compactRows = React.useMemo(
+    () => getBalancedRows(compactCards, 3),
+    [compactCards]
+  );
+  const widestCompactRow = compactRows[0]?.length ?? 1;
+  const compactCardWidth = widestCompactRow === 1
+    ? "w-[clamp(8.5rem,42vw,12rem)]"
+    : widestCompactRow === 2
+    ? "w-[clamp(7rem,36vw,9rem)]"
+    : displayedCards.length > 9
+    ? "w-[clamp(4.75rem,24vw,6.25rem)]"
+    : "w-[clamp(5.5rem,26vw,7.5rem)]";
   const allCardsRevealed =
     displayedCards.length > 0 &&
     displayedCards.every((card) => revealedCardIds.has(card.id));
@@ -222,6 +259,76 @@ const RitualCardStage: React.FC<RitualCardStageProps> = ({
     onCardFocus(id);
   };
 
+  const renderCard = (card: PickedCard, index: number) => {
+    const isDetailed = selectedCardId === card.id;
+    const isHovered = hoveredCardId === card.id && selectedCardId === null;
+    const position = spreadConfig.positions?.[index];
+    const readingWidth = useCompactLayout
+      ? compactCardWidth
+      : spreadConfig.layoutType === "absolute"
+      ? spreadConfig.cardSize.desktop
+      : "w-[clamp(6rem,18vmin,13rem)]";
+    const wrapperWidth = isPicking ? slotWidth : readingWidth;
+    const usesScaledAbsoluteLayout =
+      !isPicking && !useCompactLayout && spreadConfig.layoutType === "absolute";
+    const absoluteStyle = isPicking
+      ? undefined
+      : getAbsoluteCardStyle(position, isHovered);
+    const label = isPicking
+      ? undefined
+      : spreadConfig.layoutType === "absolute"
+      ? position?.label
+      : spreadConfig.labels?.[index];
+    const labelPosition =
+      spreadConfig.layoutType === "absolute" && !useCompactLayout
+        ? position?.labelPosition || "bottom"
+        : "bottom";
+
+    return (
+      <div
+        key={card.id}
+        style={absoluteStyle}
+        className={`pointer-events-none ${usesScaledAbsoluteLayout ? "" : wrapperWidth} ${CARD_ASPECT_CLASS} shrink-0`}
+      >
+        <RitualCard
+          layoutId={`card-${card.id}`}
+          card={card}
+          isRevealed={isReading && revealedCardIds.has(card.id)}
+          cardBackId={cardBackId}
+          isDetailed={isDetailed}
+          isDesktopDetail={!isMobile && !isTablet}
+          isHovered={isHovered}
+          isHorizontal={
+            isReading && !isDetailed && !!position?.rotation && !useCompactLayout
+          }
+          onHover={isReading ? onCardHover : undefined}
+          onDetailClose={() => onCardFocus(null)}
+          onClick={isDetailed
+            ? (event) => event.stopPropagation()
+            : () => handleCardClick(card.id)}
+          label={isDetailed ? undefined : label}
+          labelPosition={labelPosition}
+          width="w-full"
+          height={isDetailed ? "h-[100dvh]" : CARD_ASPECT_CLASS}
+          className={`${isPicking ? "pointer-events-none" : "pointer-events-auto"} ${
+            isDetailed ? "cursor-default" : ""
+          }`}
+          style={{
+            position: isDetailed ? "fixed" : "relative",
+            inset: isDetailed ? 0 : "auto",
+            zIndex: isDetailed ? 10000 : "auto",
+          }}
+          animate={isDetailed
+            ? { opacity: 1, filter: "blur(0px)" }
+            : {
+                opacity: selectedCardId === null ? 1 : 0.16,
+                filter: selectedCardId === null ? "blur(0px)" : "blur(12px)",
+              }}
+        />
+      </div>
+    );
+  };
+
   return (
     <>
       <section
@@ -236,81 +343,21 @@ const RitualCardStage: React.FC<RitualCardStageProps> = ({
           className={isPicking
             ? "absolute inset-x-0 bottom-[calc(var(--safe-bottom)+1.5rem)] flex justify-center gap-[clamp(0.25rem,1vw,0.75rem)] px-4 md:bottom-10"
             : useCompactLayout
-            ? "grid w-full max-w-xl grid-cols-3 items-start justify-items-center gap-x-3 gap-y-12 px-2 py-8"
+            ? "flex w-full flex-col items-center gap-y-[clamp(2.75rem,8vw,4rem)] px-2 py-8"
             : spreadConfig.layoutType === "absolute"
             ? "relative mx-auto h-[calc(100dvh-var(--safe-top)-4rem)] min-h-[28rem] w-full max-w-4xl lg:max-w-6xl"
             : "flex flex-wrap items-center justify-center gap-6 md:gap-12"}
         >
-          {displayedCards.map((card, index) => {
-            const isDetailed = selectedCardId === card.id;
-            const isHovered = hoveredCardId === card.id && selectedCardId === null;
-            const position = spreadConfig.positions?.[index];
-            const readingWidth = useCompactLayout
-              ? "w-full max-w-[clamp(5.5rem,26vw,7.5rem)] justify-self-center"
-              : spreadConfig.layoutType === "absolute"
-              ? spreadConfig.cardSize.desktop
-              : "w-[clamp(6rem,18vmin,13rem)]";
-            const wrapperWidth = isPicking ? slotWidth : readingWidth;
-            const usesScaledAbsoluteLayout =
-              !isPicking && !useCompactLayout && spreadConfig.layoutType === "absolute";
-            const absoluteStyle = isPicking
-              ? undefined
-              : getAbsoluteCardStyle(position, isHovered);
-            const label = isPicking
-              ? undefined
-              : spreadConfig.layoutType === "absolute"
-              ? position?.label
-              : spreadConfig.labels?.[index];
-            const labelPosition =
-              spreadConfig.layoutType === "absolute" && !useCompactLayout
-                ? position?.labelPosition || "bottom"
-                : "bottom";
-
-            return (
-              <div
-                key={card.id}
-                style={absoluteStyle}
-                className={`pointer-events-none ${usesScaledAbsoluteLayout ? "" : wrapperWidth} ${CARD_ASPECT_CLASS} ${
-                  !isPicking && useCompactLayout ? "shrink-0 snap-center" : "shrink-0"
-                }`}
-              >
-                <RitualCard
-                  layoutId={`card-${card.id}`}
-                  card={card}
-                  isRevealed={isReading && revealedCardIds.has(card.id)}
-                  isDetailed={isDetailed}
-                  isDesktopDetail={!isMobile && !isTablet}
-                  isHovered={isHovered}
-                  isHorizontal={
-                    isReading && !isDetailed && !!position?.rotation && !useCompactLayout
-                  }
-                  onHover={isReading ? onCardHover : undefined}
-                  onDetailClose={() => onCardFocus(null)}
-                  onClick={isDetailed
-                    ? (event) => event.stopPropagation()
-                    : () => handleCardClick(card.id)}
-                  label={isDetailed ? undefined : label}
-                  labelPosition={labelPosition}
-                  width="w-full"
-                  height={isDetailed ? "h-[100dvh]" : CARD_ASPECT_CLASS}
-                  className={`${isPicking ? "pointer-events-none" : "pointer-events-auto"} ${
-                    isDetailed ? "cursor-default" : ""
-                  }`}
-                  style={{
-                    position: isDetailed ? "fixed" : "relative",
-                    inset: isDetailed ? 0 : "auto",
-                    zIndex: isDetailed ? 10000 : "auto",
-                  }}
-                  animate={isDetailed
-                    ? { opacity: 1, filter: "blur(0px)" }
-                    : {
-                        opacity: selectedCardId === null ? 1 : 0.16,
-                        filter: selectedCardId === null ? "blur(0px)" : "blur(12px)",
-                      }}
-                />
-              </div>
-            );
-          })}
+          {!isPicking && useCompactLayout
+            ? compactRows.map((row, rowIndex) => (
+                <div
+                  key={`compact-row-${rowIndex}`}
+                  className="flex w-full items-start justify-center gap-x-[clamp(0.75rem,4vw,2rem)]"
+                >
+                  {row.map(({ card, index }) => renderCard(card, index))}
+                </div>
+              ))
+            : displayedCards.map((card, index) => renderCard(card, index))}
         </div>
 
         {!useCompactLayout && isReading && allCardsRevealed && selectedCardId === null && (

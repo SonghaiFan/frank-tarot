@@ -71,6 +71,27 @@
   },
   "deck": {
     "title": "Tarot Deck Library",
+    "cardBacks": {
+      "title": "Choose your card back",
+      "subtitle": "Your selection appears on every face-down card.",
+      "selected": "Selected",
+      "celestialCompass": {
+        "name": "Woven Lines",
+        "description": "Crosshatched weave"
+      },
+      "eclipseNocturne": {
+        "name": "Star Field",
+        "description": "Scattered stars"
+      },
+      "thornBloom": {
+        "name": "Folk Tiles",
+        "description": "Black and white motif"
+      },
+      "sacredGeometry": {
+        "name": "Craquelure",
+        "description": "Crackle pattern"
+      }
+    },
     "spreadsTitle": "Spread Library",
     "spreadCardCount": "{{count}} cards",
     "views": {

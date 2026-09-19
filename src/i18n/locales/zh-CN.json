@@ -71,6 +71,27 @@
   },
   "deck": {
     "title": "塔罗牌库",
+    "cardBacks": {
+      "title": "选择牌背",
+      "subtitle": "所选牌背会显示在所有未翻开的卡牌上。",
+      "selected": "已选",
+      "celestialCompass": {
+        "name": "交织格纹",
+        "description": "细密斜线编织"
+      },
+      "eclipseNocturne": {
+        "name": "星点",
+        "description": "散落星辰"
+      },
+      "thornBloom": {
+        "name": "花砖",
+        "description": "黑白民艺纹样"
+      },
+      "sacredGeometry": {
+        "name": "冰裂纹",
+        "description": "不规则开片纹理"
+      }
+    },
     "spreadsTitle": "牌阵库",
     "spreadCardCount": "{{count}} 张牌",
     "views": {

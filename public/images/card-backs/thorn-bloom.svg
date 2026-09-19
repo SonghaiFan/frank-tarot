@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 960" role="img" aria-labelledby="title">
+  <title id="title">Black and white floral tiles tarot card back</title>
+  <defs>
+    <pattern id="tiles" width="76" height="76" patternUnits="userSpaceOnUse">
+      <rect width="76" height="76" fill="#000"/>
+      <path d="M38 5c6 0 10 10 10 22 12 0 22 4 22 11s-10 11-22 11c0 12-4 22-10 22S28 61 28 49C16 49 6 45 6 38s10-11 22-11C28 15 32 5 38 5z" fill="#fff"/>
+      <path d="M38 16c3 0 5 8 5 16 8 0 16 2 16 6s-8 6-16 6c0 8-2 16-5 16s-5-8-5-16c-8 0-16-2-16-6s8-6 16-6c0-8 2-16 5-16z" fill="#000"/>
+      <path d="M0 0c10 1 18 9 19 19C9 18 1 10 0 0zm76 0c-10 1-18 9-19 19 10-1 18-9 19-19zM0 76c10-1 18-9 19-19C9 58 1 66 0 76zm76 0c-10-1-18-9-19-19 10 1 18 9 19 19z" fill="#fff"/>
+    </pattern>
+  </defs>
+  <g transform="scale(1.09375 1.25)">
+  <rect width="512" height="768" fill="#000"/>
+  <rect x="16" y="16" width="480" height="736" rx="10" fill="#fff" stroke="#fff" stroke-width="3"/>
+  <rect x="29" y="29" width="454" height="710" rx="4" fill="url(#tiles)" stroke="#000" stroke-width="5"/>
+  </g>
+</svg>

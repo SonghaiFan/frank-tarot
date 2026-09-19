@@ -78,7 +78,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
       </div>
 
       {gameState === GameState.PICKING && pickingCount > 0 && (
-        <div className="pointer-events-none absolute left-1/2 top-[calc(var(--safe-top)+0.35rem)] flex -translate-x-1/2 flex-col items-center gap-1 text-center md:top-[calc(var(--safe-top)+0.55rem)]">
+        <div className="pointer-events-none absolute left-1/2 top-[calc(var(--safe-top)+4rem)] flex -translate-x-1/2 flex-col items-center gap-1 text-center md:top-[calc(var(--safe-top)+4.5rem)]">
           <p className="whitespace-nowrap text-[10px] text-neutral-300 md:text-xs">
             {t("picking.instruction", { count: pickingCount })}
           </p>

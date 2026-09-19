@@ -3,6 +3,8 @@ import { motion } from "motion/react";
 import { SpreadType, TarotCard as TarotCardType, PickedCard } from "@/features/tarot/types";
 import { SILKY_EASE } from "@/shared/constants/ui";
 import { CARD_ASPECT_CLASS } from "@/features/tarot/constants/cards";
+import { CardBackId } from "@/features/tarot/constants/cardBacks";
+import CardBackSurface from "./CardBackSurface";
 
 interface CloudCardRenderData {
   card: TarotCardType;
@@ -21,10 +23,11 @@ interface PickingCloudCardProps {
   style: React.CSSProperties;
   onHover: (id: number | null) => void;
   onClick: () => void;
+  cardBackId: CardBackId;
 }
 
 const PickingCloudCard: React.FC<PickingCloudCardProps> = React.memo(
-  ({ card, layoutId, isHovered, width, height = CARD_ASPECT_CLASS, style, onHover, onClick }) => {
+  ({ card, layoutId, isHovered, width, height = CARD_ASPECT_CLASS, style, onHover, onClick, cardBackId }) => {
     return (
       <motion.div
         style={{
@@ -46,14 +49,7 @@ const PickingCloudCard: React.FC<PickingCloudCardProps> = React.memo(
           style={{ backfaceVisibility: "hidden" }}
         >
           <div className="absolute inset-0 overflow-hidden bg-black border border-black/80">
-            <div
-              className="absolute inset-0 opacity-20"
-              style={{
-                backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
-                backgroundSize: "6px 6px",
-              }}
-            />
-            <div className="w-4 h-4 border border-white/10 rotate-45 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+            <CardBackSurface cardBackId={cardBackId} />
           </div>
           <div
             aria-hidden
@@ -80,6 +76,7 @@ interface PickingSectionProps {
   hoveredCardId: number | null;
   onCardHover: (id: number | null) => void;
   onCardSelect: (card: TarotCardType) => void;
+  cardBackId: CardBackId;
 }
 
 const PickingSection: React.FC<PickingSectionProps> = ({
@@ -91,6 +88,7 @@ const PickingSection: React.FC<PickingSectionProps> = ({
   hoveredCardId,
   onCardHover,
   onCardSelect,
+  cardBackId,
 }) => {
   const stageRef = React.useRef<HTMLDivElement>(null);
   const [stageSize, setStageSize] = React.useState({ width: 0, height: 0 });
@@ -162,7 +160,7 @@ const PickingSection: React.FC<PickingSectionProps> = ({
     >
       <div
         ref={stageRef}
-        className="absolute inset-x-0 top-[calc(var(--safe-top)+3rem)] bottom-[calc(var(--safe-bottom)+5rem)] overflow-visible md:top-[calc(var(--safe-top)+4rem)] md:bottom-[calc(var(--safe-bottom)+5rem)]"
+        className="absolute inset-x-0 top-[calc(var(--safe-top)+6rem)] bottom-[calc(var(--safe-bottom)+5rem)] overflow-visible md:top-[calc(var(--safe-top)+6.5rem)] md:bottom-[calc(var(--safe-bottom)+5rem)]"
       >
         <div className="tarot-card-cloud absolute w-0 h-0 flex items-center justify-center top-1/2 left-1/2">
           {cloudCards.map(({ card, x, y, randomRotate, cardWidth }) => (
@@ -182,6 +180,7 @@ const PickingSection: React.FC<PickingSectionProps> = ({
                 rotate: `${randomRotate}deg`,
               }}
               onClick={() => onCardSelect(card)}
+              cardBackId={cardBackId}
             />
           ))}
         </div>

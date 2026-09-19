@@ -74,7 +74,7 @@ const CardTooltip: React.FC<CardTooltipProps> = ({
         pointerEvents: "none",
         zIndex: 9999,
       }}
-      className="bg-black/80 border border-white/10 rounded-md px-3 py-2.5 backdrop-blur-sm shadow-xl w-64 whitespace-normal"
+      className="bg-black/80 border border-white/10 px-3 py-2.5 backdrop-blur-sm shadow-xl w-64 whitespace-normal"
     >
       <div className="space-y-1.5">
         {positionLabel && (

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 960" role="img" aria-labelledby="title">
+  <title id="title">Crackle pattern tarot card back</title>
+  <defs>
+    <pattern id="crackle" width="144" height="144" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M0 32L18 16l24 6L63 6l25 14 24-11 32 23M0 102l29-1 19-6 27 13 30-6 39 0M42 0l6 25-12 23 21 21-9 26 17 23-23 26M110 0l-6 28 17 21-16 23 21 26-10 24-6 22M0 32l15 26-8 24 22 19-9 24 22 19M144 32l-18 21 10 25-10 20 18 4M48 25l56 3M57 69l48 3M65 118l51 4"/>
+      </g>
+    </pattern>
+  </defs>
+  <g transform="scale(1.09375 1.25)">
+  <rect width="512" height="768" fill="#000"/>
+  <rect x="16" y="16" width="480" height="736" rx="10" fill="#000" stroke="#fff" stroke-width="3"/>
+  <rect x="29" y="29" width="454" height="710" rx="5" fill="url(#crackle)" stroke="#fff" stroke-width="1.5"/>
+  </g>
+</svg>
