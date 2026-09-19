@@ -10,9 +10,9 @@ import CardTooltip from "./CardTooltip";
 import { useTranslation } from "react-i18next";
 import { Locale } from "@/features/tarot/types";
 import buildFollowUpPrompt from "@/features/tarot/utils/buildFollowUpPrompt";
+import { CARD_ASPECT_RATIO } from "@/features/tarot/constants/cards";
 
 const ABSOLUTE_LAYOUT_UNIT_REM = 0.25;
-const CARD_ASPECT_RATIO = 519 / 300;
 
 const parseWidthUnits = (widthClass: string) => {
   const match = widthClass.match(/\bw-(\d+(?:\.\d+)?)\b/);

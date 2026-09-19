@@ -21,7 +21,7 @@ export type SpreadType =
   | "YEARLY"
   | "AUTO";
 
-export type Locale = "zh-CN" | "en";
+export type { Locale } from "@/i18n/types";
 
 export type CardPoolType =
   | "MAJOR"

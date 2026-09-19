@@ -1,4 +1,5 @@
-{ "cards": {
+{
+  "cards": {
     "allIds": [
       "0",
       "1",
@@ -83,7 +84,7 @@
       "0": {
         "id": "0",
         "numericId": 0,
-        "image": "maj00.jpg",
+        "image": "maj00.png",
         "name": {
           "en": "The Fool",
           "zh-CN": "愚人"
@@ -124,7 +125,7 @@
       "1": {
         "id": "1",
         "numericId": 1,
-        "image": "maj01.jpg",
+        "image": "maj01.png",
         "name": {
           "en": "The Magician",
           "zh-CN": "魔术师"
@@ -163,7 +164,7 @@
       "2": {
         "id": "2",
         "numericId": 2,
-        "image": "maj02.jpg",
+        "image": "maj02.png",
         "name": {
           "en": "The High Priestess",
           "zh-CN": "女祭司"
@@ -202,7 +203,7 @@
       "3": {
         "id": "3",
         "numericId": 3,
-        "image": "maj03.jpg",
+        "image": "maj03.png",
         "name": {
           "en": "The Empress",
           "zh-CN": "皇后"
@@ -241,7 +242,7 @@
       "4": {
         "id": "4",
         "numericId": 4,
-        "image": "maj04.jpg",
+        "image": "maj04.png",
         "name": {
           "en": "The Emperor",
           "zh-CN": "皇帝"
@@ -280,7 +281,7 @@
       "5": {
         "id": "5",
         "numericId": 5,
-        "image": "maj05.jpg",
+        "image": "maj05.png",
         "name": {
           "en": "The Hierophant",
           "zh-CN": "教皇"
@@ -319,7 +320,7 @@
       "6": {
         "id": "6",
         "numericId": 6,
-        "image": "maj06.jpg",
+        "image": "maj06.png",
         "name": {
           "en": "The Lovers",
           "zh-CN": "恋人"
@@ -358,7 +359,7 @@
       "7": {
         "id": "7",
         "numericId": 7,
-        "image": "maj07.jpg",
+        "image": "maj07.png",
         "name": {
           "en": "The Chariot",
           "zh-CN": "战车"
@@ -397,7 +398,7 @@
       "8": {
         "id": "8",
         "numericId": 8,
-        "image": "maj08.jpg",
+        "image": "maj08.png",
         "name": {
           "en": "Strength",
           "zh-CN": "力量"
@@ -436,7 +437,7 @@
       "9": {
         "id": "9",
         "numericId": 9,
-        "image": "maj09.jpg",
+        "image": "maj09.png",
         "name": {
           "en": "The Hermit",
           "zh-CN": "隐士"
@@ -475,7 +476,7 @@
       "10": {
         "id": "10",
         "numericId": 10,
-        "image": "maj10.jpg",
+        "image": "maj10.png",
         "name": {
           "en": "Wheel of Fortune",
           "zh-CN": "命运之轮"
@@ -514,7 +515,7 @@
       "11": {
         "id": "11",
         "numericId": 11,
-        "image": "maj11.jpg",
+        "image": "maj11.png",
         "name": {
           "en": "Justice",
           "zh-CN": "正义"
@@ -553,7 +554,7 @@
       "12": {
         "id": "12",
         "numericId": 12,
-        "image": "maj12.jpg",
+        "image": "maj12.png",
         "name": {
           "en": "The Hanged Man",
           "zh-CN": "倒吊人"
@@ -592,7 +593,7 @@
       "13": {
         "id": "13",
         "numericId": 13,
-        "image": "maj13.jpg",
+        "image": "maj13.png",
         "name": {
           "en": "Death",
           "zh-CN": "死神"
@@ -631,7 +632,7 @@
       "14": {
         "id": "14",
         "numericId": 14,
-        "image": "maj14.jpg",
+        "image": "maj14.png",
         "name": {
           "en": "Temperance",
           "zh-CN": "节制"
@@ -670,7 +671,7 @@
       "15": {
         "id": "15",
         "numericId": 15,
-        "image": "maj15.jpg",
+        "image": "maj15.png",
         "name": {
           "en": "The Devil",
           "zh-CN": "恶魔"
@@ -709,7 +710,7 @@
       "16": {
         "id": "16",
         "numericId": 16,
-        "image": "maj16.jpg",
+        "image": "maj16.png",
         "name": {
           "en": "The Tower",
           "zh-CN": "高塔"
@@ -748,7 +749,7 @@
       "17": {
         "id": "17",
         "numericId": 17,
-        "image": "maj17.jpg",
+        "image": "maj17.png",
         "name": {
           "en": "The Star",
           "zh-CN": "星星"
@@ -787,7 +788,7 @@
       "18": {
         "id": "18",
         "numericId": 18,
-        "image": "maj18.jpg",
+        "image": "maj18.png",
         "name": {
           "en": "The Moon",
           "zh-CN": "月亮"
@@ -826,7 +827,7 @@
       "19": {
         "id": "19",
         "numericId": 19,
-        "image": "maj19.jpg",
+        "image": "maj19.png",
         "name": {
           "en": "The Sun",
           "zh-CN": "太阳"
@@ -865,7 +866,7 @@
       "20": {
         "id": "20",
         "numericId": 20,
-        "image": "maj20.jpg",
+        "image": "maj20.png",
         "name": {
           "en": "Judgement",
           "zh-CN": "审判"
@@ -904,7 +905,7 @@
       "21": {
         "id": "21",
         "numericId": 21,
-        "image": "maj21.jpg",
+        "image": "maj21.png",
         "name": {
           "en": "The World",
           "zh-CN": "世界"
@@ -943,7 +944,7 @@
       "22": {
         "id": "22",
         "numericId": 22,
-        "image": "wands01.jpg",
+        "image": "wands01.png",
         "name": {
           "en": "Ace of Wands",
           "zh-CN": "权杖首牌"
@@ -984,7 +985,7 @@
       "23": {
         "id": "23",
         "numericId": 23,
-        "image": "wands02.jpg",
+        "image": "wands02.png",
         "name": {
           "en": "Two of Wands",
           "zh-CN": "权杖二"
@@ -1023,7 +1024,7 @@
       "24": {
         "id": "24",
         "numericId": 24,
-        "image": "wands03.jpg",
+        "image": "wands03.png",
         "name": {
           "en": "Three of Wands",
           "zh-CN": "权杖三"
@@ -1062,7 +1063,7 @@
       "25": {
         "id": "25",
         "numericId": 25,
-        "image": "wands04.jpg",
+        "image": "wands04.png",
         "name": {
           "en": "Four of Wands",
           "zh-CN": "权杖四"
@@ -1103,7 +1104,7 @@
       "26": {
         "id": "26",
         "numericId": 26,
-        "image": "wands05.jpg",
+        "image": "wands05.png",
         "name": {
           "en": "Five of Wands",
           "zh-CN": "权杖五"
@@ -1142,7 +1143,7 @@
       "27": {
         "id": "27",
         "numericId": 27,
-        "image": "wands06.jpg",
+        "image": "wands06.png",
         "name": {
           "en": "Six of Wands",
           "zh-CN": "权杖六"
@@ -1181,7 +1182,7 @@
       "28": {
         "id": "28",
         "numericId": 28,
-        "image": "wands07.jpg",
+        "image": "wands07.png",
         "name": {
           "en": "Seven of Wands",
           "zh-CN": "权杖七"
@@ -1220,7 +1221,7 @@
       "29": {
         "id": "29",
         "numericId": 29,
-        "image": "wands08.jpg",
+        "image": "wands08.png",
         "name": {
           "en": "Eight of Wands",
           "zh-CN": "权杖八"
@@ -1259,7 +1260,7 @@
       "30": {
         "id": "30",
         "numericId": 30,
-        "image": "wands09.jpg",
+        "image": "wands09.png",
         "name": {
           "en": "Nine of Wands",
           "zh-CN": "权杖九"
@@ -1298,7 +1299,7 @@
       "31": {
         "id": "31",
         "numericId": 31,
-        "image": "wands10.jpg",
+        "image": "wands10.png",
         "name": {
           "en": "Ten of Wands",
           "zh-CN": "权杖十"
@@ -1337,7 +1338,7 @@
       "32": {
         "id": "32",
         "numericId": 32,
-        "image": "wands11.jpg",
+        "image": "wands11.png",
         "name": {
           "en": "Page of Wands",
           "zh-CN": "权杖侍从"
@@ -1376,7 +1377,7 @@
       "33": {
         "id": "33",
         "numericId": 33,
-        "image": "wands12.jpg",
+        "image": "wands12.png",
         "name": {
           "en": "Knight of Wands",
           "zh-CN": "权杖骑士"
@@ -1415,7 +1416,7 @@
       "34": {
         "id": "34",
         "numericId": 34,
-        "image": "wands13.jpg",
+        "image": "wands13.png",
         "name": {
           "en": "Queen of Wands",
           "zh-CN": "权杖王后"
@@ -1456,7 +1457,7 @@
       "35": {
         "id": "35",
         "numericId": 35,
-        "image": "wands14.jpg",
+        "image": "wands14.png",
         "name": {
           "en": "King of Wands",
           "zh-CN": "权杖国王"
@@ -1497,7 +1498,7 @@
       "36": {
         "id": "36",
         "numericId": 36,
-        "image": "cups01.jpg",
+        "image": "cups01.png",
         "name": {
           "en": "Ace of Cups",
           "zh-CN": "圣杯首牌"
@@ -1538,7 +1539,7 @@
       "37": {
         "id": "37",
         "numericId": 37,
-        "image": "cups02.jpg",
+        "image": "cups02.png",
         "name": {
           "en": "Two of Cups",
           "zh-CN": "圣杯二"
@@ -1579,7 +1580,7 @@
       "38": {
         "id": "38",
         "numericId": 38,
-        "image": "cups03.jpg",
+        "image": "cups03.png",
         "name": {
           "en": "Three of Cups",
           "zh-CN": "圣杯三"
@@ -1620,7 +1621,7 @@
       "39": {
         "id": "39",
         "numericId": 39,
-        "image": "cups04.jpg",
+        "image": "cups04.png",
         "name": {
           "en": "Four of Cups",
           "zh-CN": "圣杯四"
@@ -1659,7 +1660,7 @@
       "40": {
         "id": "40",
         "numericId": 40,
-        "image": "cups05.jpg",
+        "image": "cups05.png",
         "name": {
           "en": "Five of Cups",
           "zh-CN": "圣杯五"
@@ -1698,7 +1699,7 @@
       "41": {
         "id": "41",
         "numericId": 41,
-        "image": "cups06.jpg",
+        "image": "cups06.png",
         "name": {
           "en": "Six of Cups",
           "zh-CN": "圣杯六"
@@ -1739,7 +1740,7 @@
       "42": {
         "id": "42",
         "numericId": 42,
-        "image": "cups07.jpg",
+        "image": "cups07.png",
         "name": {
           "en": "Seven of Cups",
           "zh-CN": "圣杯七"
@@ -1778,7 +1779,7 @@
       "43": {
         "id": "43",
         "numericId": 43,
-        "image": "cups08.jpg",
+        "image": "cups08.png",
         "name": {
           "en": "Eight of Cups",
           "zh-CN": "圣杯八"
@@ -1817,7 +1818,7 @@
       "44": {
         "id": "44",
         "numericId": 44,
-        "image": "cups09.jpg",
+        "image": "cups09.png",
         "name": {
           "en": "Nine of Cups",
           "zh-CN": "圣杯九"
@@ -1856,7 +1857,7 @@
       "45": {
         "id": "45",
         "numericId": 45,
-        "image": "cups10.jpg",
+        "image": "cups10.png",
         "name": {
           "en": "Ten of Cups",
           "zh-CN": "圣杯十"
@@ -1895,7 +1896,7 @@
       "46": {
         "id": "46",
         "numericId": 46,
-        "image": "cups11.jpg",
+        "image": "cups11.png",
         "name": {
           "en": "Page of Cups",
           "zh-CN": "圣杯侍从"
@@ -1934,7 +1935,7 @@
       "47": {
         "id": "47",
         "numericId": 47,
-        "image": "cups12.jpg",
+        "image": "cups12.png",
         "name": {
           "en": "Knight of Cups",
           "zh-CN": "圣杯骑士"
@@ -1973,7 +1974,7 @@
       "48": {
         "id": "48",
         "numericId": 48,
-        "image": "cups13.jpg",
+        "image": "cups13.png",
         "name": {
           "en": "Queen of Cups",
           "zh-CN": "圣杯王后"
@@ -2012,7 +2013,7 @@
       "49": {
         "id": "49",
         "numericId": 49,
-        "image": "cups14.jpg",
+        "image": "cups14.png",
         "name": {
           "en": "King of Cups",
           "zh-CN": "圣杯国王"
@@ -2051,7 +2052,7 @@
       "50": {
         "id": "50",
         "numericId": 50,
-        "image": "swords01.jpg",
+        "image": "swords01.png",
         "name": {
           "en": "Ace of Swords",
           "zh-CN": "宝剑首牌"
@@ -2088,7 +2089,7 @@
       "51": {
         "id": "51",
         "numericId": 51,
-        "image": "swords02.jpg",
+        "image": "swords02.png",
         "name": {
           "en": "Two of Swords",
           "zh-CN": "宝剑二"
@@ -2125,7 +2126,7 @@
       "52": {
         "id": "52",
         "numericId": 52,
-        "image": "swords03.jpg",
+        "image": "swords03.png",
         "name": {
           "en": "Three of Swords",
           "zh-CN": "宝剑三"
@@ -2162,7 +2163,7 @@
       "53": {
         "id": "53",
         "numericId": 53,
-        "image": "swords04.jpg",
+        "image": "swords04.png",
         "name": {
           "en": "Four of Swords",
           "zh-CN": "宝剑四"
@@ -2199,7 +2200,7 @@
       "54": {
         "id": "54",
         "numericId": 54,
-        "image": "swords05.jpg",
+        "image": "swords05.png",
         "name": {
           "en": "Five of Swords",
           "zh-CN": "宝剑五"
@@ -2236,7 +2237,7 @@
       "55": {
         "id": "55",
         "numericId": 55,
-        "image": "swords06.jpg",
+        "image": "swords06.png",
         "name": {
           "en": "Six of Swords",
           "zh-CN": "宝剑六"
@@ -2273,7 +2274,7 @@
       "56": {
         "id": "56",
         "numericId": 56,
-        "image": "swords07.jpg",
+        "image": "swords07.png",
         "name": {
           "en": "Seven of Swords",
           "zh-CN": "宝剑七"
@@ -2310,7 +2311,7 @@
       "57": {
         "id": "57",
         "numericId": 57,
-        "image": "swords08.jpg",
+        "image": "swords08.png",
         "name": {
           "en": "Eight of Swords",
           "zh-CN": "宝剑八"
@@ -2347,7 +2348,7 @@
       "58": {
         "id": "58",
         "numericId": 58,
-        "image": "swords09.jpg",
+        "image": "swords09.png",
         "name": {
           "en": "Nine of Swords",
           "zh-CN": "宝剑九"
@@ -2384,7 +2385,7 @@
       "59": {
         "id": "59",
         "numericId": 59,
-        "image": "swords10.jpg",
+        "image": "swords10.png",
         "name": {
           "en": "Ten of Swords",
           "zh-CN": "宝剑十"
@@ -2421,7 +2422,7 @@
       "60": {
         "id": "60",
         "numericId": 60,
-        "image": "swords11.jpg",
+        "image": "swords11.png",
         "name": {
           "en": "Page of Swords",
           "zh-CN": "宝剑侍从"
@@ -2458,7 +2459,7 @@
       "61": {
         "id": "61",
         "numericId": 61,
-        "image": "swords12.jpg",
+        "image": "swords12.png",
         "name": {
           "en": "Knight of Swords",
           "zh-CN": "宝剑骑士"
@@ -2495,7 +2496,7 @@
       "62": {
         "id": "62",
         "numericId": 62,
-        "image": "swords13.jpg",
+        "image": "swords13.png",
         "name": {
           "en": "Queen of Swords",
           "zh-CN": "宝剑王后"
@@ -2532,7 +2533,7 @@
       "63": {
         "id": "63",
         "numericId": 63,
-        "image": "swords14.jpg",
+        "image": "swords14.png",
         "name": {
           "en": "King of Swords",
           "zh-CN": "宝剑国王"
@@ -2569,7 +2570,7 @@
       "64": {
         "id": "64",
         "numericId": 64,
-        "image": "pents01.jpg",
+        "image": "pents01.png",
         "name": {
           "en": "Ace of Pentacles",
           "zh-CN": "星币首牌"
@@ -2606,7 +2607,7 @@
       "65": {
         "id": "65",
         "numericId": 65,
-        "image": "pents02.jpg",
+        "image": "pents02.png",
         "name": {
           "en": "Two of Pentacles",
           "zh-CN": "星币二"
@@ -2643,7 +2644,7 @@
       "66": {
         "id": "66",
         "numericId": 66,
-        "image": "pents03.jpg",
+        "image": "pents03.png",
         "name": {
           "en": "Three of Pentacles",
           "zh-CN": "星币三"
@@ -2680,7 +2681,7 @@
       "67": {
         "id": "67",
         "numericId": 67,
-        "image": "pents04.jpg",
+        "image": "pents04.png",
         "name": {
           "en": "Four of Pentacles",
           "zh-CN": "星币四"
@@ -2717,7 +2718,7 @@
       "68": {
         "id": "68",
         "numericId": 68,
-        "image": "pents05.jpg",
+        "image": "pents05.png",
         "name": {
           "en": "Five of Pentacles",
           "zh-CN": "星币五"
@@ -2754,7 +2755,7 @@
       "69": {
         "id": "69",
         "numericId": 69,
-        "image": "pents06.jpg",
+        "image": "pents06.png",
         "name": {
           "en": "Six of Pentacles",
           "zh-CN": "星币六"
@@ -2791,7 +2792,7 @@
       "70": {
         "id": "70",
         "numericId": 70,
-        "image": "pents07.jpg",
+        "image": "pents07.png",
         "name": {
           "en": "Seven of Pentacles",
           "zh-CN": "星币七"
@@ -2828,7 +2829,7 @@
       "71": {
         "id": "71",
         "numericId": 71,
-        "image": "pents08.jpg",
+        "image": "pents08.png",
         "name": {
           "en": "Eight of Pentacles",
           "zh-CN": "星币八"
@@ -2865,7 +2866,7 @@
       "72": {
         "id": "72",
         "numericId": 72,
-        "image": "pents09.jpg",
+        "image": "pents09.png",
         "name": {
           "en": "Nine of Pentacles",
           "zh-CN": "星币九"
@@ -2902,7 +2903,7 @@
       "73": {
         "id": "73",
         "numericId": 73,
-        "image": "pents10.jpg",
+        "image": "pents10.png",
         "name": {
           "en": "Ten of Pentacles",
           "zh-CN": "星币十"
@@ -2939,7 +2940,7 @@
       "74": {
         "id": "74",
         "numericId": 74,
-        "image": "pents11.jpg",
+        "image": "pents11.png",
         "name": {
           "en": "Page of Pentacles",
           "zh-CN": "星币侍从"
@@ -2976,7 +2977,7 @@
       "75": {
         "id": "75",
         "numericId": 75,
-        "image": "pents12.jpg",
+        "image": "pents12.png",
         "name": {
           "en": "Knight of Pentacles",
           "zh-CN": "星币骑士"
@@ -3013,7 +3014,7 @@
       "76": {
         "id": "76",
         "numericId": 76,
-        "image": "pents13.jpg",
+        "image": "pents13.png",
         "name": {
           "en": "Queen of Pentacles",
           "zh-CN": "星币王后"
@@ -3050,7 +3051,7 @@
       "77": {
         "id": "77",
         "numericId": 77,
-        "image": "pents14.jpg",
+        "image": "pents14.png",
         "name": {
           "en": "King of Pentacles",
           "zh-CN": "星币国王"
@@ -3297,8 +3298,8 @@
             "zh-CN": null
           },
           "cardSize": {
-            "mobile": "w-64 aspect-[300/519]",
-            "desktop": "w-80 aspect-[300/519]"
+            "mobile": "w-64 aspect-[7/12]",
+            "desktop": "w-80 aspect-[7/12]"
           }
         },
         "cardPools": null,
@@ -3350,8 +3351,8 @@
             "zh-CN": null
           },
           "cardSize": {
-            "mobile": "w-64 aspect-[300/519]",
-            "desktop": "w-80 aspect-[300/519]"
+            "mobile": "w-64 aspect-[7/12]",
+            "desktop": "w-80 aspect-[7/12]"
           }
         },
         "cardPools": null,
@@ -3407,8 +3408,8 @@
             "zh-CN": null
           },
           "cardSize": {
-            "mobile": "w-28 aspect-[300/519]",
-            "desktop": "w-56 aspect-[300/519]"
+            "mobile": "w-28 aspect-[7/12]",
+            "desktop": "w-56 aspect-[7/12]"
           }
         },
         "cardPools": null,
@@ -3480,8 +3481,8 @@
             ]
           },
           "cardSize": {
-            "mobile": "w-20 aspect-[300/519]",
-            "desktop": "w-32 aspect-[300/519]"
+            "mobile": "w-20 aspect-[7/12]",
+            "desktop": "w-32 aspect-[7/12]"
           }
         },
         "cardPools": [
@@ -3543,8 +3544,8 @@
             "zh-CN": null
           },
           "cardSize": {
-            "mobile": "w-24 aspect-[300/519]",
-            "desktop": "w-36 aspect-[300/519]"
+            "mobile": "w-24 aspect-[7/12]",
+            "desktop": "w-36 aspect-[7/12]"
           }
         },
         "cardPools": null,
@@ -3604,8 +3605,8 @@
             "zh-CN": null
           },
           "cardSize": {
-            "mobile": "w-20 aspect-[300/519]",
-            "desktop": "w-32 aspect-[300/519]"
+            "mobile": "w-20 aspect-[7/12]",
+            "desktop": "w-32 aspect-[7/12]"
           }
         },
         "cardPools": null,
@@ -3691,8 +3692,8 @@
             ]
           },
           "cardSize": {
-            "mobile": "w-18 aspect-[300/519]",
-            "desktop": "w-28 aspect-[300/519]"
+            "mobile": "w-18 aspect-[7/12]",
+            "desktop": "w-28 aspect-[7/12]"
           }
         },
         "cardPools": null,
@@ -3778,8 +3779,8 @@
             ]
           },
           "cardSize": {
-            "mobile": "w-18 aspect-[300/519]",
-            "desktop": "w-28 aspect-[300/519]"
+            "mobile": "w-18 aspect-[7/12]",
+            "desktop": "w-28 aspect-[7/12]"
           }
         },
         "cardPools": [
@@ -3899,8 +3900,8 @@
             ]
           },
           "cardSize": {
-            "mobile": "w-12 aspect-[300/519]",
-            "desktop": "w-28 aspect-[300/519]"
+            "mobile": "w-12 aspect-[7/12]",
+            "desktop": "w-28 aspect-[7/12]"
           }
         },
         "cardPools": null,
@@ -4028,8 +4029,8 @@
             ]
           },
           "cardSize": {
-            "mobile": "w-14 aspect-[300/519]",
-            "desktop": "w-25 aspect-[300/519]"
+            "mobile": "w-14 aspect-[7/12]",
+            "desktop": "w-25 aspect-[7/12]"
           }
         },
         "cardPools": null,
@@ -4138,8 +4139,8 @@
             ]
           },
           "cardSize": {
-            "mobile": "w-14 aspect-[300/519]",
-            "desktop": "w-28 aspect-[300/519]"
+            "mobile": "w-14 aspect-[7/12]",
+            "desktop": "w-28 aspect-[7/12]"
           }
         },
         "cardPools": null,
@@ -4292,8 +4293,8 @@
             ]
           },
           "cardSize": {
-            "mobile": "w-12 aspect-[300/519]",
-            "desktop": "w-26 aspect-[300/519]"
+            "mobile": "w-12 aspect-[7/12]",
+            "desktop": "w-26 aspect-[7/12]"
           }
         },
         "cardPools": null,
@@ -4611,6 +4612,18 @@
           "labelPosition": "bottom"
         }
       ]
+    }
+  },
+  "cardDimensions": {
+    "standard": {
+      "name": "Classic Tarot (Rider-Waite)",
+      "widthCm": 7,
+      "heightCm": 12,
+      "widthMm": 70,
+      "heightMm": 120,
+      "aspectRatio": "7/12",
+      "heightToWidthRatio": 1.7142857142857142,
+      "tailwindAspect": "aspect-[7/12]"
     }
   }
 }

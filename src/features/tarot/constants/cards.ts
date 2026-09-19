@@ -1,7 +1,9 @@
 import groundTruth from "@/features/tarot/data/ground-truth.json";
+import cardImagesManifest from "@/features/tarot/data/card-images.json";
 import { TarotCard, CardPoolType } from "@/features/tarot/types";
 
 const LOCAL_CDN = `${import.meta.env.BASE_URL}images/cards/`;
+const cardImageMap = cardImagesManifest as Record<string, string>;
 
 type GroundTruthCardRecord = {
   id: string;
@@ -65,7 +67,20 @@ export const MAJOR_ARCANA: TarotCard[] = getCardsByIds(cardsData.groups.majorArc
 export const MINOR_ARCANA: TarotCard[] = getCardsByIds(cardsData.groups.minorArcana);
 export const FULL_DECK: TarotCard[] = getCardsByIds(cardsData.groups.fullDeck);
 
-export const getCardImageUrl = (image: string) => `${LOCAL_CDN}${image}`;
+export const getCardImageUrl = (imageOrKey: string): string => {
+  if (!imageOrKey) return "";
+  if (
+    imageOrKey.startsWith("http://") ||
+    imageOrKey.startsWith("https://") ||
+    imageOrKey.startsWith("/")
+  ) {
+    return imageOrKey;
+  }
+  // Strip any existing file extension (e.g. "maj00.jpg" or "maj00.png" -> "maj00")
+  const key = imageOrKey.replace(/\.[^/.]+$/, "");
+  const resolvedFileName = cardImageMap[key] || imageOrKey;
+  return `${LOCAL_CDN}${resolvedFileName}`;
+};
 
 export const STATIC_SCRIPTS = {
   WELCOME: "静心凝视深渊。当你的直觉苏醒时,进入命运之门。",
@@ -100,3 +115,10 @@ export const getDeckForPool = (pool: CardPoolType): TarotCard[] => {
       return FULL_DECK;
   }
 };
+
+export {
+  TAROT_CARD_DIMENSIONS,
+  CARD_ASPECT_RATIO,
+  CARD_ASPECT_CLASS,
+} from "./cardDimensions";
+export type { CardDimensionConfig } from "./cardDimensions";

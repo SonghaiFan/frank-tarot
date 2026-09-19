@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { SpreadType, TarotCard as TarotCardType, PickedCard } from "@/features/tarot/types";
 import { SILKY_EASE } from "@/shared/constants/ui";
 import { SPREADS } from "@/features/tarot/constants/spreads";
+import { CARD_ASPECT_CLASS } from "@/features/tarot/constants/cards";
 import TarotCard from "./TarotCard";
 import { useTranslation } from "react-i18next";
 
@@ -19,14 +20,14 @@ interface PickingCloudCardProps {
   layoutId: string;
   isHovered: boolean;
   width: string;
-  height: string;
+  height?: string;
   style: React.CSSProperties;
   onHover: (id: number | null) => void;
   onClick: () => void;
 }
 
 const PickingCloudCard: React.FC<PickingCloudCardProps> = React.memo(
-  ({ card, layoutId, isHovered, width, height, style, onHover, onClick }) => {
+  ({ card, layoutId, isHovered, width, height = CARD_ASPECT_CLASS, style, onHover, onClick }) => {
     return (
       <motion.div
         style={{
@@ -185,13 +186,13 @@ const PickingSection: React.FC<PickingSectionProps> = ({
             isHovered={hoveredCardId === card.id}
             onHover={onCardHover}
             width={cardWidth}
-            height="aspect-[300/519]"
+            height={CARD_ASPECT_CLASS}
             style={{
               position: "absolute",
               left: x,
               top: y,
               transform: "translate(-50%, -50%)",
-              rotate: randomRotate,
+              rotate: `${randomRotate}deg`,
             }}
             onClick={() => onCardSelect(card)}
           />
@@ -211,7 +212,7 @@ const PickingSection: React.FC<PickingSectionProps> = ({
           card={c}
           isRevealed={false}
           width={isMobile ? "w-12" : isTablet ? "w-16" : "w-24"}
-          height="aspect-[300/519]"
+          height={CARD_ASPECT_CLASS}
           className="shadow-2xl"
         />
       ))}

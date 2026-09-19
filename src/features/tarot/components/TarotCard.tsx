@@ -9,7 +9,7 @@ import {
   useTransform,
 } from "motion/react";
 import { TarotCard as TarotCardType, PickedCard } from "@/features/tarot/types";
-import { getCardImageUrl } from "@/features/tarot/constants/cards";
+import { getCardImageUrl, CARD_ASPECT_CLASS } from "@/features/tarot/constants/cards";
 import { getRomanNumeral } from "@/features/tarot/utils/getRomanNumeral";
 import { useTranslation } from "react-i18next";
 import { SILKY_EASE } from "@/shared/constants/ui";
@@ -59,7 +59,7 @@ const TarotCard: React.FC<TarotCardProps> = ({
   label,
   labelPosition = "bottom",
   width = "w-28",
-  height = "aspect-[300/519]",
+  height = CARD_ASPECT_CLASS,
   className = "",
   style,
   onClick,
@@ -72,6 +72,7 @@ const TarotCard: React.FC<TarotCardProps> = ({
   const locale = i18n.language;
   const isEnglish = locale === "en";
   const [isImageLoaded, setIsImageLoaded] = React.useState(false);
+  const [hasImageError, setHasImageError] = React.useState(false);
   const isReversed =
     propIsReversed ??
     ("isReversed" in card ? (card as PickedCard).isReversed : false);
@@ -277,7 +278,7 @@ const TarotCard: React.FC<TarotCardProps> = ({
                 >
                   <div className="absolute inset-x-[18%] bottom-[6%] h-[12%] rounded-full bg-black/60 blur-2xl opacity-80 pointer-events-none" />
                   <motion.div
-                    className="relative w-full max-w-60 md:md:max-w-84 aspect-300/519"
+                    className={`relative w-full max-w-60 md:max-w-84 ${CARD_ASPECT_CLASS}`}
                     layoutId={sharedLayoutId}
                     style={{
                       transformStyle: "preserve-3d",
@@ -297,10 +298,21 @@ const TarotCard: React.FC<TarotCardProps> = ({
                           alt={card.nameEn}
                           loading="eager"
                           onLoad={() => setIsImageLoaded(true)}
+                          onError={() => {
+                            setIsImageLoaded(true);
+                            setHasImageError(true);
+                          }}
                           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${isImageLoaded ? "opacity-100" : "opacity-0"}`}
                           style={{ filter: imageFilter }}
                         />
-                        {!isImageLoaded && (
+                        {hasImageError && (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 bg-neutral-900 text-center">
+                            <span className="text-white/40 text-xs font-cinzel tracking-widest uppercase">
+                              {card.nameEn}
+                            </span>
+                          </div>
+                        )}
+                        {!isImageLoaded && !hasImageError && (
                           <div className="absolute inset-0 flex items-center justify-center">
                             <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white/60" />
                           </div>
@@ -420,6 +432,10 @@ const TarotCard: React.FC<TarotCardProps> = ({
                   alt={card.nameEn}
                   loading={priority ? "eager" : "lazy"}
                   onLoad={() => setIsImageLoaded(true)}
+                  onError={() => {
+                    setIsImageLoaded(true);
+                    setHasImageError(true);
+                  }}
                   className={`w-full h-full object-cover transition-opacity duration-700 ${isImageLoaded ? "opacity-100" : "opacity-0"}`}
                   style={{ filter: imageFilter }}
                   initial={false}
@@ -428,7 +444,14 @@ const TarotCard: React.FC<TarotCardProps> = ({
                   }}
                   transition={{ duration: 0.34, ease: "easeInOut" }}
                 />
-                {!isImageLoaded && (
+                {hasImageError && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-4 bg-neutral-900 text-center">
+                    <span className="text-white/40 text-xs font-cinzel tracking-widest uppercase">
+                      {card.nameEn}
+                    </span>
+                  </div>
+                )}
+                {!isImageLoaded && !hasImageError && (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-8 h-8 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
                   </div>

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 import { CardPoolType } from "@/features/tarot/types";
-import { FULL_DECK, getDeckForPool } from "@/features/tarot/constants/cards";
+import { FULL_DECK, getDeckForPool, CARD_ASPECT_CLASS } from "@/features/tarot/constants/cards";
 import TarotCard from "./TarotCard";
 import { useTranslation } from "react-i18next";
 
@@ -73,7 +73,7 @@ const DeckLibrary: React.FC<DeckLibraryProps> = (_props) => {
                   isHovered={hoveredCardId === card.id}
                   onHover={setHoveredCardId}
                   width="w-full"
-                  height="aspect-[300/519]"
+                  height={CARD_ASPECT_CLASS}
                   className="hover:scale-105 transition-transform duration-300"
                 />
               </div>
