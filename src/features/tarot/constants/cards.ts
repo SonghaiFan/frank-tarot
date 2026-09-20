@@ -82,9 +82,8 @@ export const getCardImageUrl = (
   }
   // Strip any existing file extension (e.g. "maj00.jpg" or "maj00.png" -> "maj00")
   const key = imageOrKey.replace(/\.[^/.]+$/, "");
-  const resolvedFileName = cardImageMap[key] || imageOrKey;
   const baseCdn = style === "original" ? LOCAL_ORIGINAL_CDN : LOCAL_CDN;
-  return `${baseCdn}${resolvedFileName}`;
+  return `${baseCdn}${key}.webp`;
 };
 
 export const STATIC_SCRIPTS = {

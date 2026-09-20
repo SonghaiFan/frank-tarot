@@ -66,16 +66,13 @@ const DeckLibrary: React.FC<DeckLibraryProps> = ({
             {t("deck.title")}
           </h2>
 
-          <section className="mb-14" aria-labelledby="card-face-title">
-            <div className="mb-5 text-center">
+          <section className="mb-12 max-w-2xl mx-auto" aria-labelledby="card-face-title">
+            <div className="mb-3 text-center">
               <h3 id="card-face-title" className="text-xs text-white/70 font-cinzel uppercase tracking-[0.28em]">
                 {t("deck.cardFaces.title")}
               </h3>
-              <p className="mt-2 text-xs text-neutral-500">
-                {t("deck.cardFaces.subtitle")}
-              </p>
             </div>
-            <div className="mx-auto grid max-w-lg grid-cols-2 gap-4 sm:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 border border-white/15 bg-neutral-950/80 p-1 gap-1">
               {CARD_FACE_STYLES.map((styleOption) => {
                 const isSelected = cardFaceStyle === styleOption.id;
                 return (
@@ -84,41 +81,40 @@ const DeckLibrary: React.FC<DeckLibraryProps> = ({
                     type="button"
                     onClick={() => onCardFaceStyleChange(styleOption.id)}
                     aria-pressed={isSelected}
-                    className={`group relative text-left transition-transform duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${
-                      isSelected ? "scale-[1.02]" : "hover:-translate-y-1"
+                    className={`group relative flex items-center gap-3 p-2.5 sm:p-3 text-left transition-all duration-200 cursor-pointer rounded-none ${
+                      isSelected
+                        ? "bg-white/10 text-amber-50 shadow-[inset_0_0_0_1px_rgba(250,231,188,0.4)]"
+                        : "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
                     }`}
                   >
-                    <div className={`relative ${CARD_ASPECT_CLASS} overflow-hidden border bg-neutral-950 p-1 transition-all duration-300 ${
-                      isSelected
-                        ? "border-amber-100/80 shadow-[0_0_24px_rgba(250,231,188,0.25)]"
-                        : "border-white/10 group-hover:border-white/45"
-                    }`}>
-                      <div className="relative h-full w-full overflow-hidden">
-                        <img
-                          src={getCardImageUrl(styleOption.previewImage, styleOption.id)}
-                          alt={t(styleOption.nameKey)}
-                          className={`object-cover ${
-                            styleOption.id === "original"
-                              ? `absolute ${ORIGINAL_CARD_INSET_CLASS}`
-                              : "h-full w-full"
-                          }`}
-                        />
-                      </div>
-                      <div className={`pointer-events-none absolute inset-0 border transition-opacity ${
-                        isSelected ? "border-amber-100/60 opacity-100" : "border-white/0 opacity-0 group-hover:opacity-100"
-                      }`} />
-                      {isSelected && (
-                        <span className="absolute right-2 top-2 border border-amber-100/60 bg-black/75 px-1.5 py-1 text-[8px] text-amber-50 font-cinzel uppercase tracking-[0.14em] backdrop-blur-sm">
-                          {t("deck.cardFaces.selected")}
-                        </span>
-                      )}
+                    <div className="relative h-13 w-8 shrink-0 overflow-hidden border border-white/20 bg-black">
+                      <img
+                        src={getCardImageUrl(styleOption.previewImage, styleOption.id)}
+                        alt={t(styleOption.nameKey)}
+                        loading="lazy"
+                        decoding="async"
+                        className={`h-full w-full object-cover ${
+                          styleOption.id === "original" ? `absolute ${ORIGINAL_CARD_INSET_CLASS}` : ""
+                        }`}
+                      />
                     </div>
-                    <span className="mt-3 block text-center text-[10px] text-white/75 font-cinzel uppercase tracking-[0.18em]">
-                      {t(styleOption.nameKey)}
-                    </span>
-                    <span className="mt-1 block text-center text-[11px] text-neutral-500 leading-relaxed">
-                      {t(styleOption.descriptionKey)}
-                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[11px] sm:text-xs font-cinzel uppercase tracking-[0.16em] truncate ${
+                          isSelected ? "text-amber-100 font-medium" : "text-white/80"
+                        }`}>
+                          {t(styleOption.nameKey)}
+                        </span>
+                        {isSelected && (
+                          <span className="shrink-0 text-[8px] font-cinzel tracking-wider text-amber-200 border border-amber-200/50 px-1 py-0.2">
+                            {t("deck.cardFaces.selected")}
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-0.5 text-[10px] text-neutral-400 leading-tight line-clamp-1">
+                        {t(styleOption.descriptionKey)}
+                      </p>
+                    </div>
                   </button>
                 );
               })}

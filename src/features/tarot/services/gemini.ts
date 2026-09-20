@@ -4,8 +4,12 @@ import { SPREADS, getLocalizedSpread } from "@/features/tarot/constants/spreads"
 import i18n from "@/i18n/config";
 
 // Helper to create a fresh client instance (important for key updates)
-const getAiClient = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
-export const hasAiKey = () => Boolean(process.env.API_KEY?.trim());
+const getAiClient = () =>
+  new GoogleGenAI({
+    apiKey: process.env.API_KEY || process.env.GEMINI_API_KEY,
+  });
+export const hasAiKey = () =>
+  Boolean((process.env.API_KEY || process.env.GEMINI_API_KEY)?.trim());
 
 import {
   base64ToBytes,
@@ -115,14 +119,28 @@ export const generateTarotReading = async (
 
     console.log("Tarot Reading Prompt:", prompt);
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3-pro-preview",
-      // model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        temperature: 1.0,
-      },
-    });
+    let response;
+    try {
+      response = await ai.models.generateContent({
+        model: "gemini-3.1-pro-preview",
+        contents: prompt,
+        config: {
+          temperature: 1.0,
+        },
+      });
+    } catch (primaryErr) {
+      console.warn(
+        "Primary model (gemini-3.1-pro-preview) failed, falling back to gemini-3.6-flash:",
+        primaryErr
+      );
+      response = await ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: prompt,
+        config: {
+          temperature: 1.0,
+        },
+      });
+    }
     return response.text || t("errors.readingSoftFail");
   } catch (error) {
     console.warn("Text generation warning:", error);
@@ -159,7 +177,7 @@ export const generateSpeech = async (
     console.log("Gemini TTS text:", text);
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-preview-ttss",
+      model: "gemini-2.5-flash-preview-tts",
       contents: [
         {
           parts: [
@@ -244,7 +262,7 @@ export const predictBestSpread = async (
     console.log("Predict Spread Prompt:", prompt);
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash", 
+      model: "gemini-3.6-flash", 
       contents: prompt,
       config: {
         temperature: 0.3,

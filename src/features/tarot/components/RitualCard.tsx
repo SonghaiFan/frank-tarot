@@ -78,30 +78,37 @@ const RitualCard: React.FC<RitualCardProps> = ({
   const [isImageLoaded, setIsImageLoaded] = React.useState(false);
   const [hasImageError, setHasImageError] = React.useState(false);
   const [detailFaceMode, setDetailFaceMode] = React.useState<"redraw" | "original" | "diff">(cardFaceStyle);
-  const [splitPos, setSplitPos] = React.useState(50);
+  const [splitPos, setSplitPos] = React.useState(cardFaceStyle === "original" ? 100 : 0);
+  const [isAnimatingSlide, setIsAnimatingSlide] = React.useState(false);
   const isDraggingSplit = React.useRef(false);
   const sliderContainerRef = React.useRef<HTMLDivElement>(null);
+  const animationTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   React.useEffect(() => {
     if (isDetailed) {
-      setDetailFaceMode(cardFaceStyle);
-      setSplitPos(50);
+      if (cardFaceStyle === "original") {
+        setDetailFaceMode("original");
+        setSplitPos(100);
+      } else {
+        setDetailFaceMode("redraw");
+        setSplitPos(0);
+      }
     }
   }, [cardFaceStyle, isDetailed]);
 
-  const activeCardImageUrl = React.useMemo(() => {
-    if (!isDetailed) {
-      return getCardImageUrl(card.image, cardFaceStyle);
-    }
-    if (detailFaceMode === "original") {
-      return getCardImageUrl(card.image, "original");
-    }
-    return getCardImageUrl(card.image, "redraw");
-  }, [card.image, cardFaceStyle, detailFaceMode, isDetailed]);
+  React.useEffect(() => {
+    return () => {
+      if (animationTimerRef.current) {
+        clearTimeout(animationTimerRef.current);
+      }
+    };
+  }, []);
 
-  const isCurrentFaceOriginal = isDetailed
-    ? detailFaceMode === "original"
-    : cardFaceStyle === "original";
+  const activeCardImageUrl = React.useMemo(() => {
+    return getCardImageUrl(card.image, cardFaceStyle);
+  }, [card.image, cardFaceStyle]);
+
+  const isCurrentFaceOriginal = cardFaceStyle === "original";
 
   React.useEffect(() => {
     setIsImageLoaded(false);
@@ -111,27 +118,34 @@ const RitualCard: React.FC<RitualCardProps> = ({
   const updateSplitFromPointer = React.useCallback((clientX: number) => {
     if (!sliderContainerRef.current) return;
     const rect = sliderContainerRef.current.getBoundingClientRect();
-    const x = clamp((clientX - rect.left) / rect.width, 0.02, 0.98);
-    setSplitPos(Math.round(x * 100));
+    const rawRatio = (clientX - rect.left) / rect.width;
+    const x = clamp(rawRatio, 0, 1);
+    const percent = Math.round(x * 100);
+    setSplitPos(percent);
   }, []);
 
   const handleSliderPointerDown = React.useCallback(
     (e: React.PointerEvent) => {
+      if (detailFaceMode !== "diff") return;
       e.stopPropagation();
+      if (animationTimerRef.current) {
+        clearTimeout(animationTimerRef.current);
+      }
+      setIsAnimatingSlide(false);
       isDraggingSplit.current = true;
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
       updateSplitFromPointer(e.clientX);
     },
-    [updateSplitFromPointer]
+    [detailFaceMode, updateSplitFromPointer]
   );
 
   const handleSliderPointerMove = React.useCallback(
     (e: React.PointerEvent) => {
-      if (!isDraggingSplit.current) return;
+      if (!isDraggingSplit.current || detailFaceMode !== "diff") return;
       e.stopPropagation();
       updateSplitFromPointer(e.clientX);
     },
-    [updateSplitFromPointer]
+    [detailFaceMode, updateSplitFromPointer]
   );
 
   const handleSliderPointerUp = React.useCallback((e: React.PointerEvent) => {
@@ -258,6 +272,28 @@ const RitualCard: React.FC<RitualCardProps> = ({
     detailTiltX.set(0);
     detailTiltY.set(0);
   }, [detailTiltX, detailTiltY]);
+
+  const handleTabSelect = React.useCallback(
+    (mode: "original" | "diff" | "redraw") => {
+      if (animationTimerRef.current) {
+        clearTimeout(animationTimerRef.current);
+      }
+      setIsAnimatingSlide(true);
+      setDetailFaceMode(mode);
+      resetDetailTilt();
+      if (mode === "original") {
+        setSplitPos(100);
+      } else if (mode === "redraw") {
+        setSplitPos(0);
+      } else {
+        setSplitPos(50);
+      }
+      animationTimerRef.current = setTimeout(() => {
+        setIsAnimatingSlide(false);
+      }, 480);
+    },
+    [resetDetailTilt]
+  );
 
   const resetCardTilt = React.useCallback(() => {
     cardTiltX.set(0);
@@ -459,7 +495,7 @@ const RitualCard: React.FC<RitualCardProps> = ({
         className={isDetailed
           ? isDesktopDetail
             ? `relative z-20 col-start-1 justify-self-center w-[min(23rem,32vw,64dvh)] ${CARD_ASPECT_CLASS} pointer-events-auto`
-            : `relative z-20 w-[min(22rem,72vw,44dvh)] ${CARD_ASPECT_CLASS} ${detailFaceMode === "diff" ? "pointer-events-auto" : "pointer-events-none"}`
+            : `relative z-20 w-[min(22rem,72vw,44dvh)] ${CARD_ASPECT_CLASS} pointer-events-auto`
           : "absolute inset-0 z-20"}
         transition={{ layout: layoutTransition }}
         onPointerMove={isDetailed && isDesktopDetail ? handleDetailPointerMove : undefined}
@@ -488,63 +524,67 @@ const RitualCard: React.FC<RitualCardProps> = ({
         {isDetailed && (
           <motion.div
             data-card-detail-control
-            initial={{ opacity: 0, y: -6 }}
+            initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.3 }}
-            className="absolute -top-13 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1 rounded-full border border-amber-500/25 bg-neutral-950/85 p-1 shadow-[0_8px_32px_rgba(0,0,0,0.8)] backdrop-blur-md pointer-events-auto select-none whitespace-nowrap"
+            transition={{ delay: 0.15, duration: 0.25 }}
+            className="absolute -top-11 left-1/2 -translate-x-1/2 z-40 flex items-center border border-white/15 bg-black/90 p-0.5 shadow-[0_4px_24px_rgba(0,0,0,0.8)] backdrop-blur-md pointer-events-auto select-none whitespace-nowrap rounded-none"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* 1. 1909 Original (Left) -> Slide reveal left side */}
             <button
               type="button"
               data-card-detail-control
-              onClick={() => setDetailFaceMode("redraw")}
-              className={`rounded-full px-3 py-1 text-xs tracking-wider transition-all duration-200 cursor-pointer ${
-                detailFaceMode === "redraw"
-                  ? "bg-amber-400/20 text-amber-200 border border-amber-400/40 font-medium shadow-xs"
-                  : "text-neutral-400 hover:text-neutral-200 hover:bg-white/5 border border-transparent"
-              }`}
-            >
-              {t("card.diffMode.redraw")}
-            </button>
-            <button
-              type="button"
-              data-card-detail-control
-              onClick={() => setDetailFaceMode("original")}
-              className={`rounded-full px-3 py-1 text-xs tracking-wider transition-all duration-200 cursor-pointer ${
+              onClick={() => handleTabSelect("original")}
+              className={`px-3 py-1 text-[10px] font-cinzel tracking-[0.22em] uppercase transition-all duration-200 cursor-pointer rounded-none ${
                 detailFaceMode === "original"
-                  ? "bg-amber-400/20 text-amber-200 border border-amber-400/40 font-medium shadow-xs"
-                  : "text-neutral-400 hover:text-neutral-200 hover:bg-white/5 border border-transparent"
+                  ? "bg-white/10 text-amber-100 border-b border-amber-200/90 font-medium"
+                  : "text-neutral-400 hover:text-neutral-200 hover:bg-white/5 border-b border-transparent"
               }`}
             >
               {t("card.diffMode.original")}
             </button>
+            <span className="h-3 w-px bg-white/15" />
+
+            {/* 2. Interactive Sliding Diff (Center) -> Slide to 50% */}
             <button
               type="button"
               data-card-detail-control
-              onClick={() => {
-                setDetailFaceMode("diff");
-                resetDetailTilt();
-              }}
-              className={`rounded-full px-3 py-1 text-xs tracking-wider transition-all duration-200 flex items-center gap-1.5 cursor-pointer ${
+              onClick={() => handleTabSelect("diff")}
+              className={`px-3 py-1 text-[10px] font-cinzel tracking-[0.22em] uppercase transition-all duration-200 flex items-center gap-1.5 cursor-pointer rounded-none ${
                 detailFaceMode === "diff"
-                  ? "bg-amber-400/20 text-amber-200 border border-amber-400/40 font-medium shadow-xs"
-                  : "text-neutral-400 hover:text-neutral-200 hover:bg-white/5 border border-transparent"
+                  ? "bg-white/10 text-amber-100 border-b border-amber-200/90 font-medium"
+                  : "text-neutral-400 hover:text-neutral-200 hover:bg-white/5 border-b border-transparent"
               }`}
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <rect x="3" y="3" width="18" height="18" rx="0" ry="0" />
                 <line x1="12" y1="3" x2="12" y2="21" />
               </svg>
               {t("card.diffMode.diff")}
+            </button>
+            <span className="h-3 w-px bg-white/15" />
+
+            {/* 3. Redraw (Right) -> Slide reveal right side */}
+            <button
+              type="button"
+              data-card-detail-control
+              onClick={() => handleTabSelect("redraw")}
+              className={`px-3 py-1 text-[10px] font-cinzel tracking-[0.22em] uppercase transition-all duration-200 cursor-pointer rounded-none ${
+                detailFaceMode === "redraw"
+                  ? "bg-white/10 text-amber-100 border-b border-amber-200/90 font-medium"
+                  : "text-neutral-400 hover:text-neutral-200 hover:bg-white/5 border-b border-transparent"
+              }`}
+            >
+              {t("card.diffMode.redraw")}
             </button>
           </motion.div>
         )}
 
         {isDetailed && detailFaceMode === "diff" && (
           <motion.div
-            initial={{ opacity: 0, y: 4 }}
+            initial={{ opacity: 0, y: 3 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] text-amber-200/70 tracking-wider pointer-events-none font-sans"
+            className="absolute -bottom-6.5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] text-neutral-400 font-cinzel tracking-[0.24em] uppercase pointer-events-none"
           >
             {t("card.diffMode.hint")}
           </motion.div>
@@ -582,21 +622,25 @@ const RitualCard: React.FC<RitualCardProps> = ({
             style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
           >
             <div className="relative h-full w-full overflow-hidden border border-black/80 bg-neutral-950">
-              {isDetailed && detailFaceMode === "diff" ? (
+              {isDetailed ? (
                 <div
                   ref={sliderContainerRef}
                   data-card-detail-control
-                  className="absolute inset-0 h-full w-full overflow-hidden select-none touch-none cursor-ew-resize pointer-events-auto"
-                  onPointerDown={handleSliderPointerDown}
-                  onPointerMove={handleSliderPointerMove}
-                  onPointerUp={handleSliderPointerUp}
-                  onPointerCancel={handleSliderPointerUp}
+                  className={`absolute inset-0 h-full w-full overflow-hidden select-none pointer-events-auto ${
+                    detailFaceMode === "diff" ? "touch-none cursor-ew-resize" : "cursor-default"
+                  }`}
+                  onPointerDown={detailFaceMode === "diff" ? handleSliderPointerDown : undefined}
+                  onPointerMove={detailFaceMode === "diff" ? handleSliderPointerMove : undefined}
+                  onPointerUp={detailFaceMode === "diff" ? handleSliderPointerUp : undefined}
+                  onPointerCancel={detailFaceMode === "diff" ? handleSliderPointerUp : undefined}
                 >
                   {/* Base Layer: 1909 Original (Visible on left) */}
                   <img
                     src={getCardImageUrl(card.image, "original")}
                     alt={`${card.nameEn} (1909 Original)`}
                     draggable={false}
+                    decoding="async"
+                    loading="eager"
                     className={`absolute ${ORIGINAL_CARD_INSET_CLASS} object-cover pointer-events-none`}
                     style={{ filter: imageFilter }}
                   />
@@ -606,53 +650,42 @@ const RitualCard: React.FC<RitualCardProps> = ({
                     className="absolute inset-0 h-full w-full overflow-hidden pointer-events-none"
                     style={{
                       clipPath: `inset(0 0 0 ${splitPos}%)`,
+                      transition: isAnimatingSlide ? "clip-path 0.45s cubic-bezier(0.22, 1, 0.36, 1)" : "none",
+                      willChange: isAnimatingSlide || isDraggingSplit.current ? "clip-path" : undefined,
                     }}
                   >
                     <img
                       src={getCardImageUrl(card.image, "redraw")}
                       alt={`${card.nameEn} (Redraw)`}
                       draggable={false}
+                      decoding="async"
+                      loading="eager"
                       className="absolute inset-0 h-full w-full object-cover"
                       style={{ filter: imageFilter }}
                     />
                   </div>
 
-                  {/* Corner Badges */}
-                  <div className="pointer-events-none absolute top-2.5 left-2.5 z-10 rounded-full border border-white/15 bg-black/75 px-2.5 py-0.5 text-[9px] text-amber-200/95 font-cinzel tracking-wider backdrop-blur-xs shadow-md">
-                    {t("card.diffMode.original")}
-                  </div>
-                  <div className="pointer-events-none absolute top-2.5 right-2.5 z-10 rounded-full border border-white/15 bg-black/75 px-2.5 py-0.5 text-[9px] text-amber-200/95 font-cinzel tracking-wider backdrop-blur-xs shadow-md">
-                    {t("card.diffMode.redraw")}
-                  </div>
-
                   {/* Split Divider */}
                   <div
-                    className="absolute inset-y-0 z-20 w-0 pointer-events-none"
-                    style={{ left: `${splitPos}%` }}
+                    className="absolute inset-y-0 z-20 w-0 pointer-events-none transition-opacity duration-300"
+                    style={{
+                      left: `${splitPos}%`,
+                      transition: isAnimatingSlide
+                        ? "left 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease"
+                        : "opacity 0.3s ease",
+                      opacity: splitPos <= 0.5 || splitPos >= 99.5 ? 0 : 1,
+                      willChange: isAnimatingSlide || isDraggingSplit.current ? "left" : undefined,
+                    }}
                   >
-                    <div className="absolute inset-y-0 -left-[1px] w-[2px] bg-linear-to-b from-amber-200/40 via-amber-300 to-amber-200/40 shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
-                    <div className="absolute top-1/2 -left-4 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full border border-amber-300/80 bg-neutral-950/90 text-amber-200 shadow-[0_0_16px_rgba(0,0,0,0.9),0_0_8px_rgba(251,191,36,0.5)] backdrop-blur-md active:scale-95 cursor-ew-resize pointer-events-auto">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="h-3.5 w-3.5"
-                      >
-                        <polyline points="8 7 3 12 8 17" />
-                        <polyline points="16 7 21 12 16 17" />
-                      </svg>
-                    </div>
+                    <div className="absolute inset-y-0 -left-[0.5px] w-px bg-linear-to-b from-amber-100/10 via-amber-200/95 to-amber-100/10 shadow-[0_0_8px_rgba(250,231,188,0.7)]" />
                   </div>
                 </div>
               ) : (
                 <motion.img
                   src={activeCardImageUrl}
                   alt={card.nameEn}
-                  loading="eager"
+                  loading="lazy"
+                  decoding="async"
                   onLoad={() => setIsImageLoaded(true)}
                   onError={() => {
                     setIsImageLoaded(true);
@@ -677,7 +710,7 @@ const RitualCard: React.FC<RitualCardProps> = ({
                   {card.nameEn}
                 </div>
               )}
-              {!isImageLoaded && !hasImageError && detailFaceMode !== "diff" && (
+              {!isImageLoaded && !hasImageError && !isDetailed && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white/60" />
                 </div>
@@ -686,16 +719,14 @@ const RitualCard: React.FC<RitualCardProps> = ({
                 className={`absolute inset-0 pointer-events-none ${
                   !isDetailed
                     ? "bg-linear-to-t from-black/95 via-black/20 to-black/40"
-                    : detailFaceMode === "diff"
-                      ? "hidden"
-                      : "bg-linear-to-t from-black/50 via-transparent to-black/20"
+                    : "hidden"
                 }`}
               />
               <motion.div
                 aria-hidden
                 className="pointer-events-none absolute inset-0 mix-blend-screen"
                 animate={{
-                  opacity: isDetailed && isDesktopDetail && detailFaceMode !== "diff" ? 0.92 : isHovered ? 0.95 : 0,
+                  opacity: isDetailed && isDesktopDetail ? 0.92 : isHovered ? 0.95 : 0,
                   scale: isDetailed || isHovered ? 1 : 0.96,
                 }}
                 transition={{ duration: 0.35, ease: SILKY_EASE }}
@@ -703,7 +734,7 @@ const RitualCard: React.FC<RitualCardProps> = ({
               />
               <div
                 className={`absolute bottom-0 w-full p-3 text-center transition-opacity duration-300 md:p-4 ${
-                  isRevealed && (!isDetailed || detailFaceMode !== "diff") ? "opacity-100" : "opacity-0 pointer-events-none"
+                  isRevealed && !isDetailed ? "opacity-100" : "opacity-0 pointer-events-none"
                 }`}
               >
                 {romanNumeral && <div className="mb-0.5 text-[8px] text-white/60 font-cinzel tracking-[0.2em] md:text-[10px]">{romanNumeral}</div>}
