@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { CARD_ASPECT_CLASS, CARD_ASPECT_RATIO } from "@/features/tarot/constants/cards";
 import { CardBackId } from "@/features/tarot/constants/cardBacks";
 import { getLocalizedSpread, SPREADS } from "@/features/tarot/constants/spreads";
-import { GameState, Locale, PickedCard, SpreadType } from "@/features/tarot/types";
+import { GameState, Locale, PickedCard, SpreadType, CardFaceStyle } from "@/features/tarot/types";
 import { SILKY_EASE } from "@/shared/constants/ui";
 import CardTooltip from "./CardTooltip";
 import RitualCard from "./RitualCard";
@@ -14,7 +14,7 @@ import RitualCard from "./RitualCard";
 const ABSOLUTE_LAYOUT_UNIT_REM = 0.25;
 
 const parseWidthUnits = (widthClass: string) => {
-  const match = widthClass.match(/\bw-(\d+(?:\.\d+)?)\b/);
+  const match = widthClass.match(/\bw-(\d+(?:\d+)?)\b/);
   return match ? Number(match[1]) : null;
 };
 
@@ -50,6 +50,7 @@ interface RitualCardStageProps {
   onCardHover: (id: number | null) => void;
   onCardFocus: (id: number | null) => void;
   cardBackId: CardBackId;
+  cardFaceStyle?: CardFaceStyle;
 }
 
 const RitualCardStage: React.FC<RitualCardStageProps> = ({
@@ -66,6 +67,7 @@ const RitualCardStage: React.FC<RitualCardStageProps> = ({
   onCardHover,
   onCardFocus,
   cardBackId,
+  cardFaceStyle,
 }) => {
   const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
   const absoluteStageRef = React.useRef<HTMLDivElement>(null);
@@ -295,6 +297,7 @@ const RitualCardStage: React.FC<RitualCardStageProps> = ({
           card={card}
           isRevealed={isReading && revealedCardIds.has(card.id)}
           cardBackId={cardBackId}
+          cardFaceStyle={cardFaceStyle}
           isDetailed={isDetailed}
           isDesktopDetail={!isMobile && !isTablet}
           isHovered={isHovered}

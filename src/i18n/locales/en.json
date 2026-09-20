@@ -71,6 +71,19 @@
   },
   "deck": {
     "title": "Tarot Deck Library",
+    "cardFaces": {
+      "title": "Choose card artwork style",
+      "subtitle": "Choose the artwork edition displayed across the deck and rituals.",
+      "selected": "Selected",
+      "redraw": {
+        "name": "Full-Bleed Restored",
+        "description": "700×1200 borderless redraw with enhanced clarity and full bleed"
+      },
+      "original": {
+        "name": "1909 Vintage Archive",
+        "description": "Authentic 1909 historical scan with original borders and lettering"
+      }
+    },
     "cardBacks": {
       "title": "Choose your card back",
       "subtitle": "Your selection appears on every face-down card.",
@@ -112,6 +125,12 @@
     "clickForDetails": "Click to see more details"
   },
   "card": {
+    "diffMode": {
+      "redraw": "Restored",
+      "original": "1909 Original",
+      "diff": "Compare Diff",
+      "hint": "Drag slider to compare edition details"
+    },
     "reversedShort": "Rev",
     "reversedLong": "Reversed",
     "interpretationTitle": "Interpretation",

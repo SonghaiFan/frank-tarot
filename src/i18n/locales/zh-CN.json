@@ -71,6 +71,19 @@
   },
   "deck": {
     "title": "塔罗牌库",
+    "cardFaces": {
+      "title": "选择牌面风格",
+      "subtitle": "选择在牌库与仪式各环节中展示的牌面艺术版本。",
+      "selected": "已选",
+      "redraw": {
+        "name": "超清无边重绘版",
+        "description": "700×1200 满版全出血，去除黑边与标题，现代高精还原"
+      },
+      "original": {
+        "name": "1909 经典馆藏原版",
+        "description": "百年维基高精扫描，保留初版真实纸纹、外框与手写题字"
+      }
+    },
     "cardBacks": {
       "title": "选择牌背",
       "subtitle": "所选牌背会显示在所有未翻开的卡牌上。",
@@ -112,6 +125,12 @@
     "clickForDetails": "点击查看详细内容"
   },
   "card": {
+    "diffMode": {
+      "redraw": "重绘版",
+      "original": "1909原版",
+      "diff": "滑动对比",
+      "hint": "拖动滑块对比两版细节"
+    },
     "reversedShort": "逆位",
     "reversedLong": "逆位",
     "interpretationTitle": "牌义启示",

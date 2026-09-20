@@ -12,7 +12,9 @@ import {
   SpreadType,
   PickedCard,
   CardPoolType,
+  CardFaceStyle,
 } from "@/features/tarot/types";
+import { DEFAULT_CARD_FACE_STYLE } from "@/features/tarot/constants/cardFaceStyles";
 import {
   FULL_DECK,
   getDeckForPool,
@@ -107,6 +109,13 @@ const App: React.FC = () => {
       : DEFAULT_CARD_BACK_ID;
   });
 
+  const [cardFaceStyle, setCardFaceStyle] = useState<CardFaceStyle>(() => {
+    const saved = window.localStorage.getItem("f-tarot-card-face-style");
+    return saved === "original" || saved === "redraw"
+      ? saved
+      : DEFAULT_CARD_FACE_STYLE;
+  });
+
   // --- Refs ---
   const readingPromiseRef = useRef<Promise<string> | null>(null);
   const readingReadyRef = useRef<boolean>(false);
@@ -126,6 +135,10 @@ const App: React.FC = () => {
   useEffect(() => {
     window.localStorage.setItem("f-tarot-card-back", cardBackId);
   }, [cardBackId]);
+
+  useEffect(() => {
+    window.localStorage.setItem("f-tarot-card-face-style", cardFaceStyle);
+  }, [cardFaceStyle]);
 
   // --- Computed Deck ---
   const activeDeck = useMemo(() => {
@@ -222,7 +235,7 @@ const App: React.FC = () => {
     predeterminedCardsIndexRef.current = 0;
 
     targets.forEach((card) => {
-      const url = getCardImageUrl(card.image);
+      const url = getCardImageUrl(card.image, cardFaceStyle);
       preload(url, { as: "image" });
       const img = new Image();
       img.src = url;
@@ -404,6 +417,8 @@ const App: React.FC = () => {
             onCardFocus={setSelectedCardId}
             cardBackId={cardBackId}
             onCardBackChange={setCardBackId}
+            cardFaceStyle={cardFaceStyle}
+            onCardFaceStyleChange={setCardFaceStyle}
           />
         );
       case GameState.INPUT:
@@ -570,6 +585,7 @@ const App: React.FC = () => {
                   onCardHover={setHoveredCardId}
                   onCardFocus={setSelectedCardId}
                   cardBackId={cardBackId}
+                  cardFaceStyle={cardFaceStyle}
                 />
               )}
             <AnimatePresence mode="sync">{renderPhase()}</AnimatePresence>

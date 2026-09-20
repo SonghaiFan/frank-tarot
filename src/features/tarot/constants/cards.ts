@@ -1,8 +1,9 @@
 import groundTruth from "@/features/tarot/data/ground-truth.json";
 import cardImagesManifest from "@/features/tarot/data/card-images.json";
-import { TarotCard, CardPoolType } from "@/features/tarot/types";
+import { TarotCard, CardPoolType, CardFaceStyle } from "@/features/tarot/types";
 
 const LOCAL_CDN = `${import.meta.env.BASE_URL}images/cards/`;
+const LOCAL_ORIGINAL_CDN = `${import.meta.env.BASE_URL}images/cards_rws_original/`;
 const cardImageMap = cardImagesManifest as Record<string, string>;
 
 type GroundTruthCardRecord = {
@@ -67,7 +68,10 @@ export const MAJOR_ARCANA: TarotCard[] = getCardsByIds(cardsData.groups.majorArc
 export const MINOR_ARCANA: TarotCard[] = getCardsByIds(cardsData.groups.minorArcana);
 export const FULL_DECK: TarotCard[] = getCardsByIds(cardsData.groups.fullDeck);
 
-export const getCardImageUrl = (imageOrKey: string): string => {
+export const getCardImageUrl = (
+  imageOrKey: string,
+  style: CardFaceStyle = "redraw"
+): string => {
   if (!imageOrKey) return "";
   if (
     imageOrKey.startsWith("http://") ||
@@ -79,7 +83,8 @@ export const getCardImageUrl = (imageOrKey: string): string => {
   // Strip any existing file extension (e.g. "maj00.jpg" or "maj00.png" -> "maj00")
   const key = imageOrKey.replace(/\.[^/.]+$/, "");
   const resolvedFileName = cardImageMap[key] || imageOrKey;
-  return `${LOCAL_CDN}${resolvedFileName}`;
+  const baseCdn = style === "original" ? LOCAL_ORIGINAL_CDN : LOCAL_CDN;
+  return `${baseCdn}${resolvedFileName}`;
 };
 
 export const STATIC_SCRIPTS = {

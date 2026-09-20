@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from "react";
 import { motion } from "motion/react";
-import { CardPoolType } from "@/features/tarot/types";
+import { CardPoolType, CardFaceStyle } from "@/features/tarot/types";
 import { CARD_BACKS, CardBackId } from "@/features/tarot/constants/cardBacks";
+import { CARD_FACE_STYLES, ORIGINAL_CARD_INSET_CLASS } from "@/features/tarot/constants/cardFaceStyles";
 import {
   getDeckForPool,
+  getCardImageUrl,
   CARD_ASPECT_CLASS,
 } from "@/features/tarot/constants/cards";
 import RitualCard from "./RitualCard";
@@ -17,6 +19,8 @@ interface DeckLibraryProps {
   onCardFocus: (id: number | null) => void;
   cardBackId: CardBackId;
   onCardBackChange: (id: CardBackId) => void;
+  cardFaceStyle: CardFaceStyle;
+  onCardFaceStyleChange: (style: CardFaceStyle) => void;
 }
 
 const DeckLibrary: React.FC<DeckLibraryProps> = ({
@@ -26,6 +30,8 @@ const DeckLibrary: React.FC<DeckLibraryProps> = ({
   onCardFocus,
   cardBackId,
   onCardBackChange,
+  cardFaceStyle,
+  onCardFaceStyleChange,
 }) => {
   const { t } = useTranslation();
   const [hoveredCardId, setHoveredCardId] = useState<number | null>(null);
@@ -59,6 +65,65 @@ const DeckLibrary: React.FC<DeckLibraryProps> = ({
           <h2 className="mb-8 text-center text-2xl text-white/80 font-cinzel tracking-[0.2em]">
             {t("deck.title")}
           </h2>
+
+          <section className="mb-14" aria-labelledby="card-face-title">
+            <div className="mb-5 text-center">
+              <h3 id="card-face-title" className="text-xs text-white/70 font-cinzel uppercase tracking-[0.28em]">
+                {t("deck.cardFaces.title")}
+              </h3>
+              <p className="mt-2 text-xs text-neutral-500">
+                {t("deck.cardFaces.subtitle")}
+              </p>
+            </div>
+            <div className="mx-auto grid max-w-lg grid-cols-2 gap-4 sm:gap-8">
+              {CARD_FACE_STYLES.map((styleOption) => {
+                const isSelected = cardFaceStyle === styleOption.id;
+                return (
+                  <button
+                    key={styleOption.id}
+                    type="button"
+                    onClick={() => onCardFaceStyleChange(styleOption.id)}
+                    aria-pressed={isSelected}
+                    className={`group relative text-left transition-transform duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white ${
+                      isSelected ? "scale-[1.02]" : "hover:-translate-y-1"
+                    }`}
+                  >
+                    <div className={`relative ${CARD_ASPECT_CLASS} overflow-hidden border bg-neutral-950 p-1 transition-all duration-300 ${
+                      isSelected
+                        ? "border-amber-100/80 shadow-[0_0_24px_rgba(250,231,188,0.25)]"
+                        : "border-white/10 group-hover:border-white/45"
+                    }`}>
+                      <div className="relative h-full w-full overflow-hidden">
+                        <img
+                          src={getCardImageUrl(styleOption.previewImage, styleOption.id)}
+                          alt={t(styleOption.nameKey)}
+                          className={`object-cover ${
+                            styleOption.id === "original"
+                              ? `absolute ${ORIGINAL_CARD_INSET_CLASS}`
+                              : "h-full w-full"
+                          }`}
+                        />
+                      </div>
+                      <div className={`pointer-events-none absolute inset-0 border transition-opacity ${
+                        isSelected ? "border-amber-100/60 opacity-100" : "border-white/0 opacity-0 group-hover:opacity-100"
+                      }`} />
+                      {isSelected && (
+                        <span className="absolute right-2 top-2 border border-amber-100/60 bg-black/75 px-1.5 py-1 text-[8px] text-amber-50 font-cinzel uppercase tracking-[0.14em] backdrop-blur-sm">
+                          {t("deck.cardFaces.selected")}
+                        </span>
+                      )}
+                    </div>
+                    <span className="mt-3 block text-center text-[10px] text-white/75 font-cinzel uppercase tracking-[0.18em]">
+                      {t(styleOption.nameKey)}
+                    </span>
+                    <span className="mt-1 block text-center text-[11px] text-neutral-500 leading-relaxed">
+                      {t(styleOption.descriptionKey)}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
 
           <section className="mb-14" aria-labelledby="card-back-title">
             <div className="mb-5 text-center">
@@ -143,6 +208,7 @@ const DeckLibrary: React.FC<DeckLibraryProps> = ({
                   card={card}
                   isRevealed={true}
                   cardBackId={cardBackId}
+                  cardFaceStyle={cardFaceStyle}
                   isDetailed={isDetailed}
                   isDesktopDetail={isDesktopDetail}
                   isHovered={isHovered}
