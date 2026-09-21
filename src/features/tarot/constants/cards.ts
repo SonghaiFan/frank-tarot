@@ -2,8 +2,12 @@ import groundTruth from "@/features/tarot/data/ground-truth.json";
 import cardImagesManifest from "@/features/tarot/data/card-images.json";
 import { TarotCard, CardPoolType, CardFaceStyle } from "@/features/tarot/types";
 
-const LOCAL_CDN = `${import.meta.env.BASE_URL}images/cards/`;
-const LOCAL_ORIGINAL_CDN = `${import.meta.env.BASE_URL}images/cards_rws_original/`;
+const baseUrl =
+  typeof import.meta !== "undefined" && import.meta.env?.BASE_URL
+    ? import.meta.env.BASE_URL
+    : "/";
+const LOCAL_CDN = `${baseUrl}images/cards/`;
+const LOCAL_ORIGINAL_CDN = `${baseUrl}images/cards_rws_original/`;
 const cardImageMap = cardImagesManifest as Record<string, string>;
 
 type GroundTruthCardRecord = {

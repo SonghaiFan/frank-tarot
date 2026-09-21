@@ -27,6 +27,7 @@ import {
   hasAiKey,
   predictBestSpread,
 } from "@/features/tarot/services/gemini";
+import { drawCards } from "@/core";
 import Galaxy from "@/app/components/Galaxy";
 import HeaderBar from "@/app/components/HeaderBar";
 import IntroSection from "@/features/tarot/components/IntroSection";
@@ -208,28 +209,7 @@ const App: React.FC = () => {
     const currentRitualId = ritualIdRef.current + 1;
     ritualIdRef.current = currentRitualId;
 
-    const spreadDef = SPREADS[selectedSpread];
-    const targets: PickedCard[] = [];
-
-    for (let i = 0; i < spreadDef.cardCount; i++) {
-      let poolType: CardPoolType = "FULL";
-      if (spreadDef.cardPools && spreadDef.cardPools[i]) {
-        poolType = spreadDef.cardPools[i];
-      }
-
-      const sourceDeck = getDeckForPool(poolType);
-      const availableDeck = sourceDeck.filter(
-        (c) => !targets.some((t) => t.id === c.id)
-      );
-
-      const picked =
-        availableDeck[Math.floor(Math.random() * availableDeck.length)];
-
-      targets.push({
-        ...picked,
-        isReversed: Math.random() > 0.4,
-      });
-    }
+    const targets = drawCards(selectedSpread);
 
     predeterminedCardsRef.current = targets;
     predeterminedCardsIndexRef.current = 0;
